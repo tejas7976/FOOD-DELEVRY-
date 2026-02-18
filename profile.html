@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - FoodExpress</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 100px auto 50px;
+            padding: 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .profile-header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .profile-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Login Required */
+        .login-required {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        .login-required h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .login-required p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .login-required-btn {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-required-btn:hover {
+            background-color: #ff4520;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .profile-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 48px;
+            color: #667eea;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .profile-member-since {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stat-item {
+            padding: 20px;
+            text-align: center;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff6347;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        /* Profile Body */
+        .profile-card-body {
+            padding: 25px;
+        }
+
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .profile-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .profile-section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .profile-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .profile-info-label {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .profile-info-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .profile-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: #ff6347;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #ff4520;
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-danger {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #cc0000;
+        }
+
+        .btn-block {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        /* Quick Links */
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .quick-link:hover {
+            background: #f0f0f0;
+            transform: translateX(5px);
+        }
+
+        .quick-link-icon {
+            font-size: 24px;
+        }
+
+        .quick-link-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Modal Styles */
+        .profile-modal {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .profile-modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .profile-modal-close {
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .profile-modal-close:hover {
+            color: #333;
+        }
+
+        .profile-modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff6347;
+        }
+
+        .form-group input:disabled {
+            background-color: #f5f5f5;
+            color: #888;
+        }
+
+        .password-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        /* Danger Zone */
+        .danger-zone {
+            background-color: #fff5f5;
+            border: 1px solid #ffcccc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .danger-zone-title {
+            color: #cc0000;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .danger-zone-text {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-container {
+                margin-top: 80px;
+                padding: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item {
+                border-right: none;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .stat-item:last-child {
+                border-bottom: none;
+            }
+
+            .quick-links {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                🍔 FoodExpress
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="orders.html" class="nav-link">My Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a href="address.html" class="nav-link">My Addresses</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link cart">
+                        🛒 Cart <span class="cart-count">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <button class="login-btn">Login</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>👤 My Profile</h1>
+            <p>Manage your account settings</p>
+        </div>
+
+        <!-- Login Required -->
+        <div id="loginRequired" class="login-required" style="display: none;">
+            <h2>🔐 Login Required</h2>
+            <p>Please login to view your profile</p>
+            <button class="login-required-btn" onclick="showLoginModal()">Login Now</button>
+        </div>
+
+        <!-- Profile Content -->
+        <div id="profileContent" style="display: none;">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <div class="profile-avatar" id="profileAvatar">T</div>
+                    <div class="profile-name" id="profileName">User Name</div>
+                    <div class="profile-email" id="profileEmail">user@email.com</div>
+                    <div class="profile-member-since" id="memberSince">Member since: Jan 2026</div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalOrders">0</div>
+                        <div class="stat-label">Orders</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalReviews">0</div>
+                        <div class="stat-label">Reviews</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalAddresses">0</div>
+                        <div class="stat-label">Addresses</div>
+                    </div>
+                </div>
+
+                <div class="profile-card-body">
+                    <!-- Account Information -->
+                    <div class="profile-section">
+                        <div class="profile-section-title">📋 Account Information</div>
+                        <div class="profile-info-row">
+                            <span class="profile-info-label">Full Name</span>
+                            <span class="profile-info-value" id="infoName">-</span>
+                        </div>
+                        <div class="profile-info-row">
+                            <span class="profile-info-label">Email</span>
+                            <span class="profile-info-value" id="infoEmail">-</span>
+                        </div>
+                        <div class="profile-info-row">
+                            <span class="profile-info-label">Phone</span>
+                            <span class="profile-info-value" id="infoPhone">Not added</span>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <button class="profile-btn btn-primary" onclick="openEditProfileModal()">✏️ Edit Profile</button>
+                        </div>
+                    </div>
+
+                    <!-- Security -->
+                    <div class="profile-section">
+                        <div class="profile-section-title">🔒 Security</div>
+                        <div class="profile-info-row">
+                            <span class="profile-info-label">Password</span>
+                            <span class="profile-info-value">••••••••</span>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <button class="profile-btn btn-secondary" onclick="openChangePasswordModal()">🔑 Change Password</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="profile-section">
+                        <div class="profile-section-title">⚡ Quick Links</div>
+                        <div class="quick-links">
+                            <a href="orders.html" class="quick-link">
+                                <span class="quick-link-icon">📦</span>
+                                <span class="quick-link-text">My Orders</span>
+                            </a>
+                            <a href="address.html" class="quick-link">
+                                <span class="quick-link-icon">📍</span>
+                                <span class="quick-link-text">My Addresses</span>
+                            </a>
+                            <a href="index.html" class="quick-link">
+                                <span class="quick-link-icon">🍕</span>
+                                <span class="quick-link-text">Browse Restaurants</span>
+                            </a>
+                            <a href="#" class="quick-link" onclick="logout(); return false;">
+                                <span class="quick-link-icon">🚪</span>
+                                <span class="quick-link-text">Logout</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="danger-zone">
+                        <div class="danger-zone-title">⚠️ Danger Zone</div>
+                        <div class="danger-zone-text">Once you delete your account, there is no going back. Please be certain.</div>
+                        <button class="profile-btn btn-danger" onclick="deleteAccount()">🗑️ Delete My Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="profile-modal">
+        <div class="profile-modal-content">
+            <div class="profile-modal-header">
+                <h2>✏️ Edit Profile</h2>
+                <span class="profile-modal-close" onclick="closeEditProfileModal()">&times;</span>
+            </div>
+            <div class="profile-modal-body">
+                <div id="editSuccessMessage" class="success-message">Profile updated successfully!</div>
+                <div id="editErrorMessage" class="error-message">Something went wrong!</div>
+                
+                <form id="editProfileForm" onsubmit="return saveProfile(event)">
+                    <div class="form-group">
+                        <label for="editName">Full Name *</label>
+                        <input type="text" id="editName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail" disabled>
+                        <p class="password-hint">Email cannot be changed</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Phone Number</label>
+                        <input type="tel" id="editPhone" placeholder="Enter your phone number">
+                    </div>
+                    <button type="submit" class="profile-btn btn-primary btn-block">💾 Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="profile-modal">
+        <div class="profile-modal-content">
+            <div class="profile-modal-header">
+                <h2>🔑 Change Password</h2>
+                <span class="profile-modal-close" onclick="closeChangePasswordModal()">&times;</span>
+            </div>
+            <div class="profile-modal-body">
+                <div id="passwordSuccessMessage" class="success-message">Password changed successfully!</div>
+                <div id="passwordErrorMessage" class="error-message">Something went wrong!</div>
+                
+                <form id="changePasswordForm" onsubmit="return changePassword(event)">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password *</label>
+                        <input type="password" id="currentPassword" placeholder="Enter current password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password *</label>
+                        <input type="password" id="newPassword" placeholder="Enter new password" required minlength="6">
+                        <p class="password-hint">Minimum 6 characters</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password *</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
+                    </div>
+                    <button type="submit" class="profile-btn btn-primary btn-block">🔐 Change Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content login-modal-content">
+            <div class="modal-header">
+                <h2>Login / Sign Up</h2>
+                <span class="close" onclick="closeLoginModal()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
+                    Create an account or login to view your profile
+                </p>
+                
+                <form id="loginForm" onsubmit="event.preventDefault();">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
+                    
+                    <div class="login-buttons">
+                        <button type="button" class="login-submit-btn" onclick="signInWithEmail()">Login</button>
+                        <button type="button" class="signup-submit-btn" onclick="signUpWithEmail()">Sign Up</button>
+                    </div>
+                </form>
+                
+                <p class="login-note">Your data is stored locally in your browser</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 FoodExpress. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        // Load profile on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfile();
+            updateCartCount();
+        });
+
+        // Load profile data
+        function loadProfile() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                document.getElementById('loginRequired').style.display = 'block';
+                document.getElementById('profileContent').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('loginRequired').style.display = 'none';
+            document.getElementById('profileContent').style.display = 'block';
+
+            // Set avatar
+            const initial = (currentUser.name || currentUser.email).charAt(0).toUpperCase();
+            document.getElementById('profileAvatar').textContent = initial;
+
+            // Set profile info
+            const displayName = currentUser.name || currentUser.email.split('@')[0];
+            document.getElementById('profileName').textContent = displayName;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            document.getElementById('infoName').textContent = displayName;
+            document.getElementById('infoEmail').textContent = currentUser.email;
+            document.getElementById('infoPhone').textContent = currentUser.phone || 'Not added';
+
+            // Member since
+            if (currentUser.createdAt) {
+                const date = new Date(currentUser.createdAt);
+                const options = { month: 'short', year: 'numeric' };
+                document.getElementById('memberSince').textContent = 'Member since: ' + date.toLocaleDateString('en-IN', options);
+            }
+
+            // Load stats
+            loadStats(currentUser.email);
+        }
+
+        // Load user stats
+        function loadStats(email) {
+            // Orders count
+            const ordersKey = 'orders_' + email;
+            const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+            document.getElementById('totalOrders').textContent = orders.length;
+
+            // Reviews count
+            let reviewCount = 0;
+            const restaurantIds = ['pizza-paradise', 'burger-house', 'biryani-blues'];
+            restaurantIds.forEach(id => {
+                const reviewsKey = 'reviews_' + id;
+                const reviews = JSON.parse(localStorage.getItem(reviewsKey)) || [];
+                reviewCount += reviews.filter(r => r.userEmail === email).length;
+            });
+            document.getElementById('totalReviews').textContent = reviewCount;
+
+            // Addresses count
+            const addressKey = 'addresses_' + email;
+            const addresses = JSON.parse(localStorage.getItem(addressKey)) || [];
+            document.getElementById('totalAddresses').textContent = addresses.length;
+        }
+
+        // Open Edit Profile Modal
+        function openEditProfileModal() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            document.getElementById('editName').value = currentUser.name || '';
+            document.getElementById('editEmail').value = currentUser.email;
+            document.getElementById('editPhone').value = currentUser.phone || '';
+            
+            document.getElementById('editSuccessMessage').style.display = 'none';
+            document.getElementById('editErrorMessage').style.display = 'none';
+            
+            document.getElementById('editProfileModal').style.display = 'flex';
+        }
+
+        // Close Edit Profile Modal
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+
+        // Save Profile
+        function saveProfile(event) {
+            event.preventDefault();
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return false;
+
+            const newName = document.getElementById('editName').value.trim();
+            const newPhone = document.getElementById('editPhone').value.trim();
+
+            if (!newName) {
+                document.getElementById('editErrorMessage').textContent = 'Name is required!';
+                document.getElementById('editErrorMessage').style.display = 'block';
+                return false;
+            }
+
+            // Update current user
+            currentUser.name = newName;
+            currentUser.phone = newPhone;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // Update in registered users
+            const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+            const userIndex = users.findIndex(u => u.email === currentUser.email);
+            if (userIndex !== -1) {
+                users[userIndex].name = newName;
+                users[userIndex].phone = newPhone;
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+            }
+
+            // Show success message
+            document.getElementById('editSuccessMessage').style.display = 'block';
+            document.getElementById('editErrorMessage').style.display = 'none';
+
+            // Reload profile after short delay
+            setTimeout(() => {
+                closeEditProfileModal();
+                loadProfile();
+                
+                // Update login button with new name
+                const loginBtn = document.querySelector('.login-btn');
+                if (loginBtn) {
+                    loginBtn.textContent = newName.length > 15 ? newName.substring(0, 15) + '...' : newName;
+                }
+            }, 1500);
+
+            return false;
+        }
+
+        // Open Change Password Modal
+        function openChangePasswordModal() {
+            document.getElementById('changePasswordForm').reset();
+            document.getElementById('passwordSuccessMessage').style.display = 'none';
+            document.getElementById('passwordErrorMessage').style.display = 'none';
+            document.getElementById('changePasswordModal').style.display = 'flex';
+        }
+
+        // Close Change Password Modal
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').style.display = 'none';
+        }
+
+        // Change Password
+        function changePassword(event) {
+            event.preventDefault();
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return false;
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Verify current password
+            if (currentPassword !== currentUser.password) {
+                document.getElementById('passwordErrorMessage').textContent = 'Current password is incorrect!';
+                document.getElementById('passwordErrorMessage').style.display = 'block';
+                document.getElementById('passwordSuccessMessage').style.display = 'none';
+                return false;
+            }
+
+            // Check new password length
+            if (newPassword.length < 6) {
+                document.getElementById('passwordErrorMessage').textContent = 'New password must be at least 6 characters!';
+                document.getElementById('passwordErrorMessage').style.display = 'block';
+                document.getElementById('passwordSuccessMessage').style.display = 'none';
+                return false;
+            }
+
+            // Check passwords match
+            if (newPassword !== confirmPassword) {
+                document.getElementById('passwordErrorMessage').textContent = 'New passwords do not match!';
+                document.getElementById('passwordErrorMessage').style.display = 'block';
+                document.getElementById('passwordSuccessMessage').style.display = 'none';
+                return false;
+            }
+
+            // Update password
+            currentUser.password = newPassword;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // Update in registered users
+            const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+            const userIndex = users.findIndex(u => u.email === currentUser.email);
+            if (userIndex !== -1) {
+                users[userIndex].password = newPassword;
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+            }
+
+            // Show success message
+            document.getElementById('passwordSuccessMessage').style.display = 'block';
+            document.getElementById('passwordErrorMessage').style.display = 'none';
+
+            // Close modal after delay
+            setTimeout(() => {
+                closeChangePasswordModal();
+                alert('Password changed successfully!');
+            }, 1500);
+
+            return false;
+        }
+
+        // Delete Account
+        function deleteAccount() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            const confirmed = confirm('⚠️ Are you sure you want to delete your account?\n\nThis will permanently delete:\n- Your profile\n- All your orders\n- All your addresses\n- All your reviews\n\nThis action cannot be undone!');
+            
+            if (!confirmed) return;
+
+            const doubleConfirm = confirm('This is your last chance!\n\nType OK to permanently delete your account.');
+            
+            if (!doubleConfirm) return;
+
+            // Delete user data
+            const email = currentUser.email;
+
+            // Remove from registered users
+            let users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+            users = users.filter(u => u.email !== email);
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+
+            // Remove user's orders
+            localStorage.removeItem('orders_' + email);
+
+            // Remove user's addresses
+            localStorage.removeItem('addresses_' + email);
+
+            // Remove user's cart
+            localStorage.removeItem('cart_' + email);
+
+            // Remove current user session
+            localStorage.removeItem('currentUser');
+
+            alert('Your account has been deleted. We\'re sorry to see you go! 😢');
+            window.location.href = 'index.html';
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                alert('Logged out successfully!');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const cartCountBadge = document.querySelector('.cart-count');
+            
+            if (currentUser) {
+                const cartKey = 'cart_' + currentUser.email;
+                const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                if (cartCountBadge) {
+                    cartCountBadge.textContent = totalItems;
+                }
+            } else {
+                if (cartCountBadge) {
+                    cartCountBadge.textContent = '0';
+                }
+            }
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            const editModal = document.getElementById('editProfileModal');
+            const passwordModal = document.getElementById('changePasswordModal');
+            
+            if (event.target === editModal) {
+                closeEditProfileModal();
+            }
+            if (event.target === passwordModal) {
+                closeChangePasswordModal();
+            }
+        });
+    </script>
+</body>
+</html>
