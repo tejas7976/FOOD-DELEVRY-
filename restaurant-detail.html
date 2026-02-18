@@ -6,6 +6,312 @@
     <title>Restaurant Menu - FoodExpress</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="detail-style.css">
+    <style>
+        /* Reviews Section Styles */
+        .reviews-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .reviews-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin: 0;
+        }
+
+        .overall-rating {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .rating-number {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .rating-details {
+            font-size: 14px;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+
+        .write-review-btn {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .write-review-btn:hover {
+            background-color: #ff4520;
+            transform: translateY(-2px);
+        }
+
+        .review-card {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 20px 0;
+        }
+
+        .review-card:last-child {
+            border-bottom: none;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .reviewer-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .reviewer-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .review-date {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .review-rating {
+            background-color: #48c479;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .review-rating.low {
+            background-color: #ff6347;
+        }
+
+        .review-rating.medium {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .review-text {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .helpful-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .helpful-btn:hover {
+            border-color: #ff6347;
+            color: #ff6347;
+        }
+
+        .no-reviews {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .no-reviews-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .review-modal {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .review-modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .review-modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .review-modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+            color: #333;
+        }
+
+        .review-modal-close {
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .review-modal-close:hover {
+            color: #333;
+        }
+
+        .review-modal-body {
+            padding: 25px;
+        }
+
+        .star-rating-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .star-rating-input span {
+            font-size: 40px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: #ddd;
+        }
+
+        .star-rating-input span:hover {
+            transform: scale(1.2);
+        }
+
+        .star-rating-input span.active {
+            color: #ffc107;
+        }
+
+        .rating-label {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .review-textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 120px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .review-textarea:focus {
+            outline: none;
+            border-color: #ff6347;
+        }
+
+        .submit-review-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .submit-review-btn:hover {
+            background-color: #ff4520;
+        }
+
+        .submit-review-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .load-more-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: none;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .load-more-btn:hover {
+            border-color: #ff6347;
+            color: #ff6347;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -19,10 +325,10 @@
                     <a href="index.html" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link active">Menu</a>
+                    <a href="orders.html" class="nav-link">My Orders</a>
                 </li>
                 <li class="nav-item">
-                    <a href="orders.html" class="nav-link">My Orders</a>
+                    <a href="address.html" class="nav-link">My Addresses</a>
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link cart">
@@ -31,9 +337,6 @@
                 </li>
                 <li class="nav-item">
                     <button class="login-btn">Login</button>
-                </li>
-                <li class="nav-item">
-                    <a href="address.html" class="nav-link">My Addresses</a>
                 </li>
             </ul>
         </div>
@@ -166,62 +469,103 @@
                 </div>
             </div>
         </div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <div class="reviews-header">
+                <h2>⭐ Ratings & Reviews</h2>
+                <div class="overall-rating">
+                    <span class="rating-number" id="overallRating">0.0</span>
+                    <div class="rating-details">
+                        <div class="rating-stars" id="overallStars">☆☆☆☆☆</div>
+                        <div id="totalReviews">0 reviews</div>
+                    </div>
+                </div>
+                <button class="write-review-btn" onclick="openReviewModal()">✍️ Write a Review</button>
+            </div>
+
+            <div id="reviewsList">
+                <!-- Reviews will be loaded here -->
+            </div>
+
+            <button id="loadMoreBtn" class="load-more-btn" style="display: none;" onclick="loadMoreReviews()">
+                Load More Reviews
+            </button>
+        </div>
     </div>
 
-    <!-- Checkout Modal - UPDATED with Address Selection -->
-<div id="checkoutModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Checkout</h2>
-            <span class="close" onclick="closeCheckout()">&times;</span>
-        </div>
-        
-        <div class="modal-body">
-            <!-- Saved Addresses Section -->
-            <div id="savedAddressesSection" style="margin-bottom: 20px;">
-                <h3 style="margin-bottom: 15px;">📍 Select Delivery Address</h3>
-                <div id="savedAddressesList" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;">
-                    <!-- Saved addresses will be loaded here -->
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Checkout</h2>
+                <span class="close" onclick="closeCheckout()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <div id="savedAddressesSection" style="margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px;">📍 Select Delivery Address</h3>
+                    <div id="savedAddressesList" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;">
+                    </div>
+                    <button type="button" onclick="toggleNewAddressForm()" style="background: none; border: none; color: #ff6347; cursor: pointer; font-size: 14px; padding: 0;">
+                        ➕ Add New Address
+                    </button>
                 </div>
-                <button type="button" onclick="toggleNewAddressForm()" style="background: none; border: none; color: #ff6347; cursor: pointer; font-size: 14px; padding: 0;">
-                    ➕ Add New Address
+
+                <div id="newAddressForm">
+                    <h3>Delivery Details</h3>
+                    <form id="checkoutForm" onsubmit="event.preventDefault();">
+                        <input type="text" id="customerName" placeholder="Your Name" required>
+                        <input type="tel" id="customerPhone" placeholder="Phone Number" required>
+                        <textarea id="customerAddress" placeholder="Delivery Address" rows="3" required></textarea>
+                    </form>
+                </div>
+                
+                <h3 style="margin-top: 20px;">Order Summary</h3>
+                <div id="orderSummary"></div>
+                
+                <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="review-modal">
+        <div class="review-modal-content">
+            <div class="review-modal-header">
+                <h2>Write a Review</h2>
+                <span class="review-modal-close" onclick="closeReviewModal()">&times;</span>
+            </div>
+            <div class="review-modal-body">
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">How was your experience?</p>
+                
+                <div class="star-rating-input" id="starRatingInput">
+                    <span data-rating="1" onclick="setRating(1)">★</span>
+                    <span data-rating="2" onclick="setRating(2)">★</span>
+                    <span data-rating="3" onclick="setRating(3)">★</span>
+                    <span data-rating="4" onclick="setRating(4)">★</span>
+                    <span data-rating="5" onclick="setRating(5)">★</span>
+                </div>
+                <div class="rating-label" id="ratingLabel">Tap to rate</div>
+
+                <textarea 
+                    class="review-textarea" 
+                    id="reviewText" 
+                    placeholder="Share your experience about the food, delivery, packaging..."
+                    maxlength="500"
+                ></textarea>
+                <p style="text-align: right; font-size: 12px; color: #888; margin-top: 5px;">
+                    <span id="charCount">0</span>/500 characters
+                </p>
+
+                <button class="submit-review-btn" id="submitReviewBtn" onclick="submitReview()" disabled>
+                    Submit Review
                 </button>
             </div>
-
-            <!-- New Address Form (hidden by default if saved addresses exist) -->
-            <div id="newAddressForm">
-                <h3>Delivery Details</h3>
-                <form id="checkoutForm" onsubmit="event.preventDefault();">
-                    <input type="text" id="customerName" placeholder="Your Name" required>
-                    <input type="tel" id="customerPhone" placeholder="Phone Number" required>
-                    <textarea id="customerAddress" placeholder="Delivery Address" rows="3" required></textarea>
-                </form>
-            </div>
-            
-            <h3 style="margin-top: 20px;">Order Summary</h3>
-            <div id="orderSummary"></div>
-            
-            <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
         </div>
     </div>
-</div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-column">
-                <h3>🍔 FoodExpress</h3>
-                <p>Your favorite food, delivered fast to your doorstep.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 FoodExpress. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script src="cart.js"></script>
-
-<!-- Login Modal -->
+    <!-- Login Modal -->
     <div id="loginModal" class="modal" style="display: none;">
         <div class="modal-content login-modal-content">
             <div class="modal-header">
@@ -234,7 +578,6 @@
                     Create an account or login to save your orders and cart
                 </p>
                 
-                <!-- Email/Password Form -->
                 <form id="loginForm" onsubmit="event.preventDefault();">
                     <input type="email" id="loginEmail" placeholder="Email" required>
                     <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
@@ -250,10 +593,21 @@
         </div>
     </div>
 
-    <!-- Simple Auth System (No Firebase!) -->
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>🍔 FoodExpress</h3>
+                <p>Your favorite food, delivered fast to your doorstep.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 FoodExpress. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script src="auth.js"></script>
     <script src="cart.js"></script>
+    <script src="reviews.js"></script>
 </body>
-</html>    
-
-  
+</html>
