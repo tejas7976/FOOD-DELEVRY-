@@ -569,18 +569,16 @@
     </div>
 
     <!-- Login Modal -->
-<div id="loginModal" class="modal" style="display: none;">
-    <div class="modal-content login-modal-content">
-        <div class="modal-header">
-            <h2 id="loginModalTitle">Login / Sign Up</h2>
-            <span class="close" onclick="closeLoginModal()">&times;</span>
-        </div>
-        
-        <div class="modal-body">
-            <!-- Login Form Container -->
-            <div id="loginFormContainer">
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content login-modal-content">
+            <div class="modal-header">
+                <h2>Login / Sign Up</h2>
+                <span class="close" onclick="closeLoginModal()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
                 <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
-                    Create an account or login to continue
+                    Create an account or login to save your orders and cart
                 </p>
                 
                 <form id="loginForm" onsubmit="event.preventDefault();">
@@ -593,91 +591,10 @@
                     </div>
                 </form>
                 
-                <p style="text-align: center; margin-top: 15px;">
-                    <a href="#" onclick="showForgotPassword(); return false;" style="color: #ff6347; text-decoration: none; font-size: 14px;">
-                        🔑 Forgot Password?
-                    </a>
-                </p>
-                
                 <p class="login-note">Your data is stored locally in your browser</p>
-            </div>
-
-            <!-- Forgot Password Container -->
-            <div id="forgotPasswordContainer" style="display: none;">
-                <p style="color: #666; margin-bottom: 20px; font-size: 14px; text-align: center;">
-                    Enter your email address and we'll send you a verification code
-                </p>
-                
-                <form onsubmit="event.preventDefault();">
-                    <input type="email" id="forgotEmail" placeholder="Enter your email" required>
-                    
-                    <button type="button" class="login-submit-btn" style="width: 100%; margin-top: 10px;" onclick="sendResetCode()">
-                        📧 Send Reset Code
-                    </button>
-                </form>
-                
-                <p style="text-align: center; margin-top: 20px;">
-                    <a href="#" onclick="showLoginForm(); return false;" style="color: #666; text-decoration: none; font-size: 14px;">
-                        ← Back to Login
-                    </a>
-                </p>
-            </div>
-
-            <!-- Verify Code Container -->
-            <div id="verifyCodeContainer" style="display: none;">
-                <p style="color: #666; margin-bottom: 10px; font-size: 14px; text-align: center;">
-                    We sent a verification code to:
-                </p>
-                <p style="color: #333; margin-bottom: 20px; font-size: 16px; text-align: center; font-weight: bold;" id="resetEmailDisplay">
-                    email@example.com
-                </p>
-                
-                <form onsubmit="event.preventDefault();">
-                    <input type="text" id="verifyCode" placeholder="Enter 6-digit code" maxlength="6" required style="text-align: center; font-size: 24px; letter-spacing: 8px;">
-                    
-                    <button type="button" class="login-submit-btn" style="width: 100%; margin-top: 10px;" onclick="verifyResetCode()">
-                        ✓ Verify Code
-                    </button>
-                </form>
-                
-                <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #666;">
-                    Didn't receive the code? 
-                    <a href="#" onclick="resendResetCode(); return false;" style="color: #ff6347; text-decoration: none;">
-                        Resend
-                    </a>
-                </p>
-                
-                <p style="text-align: center; margin-top: 10px;">
-                    <a href="#" onclick="showForgotPassword(); return false;" style="color: #666; text-decoration: none; font-size: 14px;">
-                        ← Change Email
-                    </a>
-                </p>
-            </div>
-
-            <!-- New Password Container -->
-            <div id="newPasswordContainer" style="display: none;">
-                <p style="color: #666; margin-bottom: 20px; font-size: 14px; text-align: center;">
-                    ✅ Code verified! Create your new password
-                </p>
-                
-                <form onsubmit="event.preventDefault();">
-                    <input type="password" id="newPassword" placeholder="New Password (min 6 characters)" required>
-                    <input type="password" id="confirmNewPassword" placeholder="Confirm New Password" required>
-                    
-                    <button type="button" class="login-submit-btn" style="width: 100%; margin-top: 10px;" onclick="resetPassword()">
-                        🔐 Reset Password
-                    </button>
-                </form>
-                
-                <p style="text-align: center; margin-top: 20px;">
-                    <a href="#" onclick="showLoginForm(); return false;" style="color: #666; text-decoration: none; font-size: 14px;">
-                        ← Back to Login
-                    </a>
-                </p>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Footer -->
     <footer class="footer">
