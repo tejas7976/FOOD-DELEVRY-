@@ -552,5 +552,78 @@
             checkAdminSession();
         });
     </script>
+
+    <!-- Order Management Section -->
+<div class="admin-section">
+    <h2>📦 Order Management</h2>
+    <div id="adminOrdersList">
+        <!-- Orders will be loaded here -->
+    </div>
+</div>
+
+<script>
+// Load all orders for admin
+function loadAdminOrders() {
+    const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+    const ordersList = document.getElementById('adminOrdersList');
+    
+    if (allOrders.length === 0) {
+        ordersList.innerHTML = '<p>No orders yet</p>';
+        return;
+    }
+    
+    // Sort by date (newest first)
+    allOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    ordersList.innerHTML = allOrders.map(order => {
+        return `
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <strong>Order #${order.id}</strong>
+                    <span style="color: #666;">${new Date(order.date).toLocaleString()}</span>
+                </div>
+                <p><strong>Customer:</strong> ${order.userName || order.name}</p>
+                <p><strong>Email:</strong> ${order.userEmail}</p>
+                <p><strong>Total:</strong> ₹${order.total}</p>
+                <p><strong>Status:</strong> 
+                    <select onchange="updateOrderStatus('${order.id}', '${order.userEmail}', this.value)" style="padding: 5px 10px; border-radius: 5px;">
+                        <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                        <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>✅ Confirmed</option>
+                        <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>👨‍🍳 Preparing</option>
+                        <option value="out_for_delivery" ${order.status === 'out_for_delivery' ? 'selected' : ''}>🚴 Out for Delivery</option>
+                        <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>🎉 Delivered</option>
+                        <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>❌ Cancelled</option>
+                    </select>
+                </p>
+            </div>
+        `;
+    }).join('');
+}
+
+// Update order status
+function updateOrderStatus(orderId, userEmail, newStatus) {
+    // Update in allOrders
+    let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+    const orderIndex = allOrders.findIndex(o => o.id === orderId);
+    if (orderIndex !== -1) {
+        allOrders[orderIndex].status = newStatus;
+        localStorage.setItem('allOrders', JSON.stringify(allOrders));
+    }
+    
+    // Update in user's orders
+    const userOrdersKey = 'orders_' + userEmail;
+    let userOrders = JSON.parse(localStorage.getItem(userOrdersKey)) || [];
+    const userOrderIndex = userOrders.findIndex(o => o.id === orderId);
+    if (userOrderIndex !== -1) {
+        userOrders[userOrderIndex].status = newStatus;
+        localStorage.setItem(userOrdersKey, JSON.stringify(userOrders));
+    }
+    
+    alert('Order status updated! Customer will be notified.');
+}
+
+// Load orders on page load
+document.addEventListener('DOMContentLoaded', loadAdminOrders);
+</script>
 </body>
 </html>

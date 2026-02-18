@@ -280,6 +280,12 @@ function placeOrder() {
     alert('🎉 Order placed successfully!\n\nOrder ID: ' + order.id + '\n\nYou can track your order in "My Orders" section.');
     
     console.log('Order placed:', order);
+
+
+    // Send notification
+    if (typeof sendOrderPlacedNotification === 'function') {
+    sendOrderPlacedNotification(order.id);
+    }
 }
 
 // Initialize cart on page load

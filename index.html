@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Food Delivery App</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="notification-styles.css">
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -28,6 +29,27 @@
                         🛒 Cart <span class="cart-count">0</span>
                     </a>
                 </li>
+                <!-- Notification Bell -->
+<li class="nav-item">
+    <div class="notification-wrapper">
+        <button class="notification-bell" onclick="toggleNotificationDropdown()">
+            🔔
+            <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </button>
+        <div class="notification-dropdown" id="notificationDropdown">
+            <div class="notification-header">
+                <h3>🔔 Notifications</h3>
+                <div class="notification-header-actions">
+                    <button class="notification-header-btn" onclick="markAllNotificationsRead()">Mark all read</button>
+                    <button class="notification-header-btn" onclick="clearAllNotifications()">Clear</button>
+                </div>
+            </div>
+            <div class="notification-list" id="notificationList">
+                <!-- Notifications will be loaded here -->
+            </div>
+        </div>
+    </div>
+</li>
                 <li class="nav-item">
                     <button class="login-btn">Login</button>
                 </li>
@@ -283,5 +305,6 @@
     <!-- Simple Auth System (No Firebase!) -->
     <script src="auth.js"></script>
     <script src="script.js"></script>
+    <script src="notifications.js"></script>
 </body>
 </html>   

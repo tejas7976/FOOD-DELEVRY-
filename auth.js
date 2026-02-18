@@ -93,6 +93,11 @@ function signUpWithEmail() {
     closeLoginModal();
     
     alert('Account created successfully! Welcome ' + newUser.name + '! 🎉');
+    // Send welcome notification
+    if (typeof sendWelcomeNotification === 'function') {
+    sendWelcomeNotification();
+    }
+
 }
 
 // Login with Email/Password
