@@ -6,6 +6,99 @@
     <title>Admin Panel - FoodExpress</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Admin Login Screen */
+        .admin-login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .admin-login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .admin-login-box h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .admin-login-box p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .admin-login-box input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .admin-login-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .admin-login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .admin-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .error-message {
+            background-color: #ffe6e6;
+            color: #cc0000;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .back-link {
+            margin-top: 20px;
+            display: block;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: #667eea;
+        }
+
+        /* Admin Dashboard (Hidden by default) */
+        .admin-dashboard {
+            display: none;
+        }
+
         .admin-container {
             max-width: 1200px;
             margin: 100px auto 50px;
@@ -22,11 +115,19 @@
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .admin-header h1 {
             color: #333;
-            font-size: 32px;
+            font-size: 28px;
+        }
+
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .stats-grid {
@@ -58,6 +159,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            overflow-x: auto;
         }
 
         .users-table th {
@@ -85,6 +187,8 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
+            background-color: #e0e0e0;
+            color: #666;
         }
 
         .badge-active {
@@ -100,6 +204,7 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 12px;
+            transition: background-color 0.3s;
         }
 
         .delete-btn:hover {
@@ -114,17 +219,26 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
+            transition: background-color 0.3s;
         }
 
         .refresh-btn:hover {
             background-color: #357ae8;
         }
 
-        .no-users {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-            font-size: 16px;
+        .logout-btn {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #ff4520;
         }
 
         .back-btn {
@@ -134,78 +248,232 @@
             border-radius: 6px;
             text-decoration: none;
             font-size: 14px;
+            display: inline-block;
+            transition: background-color 0.3s;
         }
 
         .back-btn:hover {
             background-color: #555;
         }
+
+        .no-users {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .admin-logged-in-as {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .admin-header h1 {
+                font-size: 24px;
+            }
+
+            .users-table th, .users-table td {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .stat-card h2 {
+                font-size: 32px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                🍔 FoodExpress
+    <!-- Admin Login Screen -->
+    <div id="adminLoginScreen" class="admin-login-screen">
+        <div class="admin-login-box">
+            <h1>🔐 Admin Login</h1>
+            <p>Enter your admin credentials to access the dashboard</p>
+            
+            <div id="errorMessage" class="error-message">
+                Invalid username or password!
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="index.html" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">Admin</a>
-                </li>
-            </ul>
+            
+            <form id="adminLoginForm" onsubmit="return adminLogin(event)">
+                <input 
+                    type="text" 
+                    id="adminUsername" 
+                    placeholder="Admin Username" 
+                    required
+                    autocomplete="off"
+                >
+                <input 
+                    type="password" 
+                    id="adminPassword" 
+                    placeholder="Admin Password" 
+                    required
+                >
+                <button type="submit" class="admin-login-btn">🔓 Login to Dashboard</button>
+            </form>
+            
+            <a href="index.html" class="back-link">← Back to Website</a>
         </div>
-    </nav>
+    </div>
 
-    <div class="admin-container">
-        <div class="admin-header">
-            <h1>👤 User Management</h1>
-            <div>
-                <button class="refresh-btn" onclick="loadUsers()">🔄 Refresh</button>
-                <a href="index.html" class="back-btn">← Back to Home</a>
+    <!-- Admin Dashboard (Hidden until login) -->
+    <div id="adminDashboard" class="admin-dashboard">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    🍔 FoodExpress
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="admin-container">
+            <div class="admin-logged-in-as">
+                ✅ Logged in as: <strong id="adminName">Admin</strong>
+            </div>
+
+            <div class="admin-header">
+                <h1>👤 User Management</h1>
+                <div class="admin-buttons">
+                    <button class="refresh-btn" onclick="loadUsers()">🔄 Refresh</button>
+                    <a href="index.html" class="back-btn">← Back to Home</a>
+                    <button class="logout-btn" onclick="adminLogout()">🚪 Logout</button>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h2 id="totalUsers">0</h2>
+                    <p>Total Users</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h2 id="currentlyLoggedIn">0</h2>
+                    <p>Currently Logged In</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <h2 id="todaySignups">0</h2>
+                    <p>Today's Signups</p>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <h2>📋 All Registered Users</h2>
+            <div class="table-container">
+                <table class="users-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>Created At</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="6" class="no-users">Loading users...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h2 id="totalUsers">0</h2>
-                <p>Total Users</p>
+        <!-- Footer -->
+        <footer class="footer" style="margin-top: 50px;">
+            <div class="footer-bottom">
+                <p>&copy; 2026 FoodExpress Admin Panel. All rights reserved.</p>
             </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <h2 id="currentlyLoggedIn">0</h2>
-                <p>Currently Logged In</p>
-            </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                <h2 id="todaySignups">0</h2>
-                <p>Today's Signups</p>
-            </div>
-        </div>
-
-        <!-- Users Table -->
-        <h2>All Registered Users</h2>
-        <table class="users-table" id="usersTable">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Email</th>
-                    <th>Name</th>
-                    <th>Created At</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="usersTableBody">
-                <tr>
-                    <td colspan="6" class="no-users">Loading users...</td>
-                </tr>
-            </tbody>
-        </table>
+        </footer>
     </div>
 
     <script>
+        // ⚠️ CHANGE THESE CREDENTIALS TO YOUR OWN! ⚠️
+        const ADMIN_CREDENTIALS = {
+            username: 'admin',      // Change this!
+            password: 'admin123'    // Change this to a strong password!
+        };
+
+        // Check if already logged in
+        function checkAdminSession() {
+            const adminSession = localStorage.getItem('adminLoggedIn');
+            if (adminSession === 'true') {
+                showDashboard();
+            }
+        }
+
+        // Admin Login
+        function adminLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Check credentials
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                // Login successful
+                localStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminUsername', username);
+                errorMessage.style.display = 'none';
+                showDashboard();
+            } else {
+                // Login failed
+                errorMessage.style.display = 'block';
+                document.getElementById('adminPassword').value = '';
+            }
+            
+            return false;
+        }
+
+        // Admin Logout
+        function adminLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('adminLoggedIn');
+                localStorage.removeItem('adminUsername');
+                showLoginScreen();
+            }
+        }
+
+        // Show Dashboard
+        function showDashboard() {
+            document.getElementById('adminLoginScreen').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            document.getElementById('adminName').textContent = localStorage.getItem('adminUsername') || 'Admin';
+            loadUsers();
+        }
+
+        // Show Login Screen
+        function showLoginScreen() {
+            document.getElementById('adminLoginScreen').style.display = 'flex';
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('adminUsername').value = '';
+            document.getElementById('adminPassword').value = '';
+        }
+
         // Load all users
         function loadUsers() {
             const usersJson = localStorage.getItem('registeredUsers');
@@ -221,6 +489,7 @@
             // Calculate today's signups
             const today = new Date().toDateString();
             const todaySignups = users.filter(u => {
+                if (!u.createdAt) return false;
                 const userDate = new Date(u.createdAt).toDateString();
                 return userDate === today;
             }).length;
@@ -236,19 +505,19 @@
 
             tbody.innerHTML = users.map((user, index) => {
                 const isLoggedIn = currentUser && currentUser.email === user.email;
-                const createdDate = new Date(user.createdAt).toLocaleString();
+                const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A';
                 
                 return `
                     <tr>
                         <td>${index + 1}</td>
                         <td>${user.email}</td>
-                        <td>${user.name}</td>
+                        <td>${user.name || 'N/A'}</td>
                         <td>${createdDate}</td>
                         <td>
-                            ${isLoggedIn ? '<span class="badge badge-active">🟢 Online</span>' : '<span class="badge">Offline</span>'}
+                            ${isLoggedIn ? '<span class="badge badge-active">🟢 Online</span>' : '<span class="badge">⚪ Offline</span>'}
                         </td>
                         <td>
-                            <button class="delete-btn" onclick="deleteUser('${user.email}')">Delete</button>
+                            <button class="delete-btn" onclick="deleteUser('${user.email}')">🗑️ Delete</button>
                         </td>
                     </tr>
                 `;
@@ -267,7 +536,7 @@
             users = users.filter(u => u.email !== email);
             localStorage.setItem('registeredUsers', JSON.stringify(users));
             
-            // If deleting current user, logout
+            // If deleting current user, logout that user
             const currentUserJson = localStorage.getItem('currentUser');
             const currentUser = currentUserJson ? JSON.parse(currentUserJson) : null;
             if (currentUser && currentUser.email === email) {
@@ -278,9 +547,9 @@
             loadUsers();
         }
 
-        // Load users on page load
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            loadUsers();
+            checkAdminSession();
         });
     </script>
 </body>
