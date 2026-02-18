@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - FoodExpress</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dark-mode.css">
     <style>
         /* Admin Login Screen */
         .admin-login-screen {
@@ -339,6 +340,13 @@
                     🍔 FoodExpress
                 </div>
                 <ul class="nav-menu">
+                    <!-- Theme Toggle -->
+<li class="nav-item">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+        <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
+        <span class="theme-toggle-text" id="themeToggleText">Dark</span>
+    </button>
+</li>
                     <li class="nav-item">
                         <a href="index.html" class="nav-link">Home</a>
                     </li>
@@ -625,5 +633,6 @@ function updateOrderStatus(orderId, userEmail, newStatus) {
 // Load orders on page load
 document.addEventListener('DOMContentLoaded', loadAdminOrders);
 </script>
+<script src="dark-mode.js"></script>
 </body>
 </html>
