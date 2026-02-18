@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Food Delivery App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                🍔 FoodExpress
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">My Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link cart">
+                        🛒 Cart <span class="cart-count">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <button class="login-btn">Login</button>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>🍔 Restaurants Near You</h1>
+        
+        <!-- Search Bar Section -->
+        <div class="search-section">
+            <div class="search-bar">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search for restaurants or cuisines..."
+                    autocomplete="off"
+                >
+                <button class="search-btn">🔍</button>
+            </div>
+            <div class="filter-chips">
+                <button class="chip active" data-filter="all">All</button>
+                <button class="chip" data-filter="pizza">🍕 Pizza</button>
+                <button class="chip" data-filter="burger">🍔 Burger</button>
+                <button class="chip" data-filter="biryani">🍛 Biryani</button>
+                <button class="chip" data-filter="chinese">🥡 Chinese</button>
+                <button class="chip" data-filter="healthy">🥗 Healthy</button>
+            </div>
+        </div>
+        
+        <div class="restaurant-grid">
+            <!-- Restaurant Card 1 -->
+            <div class="restaurant-card">
+                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400" alt="Pizza">
+                <div class="card-content">
+                    <h2>Pizza Paradise</h2>
+                    <div class="rating">
+                        <span class="stars">⭐ 4.5</span>
+                        <span class="time">• 30-40 mins</span>
+                    </div>
+                    <p class="cuisine">Italian, Fast Food, Pizzas</p>
+                    <p class="delivery">🚚 Free delivery on orders above ₹199</p>
+                </div>
+            </div>
+
+            <!-- Restaurant Card 2 -->
+            <div class="restaurant-card">
+                <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400" alt="Burger">
+                <div class="card-content">
+                    <h2>Burger House</h2>
+                    <div class="rating">
+                        <span class="stars">⭐ 4.3</span>
+                        <span class="time">• 25-35 mins</span>
+                    </div>
+                    <p class="cuisine">American, Burgers, Fast Food</p>
+                    <p class="delivery">🚚 Free delivery on orders above ₹149</p>
+                </div>
+            </div>
+
+            <!-- Restaurant Card 3 -->
+            <div class="restaurant-card">
+                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400" alt="Biryani">
+                <div class="card-content">
+                    <h2>Biryani Blues</h2>
+                    <div class="rating">
+                        <span class="stars">⭐ 4.7</span>
+                        <span class="time">• 40-50 mins</span>
+                    </div>
+                    <p class="cuisine">Indian, Biryani, Mughlai</p>
+                    <p class="delivery">🚚 Free delivery on orders above ₹299</p>
+                </div>
+            </div>
+
+            <!-- Restaurant Card 4 -->
+            <div class="restaurant-card">
+                <img src="https://images.unsplash.com/photo-1562059390-a761a084768e?w=400" alt="Chinese">
+                <div class="card-content">
+                    <h2>Dragon Wok</h2>
+                    <div class="rating">
+                        <span class="stars">⭐ 4.2</span>
+                        <span class="time">• 35-45 mins</span>
+                    </div>
+                    <p class="cuisine">Chinese, Asian, Noodles</p>
+                    <p class="delivery">🚚 Free delivery on orders above ₹199</p>
+                </div>
+            </div>
+
+            <!-- Restaurant Card 5 -->
+            <div class="restaurant-card">
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400" alt="Healthy">
+                <div class="card-content">
+                    <h2>Healthy Bites</h2>
+                    <div class="rating">
+                        <span class="stars">⭐ 4.6</span>
+                        <span class="time">• 20-30 mins</span>
+                    </div>
+                    <p class="cuisine">Healthy, Salads, Smoothies</p>
+                    <p class="delivery">🚚 Free delivery on orders above ₹179</p>
+                </div>
+            </div>
+
+            <!-- Restaurant Card 6 -->
+            <div class="restaurant-card">
+                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400" alt="Breakfast">
+                <div class="card-content">
+                    <h2>Breakfast Club</h2>
+                    <div class="rating">
+                        <span class="stars">⭐ 4.4</span>
+                        <span class="time">• 15-25 mins</span>
+                    </div>
+                    <p class="cuisine">Breakfast, Cafe, Continental</p>
+                    <p class="delivery">🚚 Free delivery on orders above ₹99</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>🍔 FoodExpress</h3>
+                <p>Your favorite food, delivered fast to your doorstep. Order from the best restaurants in your area.</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon">📘</a>
+                    <a href="#" class="social-icon">📷</a>
+                    <a href="#" class="social-icon">🐦</a>
+                    <a href="#" class="social-icon">📺</a>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Partner With Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>For Restaurants</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Add Restaurant</a></li>
+                    <li><a href="#">Restaurant Login</a></li>
+                    <li><a href="#">Business Support</a></li>
+                    <li><a href="#">Advertise</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Contact Us</h4>
+                <ul class="footer-contact">
+                    <li>📍 Indore, Madhya Pradesh</li>
+                    <li>📧 support@foodexpress.com</li>
+                    <li>📞 +91 98765 43210</li>
+                    <li>⏰ 24/7 Available</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 FoodExpress. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Refund Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content login-modal-content">
+            <div class="modal-header">
+                <h2>Login / Sign Up</h2>
+                <span class="close" onclick="closeLoginModal()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Google Sign In Button -->
+                
+                
+                <!-- Email/Password Form -->
+                <form id="loginForm" onsubmit="event.preventDefault();">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
+                    
+                    <div class="login-buttons">
+                        <button type="button" class="login-submit-btn" onclick="signInWithEmail()">Login</button>
+                        <button type="button" class="signup-submit-btn" onclick="signUpWithEmail()">Sign Up</button>
+                    </div>
+                </form>
+                
+                <p class="login-note">By continuing, you agree to our Terms of Service and Privacy Policy</p>
+            </div>
+        </div>
+    </div>
+
+<!-- Login Modal -->
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content login-modal-content">
+            <div class="modal-header">
+                <h2>Login / Sign Up</h2>
+                <span class="close" onclick="closeLoginModal()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
+                    Create an account or login to save your orders and cart
+                </p>
+                
+                <!-- Email/Password Form -->
+                <form id="loginForm" onsubmit="event.preventDefault();">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
+                    
+                    <div class="login-buttons">
+                        <button type="button" class="login-submit-btn" onclick="signInWithEmail()">Login</button>
+                        <button type="button" class="signup-submit-btn" onclick="signUpWithEmail()">Sign Up</button>
+                    </div>
+                </form>
+                
+                <p class="login-note">Your data is stored locally in your browser</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple Auth System (No Firebase!) -->
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>   
