@@ -221,20 +221,48 @@ function updateOrderSummary() {
     `;
 }
 
-// Place order
+// Place order - UPDATED to save order history
 function placeOrder() {
     const name = document.getElementById('customerName').value;
     const phone = document.getElementById('customerPhone').value;
     const address = document.getElementById('customerAddress').value;
     
     if (!name || !phone || !address) {
-        showToast('Please fill all delivery details!');
+        alert('Please fill all delivery details!');
         return;
     }
+
+    // Get current user
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     
-    // Simulate order placement
-    showToast('🎉 Order placed successfully!');
-    
+    // Create order object
+    const order = {
+        id: 'ORD' + Date.now(),
+        items: [...cart],
+        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 40, // +40 delivery
+        name: name,
+        phone: phone,
+        address: address,
+        restaurant: 'Pizza Paradise', // You can make this dynamic later
+        date: new Date().toISOString(),
+        status: 'pending' // pending, delivered, cancelled
+    };
+
+    // Save order to user's order history
+    if (currentUser) {
+        const ordersKey = 'orders_' + currentUser.email;
+        const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+        orders.push(order);
+        localStorage.setItem(ordersKey, JSON.stringify(orders));
+    }
+
+    // Also save to all orders (for admin)
+    const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+    order.userEmail = currentUser ? currentUser.email : 'guest';
+    order.userName = name;
+    allOrders.push(order);
+    localStorage.setItem('allOrders', JSON.stringify(allOrders));
+
     // Clear cart
     cart = [];
     saveCart();
@@ -248,8 +276,10 @@ function placeOrder() {
     document.getElementById('customerPhone').value = '';
     document.getElementById('customerAddress').value = '';
     
-    // In a real app, you would send this to a backend server
-    console.log('Order placed:', { name, phone, address, items: cart });
+    // Show success message
+    alert('🎉 Order placed successfully!\n\nOrder ID: ' + order.id + '\n\nYou can track your order in "My Orders" section.');
+    
+    console.log('Order placed:', order);
 }
 
 // Initialize cart on page load

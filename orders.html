@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - FoodExpress</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .orders-container {
+            max-width: 900px;
+            margin: 100px auto 50px;
+            padding: 20px;
+        }
+
+        .orders-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .orders-header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .orders-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Login Required Message */
+        .login-required {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        .login-required h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .login-required p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .login-required-btn {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-required-btn:hover {
+            background-color: #ff4520;
+        }
+
+        /* No Orders Message */
+        .no-orders {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        .no-orders h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .no-orders p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .no-orders-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .browse-btn {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .browse-btn:hover {
+            background-color: #ff4520;
+        }
+
+        /* Order Card */
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .order-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .order-id {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .order-date {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .order-status {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-delivered {
+            background-color: #48c479;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .status-cancelled {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        .order-body {
+            padding: 20px;
+        }
+
+        .order-restaurant {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .order-items {
+            border-top: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 15px 0;
+            margin-bottom: 15px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .order-item-name {
+            flex: 1;
+        }
+
+        .order-item-qty {
+            color: #888;
+            margin: 0 15px;
+        }
+
+        .order-item-price {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .order-total {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff6347;
+        }
+
+        .order-address {
+            font-size: 13px;
+            color: #666;
+            max-width: 300px;
+        }
+
+        .reorder-btn {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .reorder-btn:hover {
+            background-color: #ff4520;
+        }
+
+        /* Orders List */
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-tab {
+            padding: 10px 25px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-tab:hover {
+            border-color: #ff6347;
+        }
+
+        .filter-tab.active {
+            background-color: #ff6347;
+            color: white;
+            border-color: #ff6347;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .orders-container {
+                margin-top: 80px;
+                padding: 15px;
+            }
+
+            .order-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .order-footer {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .order-address {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                🍔 FoodExpress
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">My Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link cart">
+                        🛒 Cart <span class="cart-count">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <button class="login-btn">Login</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="orders-container">
+        <div class="orders-header">
+            <h1>📦 My Orders</h1>
+            <p>Track and manage your food orders</p>
+        </div>
+
+        <!-- Login Required (shown if not logged in) -->
+        <div id="loginRequired" class="login-required" style="display: none;">
+            <h2>🔐 Login Required</h2>
+            <p>Please login to view your order history</p>
+            <button class="login-required-btn" onclick="showLoginModal()">Login Now</button>
+        </div>
+
+        <!-- No Orders (shown if no orders) -->
+        <div id="noOrders" class="no-orders" style="display: none;">
+            <div class="no-orders-icon">📭</div>
+            <h2>No Orders Yet</h2>
+            <p>You haven't placed any orders yet. Start exploring restaurants!</p>
+            <a href="index.html" class="browse-btn">Browse Restaurants</a>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div id="filterTabs" class="filter-tabs" style="display: none;">
+            <button class="filter-tab active" data-filter="all">All Orders</button>
+            <button class="filter-tab" data-filter="delivered">✅ Delivered</button>
+            <button class="filter-tab" data-filter="pending">⏳ Pending</button>
+            <button class="filter-tab" data-filter="cancelled">❌ Cancelled</button>
+        </div>
+
+        <!-- Orders List -->
+        <div id="ordersList" class="orders-list">
+            <!-- Orders will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content login-modal-content">
+            <div class="modal-header">
+                <h2>Login / Sign Up</h2>
+                <span class="close" onclick="closeLoginModal()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
+                    Create an account or login to view your orders
+                </p>
+                
+                <form id="loginForm" onsubmit="event.preventDefault();">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
+                    
+                    <div class="login-buttons">
+                        <button type="button" class="login-submit-btn" onclick="signInWithEmail()">Login</button>
+                        <button type="button" class="signup-submit-btn" onclick="signUpWithEmail()">Sign Up</button>
+                    </div>
+                </form>
+                
+                <p class="login-note">Your data is stored locally in your browser</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 FoodExpress. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        let currentFilter = 'all';
+
+        // Load orders on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrders();
+            setupFilterTabs();
+            updateCartCount();
+        });
+
+        // Setup filter tabs
+        function setupFilterTabs() {
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    loadOrders();
+                });
+            });
+        }
+
+        // Load orders
+        function loadOrders() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            // Check if logged in
+            if (!currentUser) {
+                document.getElementById('loginRequired').style.display = 'block';
+                document.getElementById('noOrders').style.display = 'none';
+                document.getElementById('filterTabs').style.display = 'none';
+                document.getElementById('ordersList').innerHTML = '';
+                return;
+            }
+
+            document.getElementById('loginRequired').style.display = 'none';
+
+            // Get user's orders
+            const ordersKey = 'orders_' + currentUser.email;
+            const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+
+            // Filter orders
+            let filteredOrders = orders;
+            if (currentFilter !== 'all') {
+                filteredOrders = orders.filter(order => order.status === currentFilter);
+            }
+
+            // Check if no orders
+            if (orders.length === 0) {
+                document.getElementById('noOrders').style.display = 'block';
+                document.getElementById('filterTabs').style.display = 'none';
+                document.getElementById('ordersList').innerHTML = '';
+                return;
+            }
+
+            document.getElementById('noOrders').style.display = 'none';
+            document.getElementById('filterTabs').style.display = 'flex';
+
+            // Display orders
+            const ordersList = document.getElementById('ordersList');
+            
+            if (filteredOrders.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="no-orders">
+                        <p>No ${currentFilter} orders found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by date (newest first)
+            filteredOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            ordersList.innerHTML = filteredOrders.map(order => {
+                const statusClass = `status-${order.status}`;
+                const statusText = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+                const orderDate = new Date(order.date).toLocaleString();
+
+                const itemsHTML = order.items.map(item => `
+                    <div class="order-item">
+                        <span class="order-item-name">${item.name}</span>
+                        <span class="order-item-qty">x${item.quantity}</span>
+                        <span class="order-item-price">₹${item.price * item.quantity}</span>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">Order #${order.id}</div>
+                                <div class="order-date">📅 ${orderDate}</div>
+                            </div>
+                            <span class="order-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-restaurant">
+                                🍽️ ${order.restaurant || 'FoodExpress Restaurant'}
+                            </div>
+                            <div class="order-items">
+                                ${itemsHTML}
+                            </div>
+                            <div class="order-footer">
+                                <div>
+                                    <div class="order-total">Total: ₹${order.total}</div>
+                                    <div class="order-address">📍 ${order.address}</div>
+                                </div>
+                                <button class="reorder-btn" onclick="reorder('${order.id}')">🔄 Reorder</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Reorder function
+        function reorder(orderId) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            const ordersKey = 'orders_' + currentUser.email;
+            const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+            const order = orders.find(o => o.id === orderId);
+
+            if (order) {
+                // Add items to cart
+                const cartKey = 'cart_' + currentUser.email;
+                localStorage.setItem(cartKey, JSON.stringify(order.items));
+                alert('Items added to cart! Redirecting to checkout...');
+                window.location.href = 'restaurant-detail.html';
+            }
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const cartCountBadge = document.querySelector('.cart-count');
+            
+            if (currentUser) {
+                const cartKey = 'cart_' + currentUser.email;
+                const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                if (cartCountBadge) {
+                    cartCountBadge.textContent = totalItems;
+                }
+            } else {
+                if (cartCountBadge) {
+                    cartCountBadge.textContent = '0';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
