@@ -293,3 +293,113 @@ document.addEventListener('DOMContentLoaded', function() {
         checkoutBtn.addEventListener('click', showCheckout);
     }
 });
+
+// Load saved addresses in checkout
+function loadSavedAddresses() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const savedAddressesSection = document.getElementById('savedAddressesSection');
+    const savedAddressesList = document.getElementById('savedAddressesList');
+    const newAddressForm = document.getElementById('newAddressForm');
+    
+    if (!currentUser || !savedAddressesSection) return;
+
+    const addressKey = 'addresses_' + currentUser.email;
+    const addresses = JSON.parse(localStorage.getItem(addressKey)) || [];
+
+    if (addresses.length === 0) {
+        savedAddressesSection.style.display = 'none';
+        newAddressForm.style.display = 'block';
+        return;
+    }
+
+    savedAddressesSection.style.display = 'block';
+    newAddressForm.style.display = 'none';
+
+    // Sort: default first
+    addresses.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+
+    savedAddressesList.innerHTML = addresses.map((address, index) => {
+        const typeIcons = { home: '🏠', work: '💼', other: '📍' };
+        const isChecked = address.isDefault ? 'checked' : '';
+        
+        return `
+            <label style="display: block; padding: 12px; border: 2px solid ${address.isDefault ? '#ff6347' : '#e0e0e0'}; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.3s;">
+                <input type="radio" name="selectedAddress" value="${address.id}" ${isChecked} onchange="selectSavedAddress('${address.id}')" style="margin-right: 10px;">
+                <strong>${typeIcons[address.type] || '📍'} ${address.type.charAt(0).toUpperCase() + address.type.slice(1)}</strong>
+                ${address.isDefault ? '<span style="background: #ff6347; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; margin-left: 10px;">Default</span>' : ''}
+                <br>
+                <span style="font-size: 13px; color: #555; margin-left: 22px; display: block; margin-top: 5px;">
+                    ${address.fullName}, ${address.addressLine1}, ${address.addressLine2}, ${address.city} - ${address.pincode}
+                    <br>📞 ${address.phoneNumber}
+                </span>
+            </label>
+        `;
+    }).join('');
+
+    // Pre-fill with default address
+    const defaultAddress = addresses.find(a => a.isDefault);
+    if (defaultAddress) {
+        selectSavedAddress(defaultAddress.id);
+    }
+}
+
+// Select saved address
+function selectSavedAddress(addressId) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+
+    const addressKey = 'addresses_' + currentUser.email;
+    const addresses = JSON.parse(localStorage.getItem(addressKey)) || [];
+    const address = addresses.find(a => a.id === addressId);
+
+    if (address) {
+        document.getElementById('customerName').value = address.fullName;
+        document.getElementById('customerPhone').value = address.phoneNumber;
+        document.getElementById('customerAddress').value = `${address.addressLine1}, ${address.addressLine2}, ${address.city}, ${address.state} - ${address.pincode}${address.landmark ? ', Near ' + address.landmark : ''}`;
+    }
+
+    // Update selected styling
+    document.querySelectorAll('#savedAddressesList label').forEach(label => {
+        const radio = label.querySelector('input[type="radio"]');
+        label.style.borderColor = radio.checked ? '#ff6347' : '#e0e0e0';
+    });
+}
+
+// Toggle new address form
+function toggleNewAddressForm() {
+    const newAddressForm = document.getElementById('newAddressForm');
+    const isHidden = newAddressForm.style.display === 'none';
+    
+    newAddressForm.style.display = isHidden ? 'block' : 'none';
+    
+    if (isHidden) {
+        // Clear form for new address
+        document.getElementById('customerName').value = '';
+        document.getElementById('customerPhone').value = '';
+        document.getElementById('customerAddress').value = '';
+        
+        // Uncheck all saved addresses
+        document.querySelectorAll('#savedAddressesList input[type="radio"]').forEach(radio => {
+            radio.checked = false;
+        });
+        document.querySelectorAll('#savedAddressesList label').forEach(label => {
+            label.style.borderColor = '#e0e0e0';
+        });
+    }
+}
+
+// Update showCheckout to load addresses
+const originalShowCheckout = showCheckout;
+showCheckout = function() {
+    if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+    }
+    
+    const modal = document.getElementById('checkoutModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        updateOrderSummary();
+        loadSavedAddresses();
+    }
+};

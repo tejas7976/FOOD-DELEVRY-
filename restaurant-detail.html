@@ -32,6 +32,9 @@
                 <li class="nav-item">
                     <button class="login-btn">Login</button>
                 </li>
+                <li class="nav-item">
+                    <a href="address.html" class="nav-link">My Addresses</a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -165,29 +168,43 @@
         </div>
     </div>
 
-    <!-- Checkout Modal -->
-    <div id="checkoutModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Checkout</h2>
-                <span class="close" onclick="closeCheckout()">&times;</span>
+    <!-- Checkout Modal - UPDATED with Address Selection -->
+<div id="checkoutModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Checkout</h2>
+            <span class="close" onclick="closeCheckout()">&times;</span>
+        </div>
+        
+        <div class="modal-body">
+            <!-- Saved Addresses Section -->
+            <div id="savedAddressesSection" style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px;">📍 Select Delivery Address</h3>
+                <div id="savedAddressesList" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;">
+                    <!-- Saved addresses will be loaded here -->
+                </div>
+                <button type="button" onclick="toggleNewAddressForm()" style="background: none; border: none; color: #ff6347; cursor: pointer; font-size: 14px; padding: 0;">
+                    ➕ Add New Address
+                </button>
             </div>
-            
-            <div class="modal-body">
+
+            <!-- New Address Form (hidden by default if saved addresses exist) -->
+            <div id="newAddressForm">
                 <h3>Delivery Details</h3>
                 <form id="checkoutForm" onsubmit="event.preventDefault();">
                     <input type="text" id="customerName" placeholder="Your Name" required>
                     <input type="tel" id="customerPhone" placeholder="Phone Number" required>
                     <textarea id="customerAddress" placeholder="Delivery Address" rows="3" required></textarea>
                 </form>
-                
-                <h3>Order Summary</h3>
-                <div id="orderSummary"></div>
-                
-                <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
             </div>
+            
+            <h3 style="margin-top: 20px;">Order Summary</h3>
+            <div id="orderSummary"></div>
+            
+            <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
         </div>
     </div>
+</div>
 
     <!-- Footer -->
     <footer class="footer">
