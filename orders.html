@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders - FoodExpress</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="notification-styles.css">
     <link rel="stylesheet" href="dark-mode.css">
     <style>
         .orders-container {
@@ -19,32 +20,32 @@
         }
 
         .orders-header h1 {
-            color: #333;
+            color: var(--text-primary);
             font-size: 32px;
             margin-bottom: 10px;
         }
 
         .orders-header p {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 16px;
         }
 
-        /* Login Required Message */
+        /* Login Required */
         .login-required {
             text-align: center;
             padding: 60px 20px;
-            background: white;
+            background: var(--bg-card);
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 12px var(--shadow-color);
         }
 
         .login-required h2 {
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 15px;
         }
 
         .login-required p {
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 25px;
         }
 
@@ -64,23 +65,13 @@
             background-color: #ff4520;
         }
 
-        /* No Orders Message */
+        /* No Orders */
         .no-orders {
             text-align: center;
             padding: 60px 20px;
-            background: white;
+            background: var(--bg-card);
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-        }
-
-        .no-orders h2 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .no-orders p {
-            color: #666;
-            margin-bottom: 25px;
+            box-shadow: 0 2px 12px var(--shadow-color);
         }
 
         .no-orders-icon {
@@ -88,11 +79,21 @@
             margin-bottom: 20px;
         }
 
+        .no-orders h2 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .no-orders p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+
         .browse-btn {
             background-color: #ff6347;
             color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 15px 30px;
             border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
@@ -108,9 +109,9 @@
 
         /* Order Card */
         .order-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 12px var(--shadow-color);
             margin-bottom: 20px;
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
@@ -118,7 +119,7 @@
 
         .order-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px var(--shadow-color);
         }
 
         .order-header {
@@ -145,14 +146,9 @@
         .order-status {
             padding: 6px 15px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             text-transform: uppercase;
-        }
-
-        .status-delivered {
-            background-color: #48c479;
-            color: white;
         }
 
         .status-pending {
@@ -160,8 +156,28 @@
             color: #333;
         }
 
+        .status-confirmed {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .status-preparing {
+            background-color: #2196f3;
+            color: white;
+        }
+
+        .status-out_for_delivery {
+            background-color: #9c27b0;
+            color: white;
+        }
+
+        .status-delivered {
+            background-color: #48c479;
+            color: white;
+        }
+
         .status-cancelled {
-            background-color: #ff4444;
+            background-color: #f44336;
             color: white;
         }
 
@@ -172,7 +188,7 @@
         .order-restaurant {
             font-size: 18px;
             font-weight: bold;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 15px;
             display: flex;
             align-items: center;
@@ -180,41 +196,93 @@
         }
 
         .order-items {
-            border-top: 1px solid #f0f0f0;
-            border-bottom: 1px solid #f0f0f0;
-            padding: 15px 0;
             margin-bottom: 15px;
         }
 
         .order-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             padding: 8px 0;
+            border-bottom: 1px dashed var(--border-color);
+            color: var(--text-secondary);
             font-size: 14px;
-            color: #555;
         }
 
-        .order-item-name {
-            flex: 1;
+        .order-item:last-child {
+            border-bottom: none;
         }
 
-        .order-item-qty {
-            color: #888;
-            margin: 0 15px;
+        .item-name {
+            display: flex;
+            gap: 10px;
         }
 
-        .order-item-price {
+        .item-qty {
+            color: var(--text-muted);
+        }
+
+        /* Payment Section */
+        .order-payment {
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .payment-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .payment-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .payment-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: bold;
-            color: #333;
         }
 
+        .payment-badge.paid {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .payment-badge.cod {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+
+        .payment-badge.pending {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .payment-id {
+            font-size: 11px;
+            color: var(--text-muted);
+            word-break: break-all;
+        }
+
+        /* Order Footer */
         .order-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
         }
 
         .order-total {
@@ -225,7 +293,7 @@
 
         .order-address {
             font-size: 13px;
-            color: #666;
+            color: var(--text-secondary);
             max-width: 300px;
         }
 
@@ -234,7 +302,7 @@
             color: white;
             border: none;
             padding: 10px 25px;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
@@ -245,40 +313,70 @@
             background-color: #ff4520;
         }
 
-        /* Orders List */
-        .orders-list {
+        /* Order Timeline */
+        .order-timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .order-timeline::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--border-color);
+            z-index: 1;
+        }
+
+        .timeline-step {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
         }
 
-        /* Filter Tabs */
-        .filter-tabs {
+        .timeline-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--border-color);
             display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
+            align-items: center;
             justify-content: center;
+            font-size: 16px;
+            margin-bottom: 8px;
         }
 
-        .filter-tab {
-            padding: 10px 25px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 25px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
+        .timeline-step.active .timeline-icon {
+            background: #48c479;
         }
 
-        .filter-tab:hover {
-            border-color: #ff6347;
+        .timeline-step.current .timeline-icon {
+            background: #ff6347;
+            animation: pulse 1.5s infinite;
         }
 
-        .filter-tab.active {
-            background-color: #ff6347;
-            color: white;
-            border-color: #ff6347;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .timeline-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .timeline-step.active .timeline-label,
+        .timeline-step.current .timeline-label {
+            color: var(--text-primary);
+            font-weight: bold;
         }
 
         /* Responsive */
@@ -301,6 +399,10 @@
             .order-address {
                 max-width: 100%;
             }
+
+            .order-timeline {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -313,22 +415,45 @@
             </div>
             <ul class="nav-menu">
                 <!-- Theme Toggle -->
-<li class="nav-item">
-    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
-        <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
-        <span class="theme-toggle-text" id="themeToggleText">Dark</span>
-    </button>
-</li>
+                <li class="nav-item">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                        <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
+                        <span class="theme-toggle-text" id="themeToggleText">Dark</span>
+                    </button>
+                </li>
                 <li class="nav-item">
                     <a href="index.html" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link active">My Orders</a>
+                    <a href="restaurant-detail.html" class="nav-link">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a href="orders.html" class="nav-link active">My Orders</a>
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link cart">
                         🛒 Cart <span class="cart-count">0</span>
                     </a>
+                </li>
+                <!-- Notification Bell -->
+                <li class="nav-item">
+                    <div class="notification-wrapper">
+                        <button class="notification-bell" onclick="toggleNotificationDropdown()">
+                            🔔
+                            <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                        </button>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <h3>🔔 Notifications</h3>
+                                <div class="notification-header-actions">
+                                    <button class="notification-header-btn" onclick="markAllNotificationsRead()">Mark all read</button>
+                                    <button class="notification-header-btn" onclick="clearAllNotifications()">Clear</button>
+                                </div>
+                            </div>
+                            <div class="notification-list" id="notificationList">
+                            </div>
+                        </div>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <button class="login-btn">Login</button>
@@ -346,13 +471,13 @@
     <div class="orders-container">
         <div class="orders-header">
             <h1>📦 My Orders</h1>
-            <p>Track and manage your food orders</p>
+            <p>Track and manage your orders</p>
         </div>
 
         <!-- Login Required (shown if not logged in) -->
         <div id="loginRequired" class="login-required" style="display: none;">
             <h2>🔐 Login Required</h2>
-            <p>Please login to view your order history</p>
+            <p>Please login to view your orders</p>
             <button class="login-required-btn" onclick="showLoginModal()">Login Now</button>
         </div>
 
@@ -360,20 +485,12 @@
         <div id="noOrders" class="no-orders" style="display: none;">
             <div class="no-orders-icon">📭</div>
             <h2>No Orders Yet</h2>
-            <p>You haven't placed any orders yet. Start exploring restaurants!</p>
+            <p>You haven't placed any orders yet. Start exploring our restaurants!</p>
             <a href="index.html" class="browse-btn">Browse Restaurants</a>
         </div>
 
-        <!-- Filter Tabs -->
-        <div id="filterTabs" class="filter-tabs" style="display: none;">
-            <button class="filter-tab active" data-filter="all">All Orders</button>
-            <button class="filter-tab" data-filter="delivered">✅ Delivered</button>
-            <button class="filter-tab" data-filter="pending">⏳ Pending</button>
-            <button class="filter-tab" data-filter="cancelled">❌ Cancelled</button>
-        </div>
-
         <!-- Orders List -->
-        <div id="ordersList" class="orders-list">
+        <div id="ordersList">
             <!-- Orders will be loaded here -->
         </div>
     </div>
@@ -382,62 +499,153 @@
     <div id="loginModal" class="modal" style="display: none;">
         <div class="modal-content login-modal-content">
             <div class="modal-header">
-                <h2>Login / Sign Up</h2>
+                <h2 id="loginModalTitle">Login / Sign Up</h2>
                 <span class="close" onclick="closeLoginModal()">&times;</span>
             </div>
             
             <div class="modal-body">
-                <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
-                    Create an account or login to view your orders
-                </p>
-                
-                <form id="loginForm" onsubmit="event.preventDefault();">
-                    <input type="email" id="loginEmail" placeholder="Email" required>
-                    <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
+                <!-- Login Form Container -->
+                <div id="loginFormContainer">
+                    <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
+                        Create an account or login to continue
+                    </p>
                     
-                    <div class="login-buttons">
-                        <button type="button" class="login-submit-btn" onclick="signInWithEmail()">Login</button>
-                        <button type="button" class="signup-submit-btn" onclick="signUpWithEmail()">Sign Up</button>
-                    </div>
-                </form>
-                
-                <p class="login-note">Your data is stored locally in your browser</p>
+                    <form id="loginForm" onsubmit="event.preventDefault();">
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                        <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
+                        
+                        <div class="login-buttons">
+                            <button type="button" class="login-submit-btn" onclick="signInWithEmail()">Login</button>
+                            <button type="button" class="signup-submit-btn" onclick="signUpWithEmail()">Sign Up</button>
+                        </div>
+                    </form>
+                    
+                    <p style="text-align: center; margin-top: 15px;">
+                        <a href="#" onclick="showForgotPassword(); return false;" style="color: #ff6347; text-decoration: none; font-size: 14px;">
+                            🔑 Forgot Password?
+                        </a>
+                    </p>
+                    
+                    <p class="login-note">Your data is stored locally in your browser</p>
+                </div>
+
+                <!-- Forgot Password Container -->
+                <div id="forgotPasswordContainer" style="display: none;">
+                    <p style="color: #666; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                        Enter your email address and we'll send you a verification code
+                    </p>
+                    
+                    <form onsubmit="event.preventDefault();">
+                        <input type="email" id="forgotEmail" placeholder="Enter your email" required>
+                        
+                        <button type="button" class="login-submit-btn" style="width: 100%; margin-top: 10px;" onclick="sendResetCode()">
+                            📧 Send Reset Code
+                        </button>
+                    </form>
+                    
+                    <p style="text-align: center; margin-top: 20px;">
+                        <a href="#" onclick="showLoginForm(); return false;" style="color: #666; text-decoration: none; font-size: 14px;">
+                            ← Back to Login
+                        </a>
+                    </p>
+                </div>
+
+                <!-- Verify Code Container -->
+                <div id="verifyCodeContainer" style="display: none;">
+                    <p style="color: #666; margin-bottom: 10px; font-size: 14px; text-align: center;">
+                        We sent a verification code to:
+                    </p>
+                    <p style="color: #333; margin-bottom: 20px; font-size: 16px; text-align: center; font-weight: bold;" id="resetEmailDisplay">
+                        email@example.com
+                    </p>
+                    
+                    <form onsubmit="event.preventDefault();">
+                        <input type="text" id="verifyCode" placeholder="Enter 6-digit code" maxlength="6" required style="text-align: center; font-size: 24px; letter-spacing: 8px;">
+                        
+                        <button type="button" class="login-submit-btn" style="width: 100%; margin-top: 10px;" onclick="verifyResetCode()">
+                            ✓ Verify Code
+                        </button>
+                    </form>
+                    
+                    <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #666;">
+                        Didn't receive the code? 
+                        <a href="#" onclick="resendResetCode(); return false;" style="color: #ff6347; text-decoration: none;">
+                            Resend
+                        </a>
+                    </p>
+                    
+                    <p style="text-align: center; margin-top: 10px;">
+                        <a href="#" onclick="showForgotPassword(); return false;" style="color: #666; text-decoration: none; font-size: 14px;">
+                            ← Change Email
+                        </a>
+                    </p>
+                </div>
+
+                <!-- New Password Container -->
+                <div id="newPasswordContainer" style="display: none;">
+                    <p style="color: #666; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                        ✅ Code verified! Create your new password
+                    </p>
+                    
+                    <form onsubmit="event.preventDefault();">
+                        <input type="password" id="newPassword" placeholder="New Password (min 6 characters)" required>
+                        <input type="password" id="confirmNewPassword" placeholder="Confirm New Password" required>
+                        
+                        <button type="button" class="login-submit-btn" style="width: 100%; margin-top: 10px;" onclick="resetPassword()">
+                            🔐 Reset Password
+                        </button>
+                    </form>
+                    
+                    <p style="text-align: center; margin-top: 20px;">
+                        <a href="#" onclick="showLoginForm(); return false;" style="color: #666; text-decoration: none; font-size: 14px;">
+                            ← Back to Login
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>🍔 FoodExpress</h3>
+                <p>Your favorite food, delivered fast to your doorstep.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="orders.html">My Orders</a></li>
+                    <li><a href="profile.html">My Profile</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Contact Us</h4>
+                <ul class="footer-contact">
+                    <li>📍 Indore, Madhya Pradesh</li>
+                    <li>📧 support@foodexpress.com</li>
+                    <li>📞 +91 98765 43210</li>
+                </ul>
+            </div>
+        </div>
         <div class="footer-bottom">
             <p>&copy; 2026 FoodExpress. All rights reserved.</p>
         </div>
     </footer>
 
     <script src="auth.js"></script>
+    <script src="notifications.js"></script>
+    <script src="dark-mode.js"></script>
     <script>
-        let currentFilter = 'all';
-
         // Load orders on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadOrders();
-            setupFilterTabs();
             updateCartCount();
         });
 
-        // Setup filter tabs
-        function setupFilterTabs() {
-            const tabs = document.querySelectorAll('.filter-tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    currentFilter = this.dataset.filter;
-                    loadOrders();
-                });
-            });
-        }
-
-        // Load orders
+        // Load user orders
         function loadOrders() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             
@@ -445,8 +653,7 @@
             if (!currentUser) {
                 document.getElementById('loginRequired').style.display = 'block';
                 document.getElementById('noOrders').style.display = 'none';
-                document.getElementById('filterTabs').style.display = 'none';
-                document.getElementById('ordersList').innerHTML = '';
+                document.getElementById('ordersList').style.display = 'none';
                 return;
             }
 
@@ -456,67 +663,100 @@
             const ordersKey = 'orders_' + currentUser.email;
             const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
 
-            // Filter orders
-            let filteredOrders = orders;
-            if (currentFilter !== 'all') {
-                filteredOrders = orders.filter(order => order.status === currentFilter);
-            }
-
-            // Check if no orders
-            if (orders.length === 0) {
-                document.getElementById('noOrders').style.display = 'block';
-                document.getElementById('filterTabs').style.display = 'none';
-                document.getElementById('ordersList').innerHTML = '';
-                return;
-            }
-
-            document.getElementById('noOrders').style.display = 'none';
-            document.getElementById('filterTabs').style.display = 'flex';
-
-            // Display orders
             const ordersList = document.getElementById('ordersList');
-            
-            if (filteredOrders.length === 0) {
-                ordersList.innerHTML = `
-                    <div class="no-orders">
-                        <p>No ${currentFilter} orders found</p>
-                    </div>
-                `;
+            const noOrders = document.getElementById('noOrders');
+
+            if (orders.length === 0) {
+                noOrders.style.display = 'block';
+                ordersList.style.display = 'none';
                 return;
             }
+
+            noOrders.style.display = 'none';
+            ordersList.style.display = 'block';
 
             // Sort by date (newest first)
-            filteredOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+            orders.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            ordersList.innerHTML = filteredOrders.map(order => {
-                const statusClass = `status-${order.status}`;
-                const statusText = order.status.charAt(0).toUpperCase() + order.status.slice(1);
-                const orderDate = new Date(order.date).toLocaleString();
+            ordersList.innerHTML = orders.map(order => {
+                const date = new Date(order.date);
+                const formattedDate = date.toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
 
-                const itemsHTML = order.items.map(item => `
+                // Status class
+                const statusClass = 'status-' + (order.status || 'pending');
+                const statusText = getStatusText(order.status || 'pending');
+
+                // Payment badge
+                let paymentBadge = '';
+                if (order.paymentStatus === 'paid') {
+                    paymentBadge = '<span class="payment-badge paid">✅ Paid Online</span>';
+                } else if (order.paymentStatus === 'cod') {
+                    paymentBadge = '<span class="payment-badge cod">💵 Cash on Delivery</span>';
+                } else {
+                    paymentBadge = '<span class="payment-badge pending">⏳ Payment Pending</span>';
+                }
+
+                // Payment ID
+                const paymentId = order.paymentId 
+                    ? '<p class="payment-id">Transaction ID: ' + order.paymentId + '</p>'
+                    : '';
+
+                // Order items
+                const itemsHtml = order.items.map(item => `
                     <div class="order-item">
-                        <span class="order-item-name">${item.name}</span>
-                        <span class="order-item-qty">x${item.quantity}</span>
-                        <span class="order-item-price">₹${item.price * item.quantity}</span>
+                        <span class="item-name">
+                            <span class="item-qty">${item.quantity}x</span>
+                            ${item.name}
+                        </span>
+                        <span>₹${item.price * item.quantity}</span>
                     </div>
                 `).join('');
+
+                // Timeline
+                const timeline = getOrderTimeline(order.status || 'pending');
 
                 return `
                     <div class="order-card">
                         <div class="order-header">
                             <div>
                                 <div class="order-id">Order #${order.id}</div>
-                                <div class="order-date">📅 ${orderDate}</div>
+                                <div class="order-date">${formattedDate}</div>
                             </div>
                             <span class="order-status ${statusClass}">${statusText}</span>
                         </div>
+                        
                         <div class="order-body">
                             <div class="order-restaurant">
-                                🍽️ ${order.restaurant || 'FoodExpress Restaurant'}
+                                🍕 Pizza Paradise
                             </div>
+
+                            <!-- Order Timeline -->
+                            ${timeline}
+
                             <div class="order-items">
-                                ${itemsHTML}
+                                ${itemsHtml}
                             </div>
+
+                            <!-- Payment Section -->
+                            <div class="order-payment">
+                                <div class="payment-row">
+                                    <span class="payment-label">Payment Method</span>
+                                    ${paymentBadge}
+                                </div>
+                                ${order.paymentId ? `
+                                <div class="payment-row">
+                                    <span class="payment-label">Transaction ID</span>
+                                    <span class="payment-id">${order.paymentId}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+
                             <div class="order-footer">
                                 <div>
                                     <div class="order-total">Total: ₹${order.total}</div>
@@ -530,22 +770,84 @@
             }).join('');
         }
 
+        // Get status text
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': '⏳ Pending',
+                'confirmed': '✅ Confirmed',
+                'preparing': '👨‍🍳 Preparing',
+                'out_for_delivery': '🚴 Out for Delivery',
+                'delivered': '🎉 Delivered',
+                'cancelled': '❌ Cancelled'
+            };
+            return statusMap[status] || '⏳ Pending';
+        }
+
+        // Get order timeline HTML
+        function getOrderTimeline(currentStatus) {
+            const steps = [
+                { id: 'pending', icon: '📝', label: 'Placed' },
+                { id: 'confirmed', icon: '✅', label: 'Confirmed' },
+                { id: 'preparing', icon: '👨‍🍳', label: 'Preparing' },
+                { id: 'out_for_delivery', icon: '🚴', label: 'On the way' },
+                { id: 'delivered', icon: '🎉', label: 'Delivered' }
+            ];
+
+            const statusOrder = ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered'];
+            const currentIndex = statusOrder.indexOf(currentStatus);
+
+            if (currentStatus === 'cancelled') {
+                return '<div style="text-align: center; color: #f44336; padding: 15px;">❌ Order Cancelled</div>';
+            }
+
+            const stepsHtml = steps.map((step, index) => {
+                let stepClass = '';
+                if (index < currentIndex) {
+                    stepClass = 'active';
+                } else if (index === currentIndex) {
+                    stepClass = 'current';
+                }
+
+                return `
+                    <div class="timeline-step ${stepClass}">
+                        <div class="timeline-icon">${step.icon}</div>
+                        <div class="timeline-label">${step.label}</div>
+                    </div>
+                `;
+            }).join('');
+
+            return `<div class="order-timeline">${stepsHtml}</div>`;
+        }
+
         // Reorder function
         function reorder(orderId) {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) return;
+            if (!currentUser) {
+                alert('Please login to reorder');
+                return;
+            }
 
             const ordersKey = 'orders_' + currentUser.email;
             const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
             const order = orders.find(o => o.id === orderId);
 
-            if (order) {
-                // Add items to cart
-                const cartKey = 'cart_' + currentUser.email;
-                localStorage.setItem(cartKey, JSON.stringify(order.items));
-                alert('Items added to cart! Redirecting to checkout...');
-                window.location.href = 'restaurant-detail.html';
+            if (!order) {
+                alert('Order not found');
+                return;
             }
+
+            // Add items to cart
+            const cartKey = 'cart_' + currentUser.email;
+            const cart = order.items.map(item => ({
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity
+            }));
+
+            localStorage.setItem(cartKey, JSON.stringify(cart));
+            
+            alert('Items added to cart! Redirecting to checkout...');
+            window.location.href = 'restaurant-detail.html';
         }
 
         // Update cart count
@@ -567,6 +869,5 @@
             }
         }
     </script>
-    <script src="dark-mode.js"></script>
 </body>
 </html>
