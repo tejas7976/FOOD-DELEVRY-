@@ -1,0 +1,710 @@
+/* ==================== MOBILE RESPONSIVE STYLES ==================== */
+
+/* ==================== NAVBAR ==================== */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 100001;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--text-primary, #333);
+    margin: 3px 0;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Hamburger animation when active */
+.hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* ==================== MOBILE BREAKPOINT ==================== */
+@media (max-width: 992px) {
+    /* Navbar */
+    .navbar {
+        padding: 10px 0;
+    }
+
+    .nav-container {
+        padding: 0 15px;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background-color: var(--bg-card, #fff);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 80px 20px 30px;
+        box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease;
+        z-index: 100000;
+        overflow-y: auto;
+        gap: 0;
+    }
+
+    .nav-menu.active {
+        right: 0;
+    }
+
+    .nav-item {
+        width: 100%;
+        margin: 0;
+    }
+
+    .nav-link {
+        display: block;
+        padding: 15px 10px;
+        font-size: 16px;
+        border-bottom: 1px solid var(--border-color, #eee);
+        width: 100%;
+    }
+
+    .nav-link.cart {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .login-btn {
+        width: 100%;
+        margin-top: 10px;
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    .theme-toggle {
+        width: 100%;
+        justify-content: center;
+        margin: 10px 0;
+        padding: 12px;
+    }
+
+    .notification-wrapper {
+        width: 100%;
+    }
+
+    .notification-bell {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 15px;
+        font-size: 20px;
+    }
+
+    .notification-dropdown {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    /* Mobile menu overlay */
+    .menu-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 99999;
+    }
+
+    .menu-overlay.active {
+        display: block;
+    }
+}
+
+/* ==================== SMALL MOBILE ==================== */
+@media (max-width: 768px) {
+    /* Container */
+    .container {
+        padding: 15px;
+        margin-top: 70px;
+    }
+
+    .container h1 {
+        font-size: 24px;
+        text-align: center;
+    }
+
+    /* Search Section */
+    .search-section {
+        padding: 15px 0;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-bar input {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+
+    .search-btn {
+        width: 100%;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    /* Filter Chips */
+    .filter-chips {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding: 10px 0;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .filter-chips::-webkit-scrollbar {
+        display: none;
+    }
+
+    .chip {
+        flex-shrink: 0;
+        padding: 10px 18px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    /* Restaurant Grid */
+    .restaurant-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .restaurant-card {
+        border-radius: 15px;
+    }
+
+    .restaurant-card img {
+        height: 180px;
+    }
+
+    .card-content {
+        padding: 15px;
+    }
+
+    .card-content h2 {
+        font-size: 18px;
+    }
+
+    .rating {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .cuisine {
+        font-size: 13px;
+    }
+
+    .delivery {
+        font-size: 12px;
+    }
+
+    /* Restaurant Detail Page */
+    .restaurant-header {
+        padding: 20px 15px;
+        margin-top: 60px;
+    }
+
+    .restaurant-header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .restaurant-header-image {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .restaurant-info h1 {
+        font-size: 24px;
+    }
+
+    .restaurant-meta {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    /* Menu Layout */
+    .menu-layout {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .menu-section {
+        width: 100%;
+    }
+
+    .section-title {
+        font-size: 20px;
+    }
+
+    /* Menu Items */
+    .menu-item {
+        flex-direction: column;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .menu-item-info {
+        width: 100%;
+    }
+
+    .menu-item-info h3 {
+        font-size: 16px;
+    }
+
+    .menu-item-image {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .menu-item-image img {
+        width: 100px;
+        height: 100px;
+        border-radius: 10px;
+    }
+
+    .add-btn {
+        padding: 10px 30px;
+        font-size: 14px;
+    }
+
+    /* Cart Summary - Fixed at Bottom on Mobile */
+    .cart-summary {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: 60vh;
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.15);
+        z-index: 9999;
+        transform: translateY(calc(100% - 70px));
+        transition: transform 0.3s ease;
+    }
+
+    .cart-summary.expanded {
+        transform: translateY(0);
+    }
+
+    .cart-summary h3 {
+        padding: 20px;
+        margin: 0;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border-color, #eee);
+    }
+
+    .cart-summary h3::after {
+        content: '▲';
+        font-size: 12px;
+        transition: transform 0.3s;
+    }
+
+    .cart-summary.expanded h3::after {
+        transform: rotate(180deg);
+    }
+
+    #cartItems {
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 15px;
+    }
+
+    .cart-total {
+        padding: 15px;
+    }
+
+    .checkout-btn {
+        width: calc(100% - 30px);
+        margin: 0 15px 15px;
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    /* Add padding to menu section for cart */
+    .menu-section {
+        padding-bottom: 100px;
+    }
+
+    /* Reviews Section */
+    .reviews-section {
+        padding: 20px 15px;
+        margin-top: 20px;
+    }
+
+    .reviews-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .overall-rating {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .write-review-btn {
+        width: 100%;
+    }
+
+    .review-card {
+        padding: 15px 0;
+    }
+
+    .review-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Orders Page */
+    .orders-container {
+        padding: 15px;
+        margin-top: 70px;
+    }
+
+    .orders-header h1 {
+        font-size: 24px;
+    }
+
+    .order-card {
+        border-radius: 15px;
+    }
+
+    .order-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .order-body {
+        padding: 15px;
+    }
+
+    .order-footer {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .order-address {
+        max-width: 100%;
+    }
+
+    .reorder-btn {
+        width: 100%;
+    }
+
+    /* Address Page */
+    .address-container {
+        padding: 15px;
+        margin-top: 70px;
+    }
+
+    .address-card {
+        padding: 15px;
+    }
+
+    .address-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .address-actions button {
+        width: 100%;
+    }
+
+    /* Profile Page */
+    .profile-container {
+        padding: 15px;
+        margin-top: 70px;
+    }
+
+    .profile-header h1 {
+        font-size: 24px;
+    }
+
+    .profile-card-header {
+        padding: 20px;
+    }
+
+    .profile-avatar {
+        width: 70px;
+        height: 70px;
+        font-size: 30px;
+    }
+
+    .profile-name {
+        font-size: 20px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-item {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color, #eee);
+    }
+
+    .stat-item:last-child {
+        border-bottom: none;
+    }
+
+    .quick-links {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-card-body {
+        padding: 15px;
+    }
+
+    .profile-btn {
+        width: 100%;
+    }
+
+    /* Modals */
+    .modal-content {
+        width: 95%;
+        max-width: none;
+        margin: 10px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 15px;
+    }
+
+    .modal-header {
+        padding: 15px 20px;
+        position: sticky;
+        top: 0;
+        background: var(--bg-card, #fff);
+        z-index: 10;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-body input,
+    .modal-body textarea,
+    .modal-body select {
+        font-size: 16px;
+        padding: 15px;
+    }
+
+    .login-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .login-buttons button {
+        width: 100%;
+        padding: 15px;
+    }
+
+    /* Review Modal */
+    .review-modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+
+    .star-rating-input span {
+        font-size: 35px;
+    }
+
+    /* Profile Modals */
+    .profile-modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 30px 15px 20px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .footer-column {
+        text-align: center;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .footer-bottom-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Admin Page */
+    .admin-container {
+        padding: 15px;
+        margin-top: 70px;
+    }
+
+    .admin-header h1 {
+        font-size: 24px;
+    }
+
+    .users-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 10px;
+        font-size: 13px;
+    }
+}
+
+/* ==================== EXTRA SMALL MOBILE ==================== */
+@media (max-width: 480px) {
+    .logo {
+        font-size: 18px;
+    }
+
+    .container h1 {
+        font-size: 20px;
+    }
+
+    .restaurant-card img {
+        height: 150px;
+    }
+
+    .card-content h2 {
+        font-size: 16px;
+    }
+
+    .menu-item-image img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .order-timeline {
+        display: none;
+    }
+
+    .notification-dropdown {
+        width: 100%;
+    }
+
+    /* Payment Button */
+    .pay-online-btn {
+        padding: 15px !important;
+        font-size: 14px !important;
+    }
+}
+
+/* ==================== TOUCH IMPROVEMENTS ==================== */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .nav-link,
+    .chip,
+    .add-btn,
+    .login-btn,
+    button {
+        min-height: 44px;
+    }
+
+    /* Remove hover effects on touch devices */
+    .restaurant-card:hover {
+        transform: none;
+    }
+
+    .menu-item:hover {
+        background: transparent;
+    }
+
+    /* Active states for touch */
+    .restaurant-card:active {
+        transform: scale(0.98);
+    }
+
+    .add-btn:active,
+    .login-btn:active,
+    .chip:active {
+        transform: scale(0.95);
+    }
+}
+
+/* ==================== LANDSCAPE MOBILE ==================== */
+@media (max-height: 500px) and (orientation: landscape) {
+    .modal-content {
+        max-height: 95vh;
+    }
+
+    .cart-summary {
+        max-height: 80vh;
+    }
+
+    .nav-menu {
+        padding-top: 60px;
+    }
+}
+
+/* ==================== SAFE AREA (NOTCH) ==================== */
+@supports (padding-top: env(safe-area-inset-top)) {
+    .navbar {
+        padding-top: env(safe-area-inset-top);
+    }
+
+    .cart-summary {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .modal-content {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}

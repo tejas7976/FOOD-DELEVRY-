@@ -6,6 +6,7 @@
     <title>Admin Panel - FoodExpress</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dark-mode.css">
+    <link rel="stylesheet" href="mobile-responsive.css">
     <style>
         /* Admin Login Screen */
         .admin-login-screen {
@@ -354,6 +355,14 @@
                         <a href="#" class="nav-link active">Admin</a>
                     </li>
                 </ul>
+
+                <!-- Hamburger Menu (ADD THIS IF MISSING) -->
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
             </div>
         </nav>
 
@@ -634,5 +643,6 @@ function updateOrderStatus(orderId, userEmail, newStatus) {
 document.addEventListener('DOMContentLoaded', loadAdminOrders);
 </script>
 <script src="dark-mode.js"></script>
+<script src="mobile-menu.js"></script>
 </body>
 </html>
