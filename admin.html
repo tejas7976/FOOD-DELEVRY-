@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dark-mode.css">
     <link rel="stylesheet" href="mobile-responsive.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
     <style>
         .admin-container {
             max-width: 1200px;
@@ -29,10 +35,10 @@
             color: var(--text-secondary);
         }
 
-        /* Info Banner */
-        .info-banner {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        /* Success Banner */
+        .success-banner {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #1a5a2e;
             padding: 15px 20px;
             border-radius: 10px;
             margin-bottom: 25px;
@@ -41,11 +47,11 @@
             gap: 15px;
         }
 
-        .info-banner-icon {
+        .success-banner-icon {
             font-size: 30px;
         }
 
-        .info-banner-text {
+        .success-banner-text {
             font-size: 14px;
             line-height: 1.5;
         }
@@ -66,21 +72,10 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .stat-card.purple {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .stat-card.pink {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .stat-card.cyan {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .stat-card.green {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        }
+        .stat-card.purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-card.pink { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-card.cyan { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .stat-card.green { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
 
         .stat-number {
             font-size: 48px;
@@ -91,6 +86,28 @@
         .stat-label {
             font-size: 14px;
             opacity: 0.9;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid #ff6347;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Section Title */
@@ -133,13 +150,8 @@
             font-size: 14px;
         }
 
-        .users-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .users-table tr:hover {
-            background: var(--bg-secondary);
-        }
+        .users-table tr:last-child td { border-bottom: none; }
+        .users-table tr:hover { background: var(--bg-secondary); }
 
         .status-badge {
             padding: 5px 12px;
@@ -148,15 +160,8 @@
             font-weight: bold;
         }
 
-        .status-badge.online {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .status-badge.offline {
-            background: #f5f5f5;
-            color: #888;
-        }
+        .status-badge.online { background: #e8f5e9; color: #2e7d32; }
+        .status-badge.offline { background: #f5f5f5; color: #888; }
 
         .delete-btn {
             background: #ff4444;
@@ -166,30 +171,23 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
-            transition: background 0.3s;
         }
 
-        .delete-btn:hover {
-            background: #cc0000;
-        }
+        .delete-btn:hover { background: #cc0000; }
 
-        /* No Users */
-        .no-users {
+        /* No Data */
+        .no-data {
             text-align: center;
             padding: 50px;
             color: var(--text-secondary);
         }
 
-        .no-users-icon {
+        .no-data-icon {
             font-size: 60px;
             margin-bottom: 15px;
         }
 
-        /* Orders Section */
-        .orders-section {
-            margin-top: 30px;
-        }
-
+        /* Order Card */
         .order-card {
             background: var(--bg-card);
             border-radius: 12px;
@@ -207,38 +205,18 @@
             gap: 10px;
         }
 
-        .order-id {
-            font-weight: bold;
-            color: var(--text-primary);
-        }
-
-        .order-date {
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
+        .order-id { font-weight: bold; color: var(--text-primary); }
+        .order-date { color: var(--text-secondary); font-size: 13px; }
 
         .order-details {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-bottom: 15px;
         }
 
-        .order-detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .order-detail-label {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .order-detail-value {
-            font-size: 14px;
-            color: var(--text-primary);
-        }
+        .order-detail-item { display: flex; flex-direction: column; gap: 3px; }
+        .order-detail-label { font-size: 12px; color: var(--text-muted); }
+        .order-detail-value { font-size: 14px; color: var(--text-primary); }
 
         .order-status-select {
             padding: 8px 12px;
@@ -248,11 +226,6 @@
             background: var(--bg-input);
             color: var(--text-primary);
             cursor: pointer;
-        }
-
-        .order-status-select:focus {
-            border-color: #ff6347;
-            outline: none;
         }
 
         /* Footer */
@@ -267,34 +240,10 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .admin-container {
-                margin-top: 80px;
-                padding: 15px;
-            }
-
-            .stat-number {
-                font-size: 36px;
-            }
-
-            .users-table-container {
-                overflow-x: auto;
-            }
-
-            .users-table th,
-            .users-table td {
-                padding: 10px;
-                font-size: 12px;
-            }
-
-            .info-banner {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .order-card-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+            .admin-container { margin-top: 80px; padding: 15px; }
+            .stat-number { font-size: 36px; }
+            .users-table-container { overflow-x: auto; }
+            .users-table th, .users-table td { padding: 10px; font-size: 12px; }
         }
     </style>
 </head>
@@ -302,22 +251,16 @@
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">
-                🍔 FoodExpress
-            </div>
+            <div class="logo">🍔 FoodExpress</div>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                    <button class="theme-toggle" onclick="toggleTheme()">
                         <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
                         <span class="theme-toggle-text" id="themeToggleText">Dark</span>
                     </button>
                 </li>
-                <li class="nav-item">
-                    <a href="index.html" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="admin.html" class="nav-link active">Admin</a>
-                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="admin.html" class="nav-link active">Admin</a></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -333,112 +276,126 @@
             <p>Manage users and orders</p>
         </div>
 
-        <!-- Info Banner -->
-        <div class="info-banner">
-            <div class="info-banner-icon">ℹ️</div>
-            <div class="info-banner-text">
-                <strong>Note:</strong> This app uses browser storage (localStorage). Data is stored locally on each device/browser and is not shared across different devices. For a production app, you would need a backend database like Firebase or MongoDB.
+        <!-- Success Banner -->
+        <div class="success-banner">
+            <div class="success-banner-icon">🔥</div>
+            <div class="success-banner-text">
+                <strong>Firebase Connected!</strong> Your app is now using a real cloud database. All data is synced across all devices and users in real-time.
             </div>
         </div>
 
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card purple">
-                <div class="stat-number" id="totalUsers">0</div>
-                <div class="stat-label">Total Users</div>
-            </div>
-            <div class="stat-card pink">
-                <div class="stat-number" id="loggedInUsers">0</div>
-                <div class="stat-label">Currently Logged In</div>
-            </div>
-            <div class="stat-card cyan">
-                <div class="stat-number" id="todaySignups">0</div>
-                <div class="stat-label">Today's Signups</div>
-            </div>
-            <div class="stat-card green">
-                <div class="stat-number" id="totalOrders">0</div>
-                <div class="stat-label">Total Orders</div>
-            </div>
+        <!-- Loading State -->
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Loading data from Firebase...</p>
         </div>
 
-        <!-- Users Section -->
-        <h2 class="section-title">📋 All Registered Users</h2>
-        <div class="users-table-container">
-            <table class="users-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>EMAIL</th>
-                        <th>NAME</th>
-                        <th>PHONE</th>
-                        <th>CREATED AT</th>
-                        <th>STATUS</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                    <!-- Users will be loaded here -->
-                </tbody>
-            </table>
-            <div id="noUsers" class="no-users" style="display: none;">
-                <div class="no-users-icon">👥</div>
-                <p>No registered users yet</p>
+        <!-- Main Content (hidden until loaded) -->
+        <div id="mainContent" style="display: none;">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card purple">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card pink">
+                    <div class="stat-number" id="onlineUsers">0</div>
+                    <div class="stat-label">Online Users</div>
+                </div>
+                <div class="stat-card cyan">
+                    <div class="stat-number" id="todaySignups">0</div>
+                    <div class="stat-label">Today's Signups</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-number" id="totalOrders">0</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
             </div>
-        </div>
 
-        <!-- Orders Section -->
-        <h2 class="section-title">📦 Order Management</h2>
-        <div id="ordersSection">
-            <!-- Orders will be loaded here -->
+            <!-- Users Section -->
+            <h2 class="section-title">📋 All Registered Users</h2>
+            <div class="users-table-container">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>EMAIL</th>
+                            <th>NAME</th>
+                            <th>PHONE</th>
+                            <th>JOINED</th>
+                            <th>STATUS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody"></tbody>
+                </table>
+                <div id="noUsers" class="no-data" style="display: none;">
+                    <div class="no-data-icon">👥</div>
+                    <p>No registered users yet</p>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <h2 class="section-title">📦 All Orders</h2>
+            <div id="ordersSection"></div>
         </div>
 
         <div class="admin-footer">
-            <p>© 2026 FoodExpress Admin Panel. All rights reserved.</p>
+            <p>© 2026 FoodExpress Admin Panel • Powered by Firebase 🔥</p>
         </div>
     </div>
 
+    <script src="firebase-config.js"></script>
     <script src="dark-mode.js"></script>
     <script src="mobile-menu.js"></script>
     <script>
-        // Load admin data on page load
+        // Wait for Firebase to initialize
         document.addEventListener('DOMContentLoaded', function() {
-            loadAdminStats();
-            loadUsers();
-            loadAllOrders();
+            // Wait a bit for Firebase to initialize
+            setTimeout(loadAdminData, 1000);
         });
 
-        // Load admin statistics
-        function loadAdminStats() {
-            const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
-            
-            // Total users
-            document.getElementById('totalUsers').textContent = users.length;
-            
-            // Currently logged in
-            document.getElementById('loggedInUsers').textContent = currentUser ? 1 : 0;
-            
-            // Today's signups
-            const today = new Date().toDateString();
-            const todaySignups = users.filter(user => {
-                if (!user.createdAt) return false;
-                return new Date(user.createdAt).toDateString() === today;
-            }).length;
-            document.getElementById('todaySignups').textContent = todaySignups;
-            
-            // Total orders
-            document.getElementById('totalOrders').textContent = allOrders.length;
+        // Load all admin data
+        async function loadAdminData() {
+            try {
+                await Promise.all([
+                    loadStats(),
+                    loadUsers(),
+                    loadOrders()
+                ]);
+                
+                // Hide loading, show content
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                document.getElementById('loadingState').innerHTML = `
+                    <div class="no-data-icon">⚠️</div>
+                    <p>Error loading data. Please refresh the page.</p>
+                `;
+            }
         }
 
-        // Load all users
-        function loadUsers() {
-            const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        // Load statistics
+        async function loadStats() {
+            const result = await getAdminStats();
+            
+            if (result.success) {
+                document.getElementById('totalUsers').textContent = result.stats.totalUsers;
+                document.getElementById('onlineUsers').textContent = result.stats.onlineUsers;
+                document.getElementById('todaySignups').textContent = result.stats.todaySignups;
+                document.getElementById('totalOrders').textContent = result.stats.totalOrders;
+            }
+        }
+
+        // Load users
+        async function loadUsers() {
+            const result = await getAllUsers();
             const tableBody = document.getElementById('usersTableBody');
             const noUsers = document.getElementById('noUsers');
             
-            if (users.length === 0) {
+            if (!result.success || result.users.length === 0) {
                 tableBody.innerHTML = '';
                 noUsers.style.display = 'block';
                 return;
@@ -446,19 +403,12 @@
             
             noUsers.style.display = 'none';
             
-            tableBody.innerHTML = users.map((user, index) => {
+            tableBody.innerHTML = result.users.map((user, index) => {
                 const createdDate = user.createdAt 
-                    ? new Date(user.createdAt).toLocaleString('en-IN', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })
+                    ? user.createdAt.toDate().toLocaleString('en-IN')
                     : 'N/A';
                 
-                const isOnline = currentUser && currentUser.email === user.email;
-                const statusBadge = isOnline 
+                const statusBadge = user.isOnline 
                     ? '<span class="status-badge online">🟢 Online</span>'
                     : '<span class="status-badge offline">⚪ Offline</span>';
                 
@@ -466,12 +416,12 @@
                     <tr>
                         <td>${index + 1}</td>
                         <td>${user.email}</td>
-                        <td>${user.name || user.email.split('@')[0]}</td>
+                        <td>${user.name || 'N/A'}</td>
                         <td>${user.phone || 'N/A'}</td>
                         <td>${createdDate}</td>
                         <td>${statusBadge}</td>
                         <td>
-                            <button class="delete-btn" onclick="deleteUser('${user.email}')">
+                            <button class="delete-btn" onclick="handleDeleteUser('${user.uid}')">
                                 🗑️ Delete
                             </button>
                         </td>
@@ -480,79 +430,43 @@
             }).join('');
         }
 
-        // Delete user
-        function deleteUser(email) {
-            if (!confirm('Are you sure you want to delete this user?\n\nThis will also delete all their orders, addresses, and data.')) {
-                return;
+        // Delete user handler
+        async function handleDeleteUser(uid) {
+            if (!confirm('Are you sure you want to delete this user?')) return;
+            
+            const result = await deleteUser(uid);
+            
+            if (result.success) {
+                alert('✅ User deleted successfully!');
+                loadAdminData(); // Reload data
+            } else {
+                alert('❌ Error: ' + result.error);
             }
-            
-            // Remove from registered users
-            let users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-            users = users.filter(u => u.email !== email);
-            localStorage.setItem('registeredUsers', JSON.stringify(users));
-            
-            // Remove user's data
-            localStorage.removeItem('orders_' + email);
-            localStorage.removeItem('addresses_' + email);
-            localStorage.removeItem('cart_' + email);
-            localStorage.removeItem('notifications_' + email);
-            localStorage.removeItem('payments_' + email);
-            
-            // If current user is deleted, log them out
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (currentUser && currentUser.email === email) {
-                localStorage.removeItem('currentUser');
-            }
-            
-            // Remove user's orders from allOrders
-            let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
-            allOrders = allOrders.filter(o => o.userEmail !== email);
-            localStorage.setItem('allOrders', JSON.stringify(allOrders));
-            
-            alert('User deleted successfully!');
-            
-            // Reload data
-            loadAdminStats();
-            loadUsers();
-            loadAllOrders();
         }
 
-        // Load all orders
-        function loadAllOrders() {
-            const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+        // Load orders
+        async function loadOrders() {
+            const result = await getAllOrders();
             const ordersSection = document.getElementById('ordersSection');
             
-            if (allOrders.length === 0) {
+            if (!result.success || result.orders.length === 0) {
                 ordersSection.innerHTML = `
-                    <div class="no-users">
-                        <div class="no-users-icon">📭</div>
+                    <div class="no-data">
+                        <div class="no-data-icon">📭</div>
                         <p>No orders yet</p>
                     </div>
                 `;
                 return;
             }
             
-            // Sort by date (newest first)
-            allOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            ordersSection.innerHTML = allOrders.map(order => {
-                const date = new Date(order.date).toLocaleString('en-IN', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
+            ordersSection.innerHTML = result.orders.map(order => {
+                const date = order.createdAt 
+                    ? order.createdAt.toDate().toLocaleString('en-IN')
+                    : 'N/A';
                 
                 const itemsList = order.items 
                     ? order.items.map(item => `${item.quantity}x ${item.name}`).join(', ')
                     : 'N/A';
-                
-                const paymentBadge = order.paymentStatus === 'paid'
-                    ? '✅ Paid'
-                    : order.paymentStatus === 'cod'
-                    ? '💵 COD'
-                    : '⏳ Pending';
                 
                 return `
                     <div class="order-card">
@@ -561,7 +475,7 @@
                                 <span class="order-id">Order #${order.id}</span>
                                 <span class="order-date"> • ${date}</span>
                             </div>
-                            <select class="order-status-select" onchange="updateOrderStatus('${order.id}', '${order.userEmail}', this.value)">
+                            <select class="order-status-select" onchange="handleStatusUpdate('${order.id}', this.value)">
                                 <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
                                 <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>✅ Confirmed</option>
                                 <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>👨‍🍳 Preparing</option>
@@ -573,61 +487,39 @@
                         <div class="order-details">
                             <div class="order-detail-item">
                                 <span class="order-detail-label">Customer</span>
-                                <span class="order-detail-value">${order.userName || 'N/A'}</span>
+                                <span class="order-detail-value">${order.customerName || 'N/A'}</span>
                             </div>
                             <div class="order-detail-item">
                                 <span class="order-detail-label">Email</span>
                                 <span class="order-detail-value">${order.userEmail || 'N/A'}</span>
                             </div>
                             <div class="order-detail-item">
-                                <span class="order-detail-label">Phone</span>
-                                <span class="order-detail-value">${order.phone || 'N/A'}</span>
-                            </div>
-                            <div class="order-detail-item">
                                 <span class="order-detail-label">Total</span>
-                                <span class="order-detail-value">₹${order.total}</span>
+                                <span class="order-detail-value">₹${order.total || 0}</span>
                             </div>
                             <div class="order-detail-item">
-                                <span class="order-detail-label">Payment</span>
-                                <span class="order-detail-value">${paymentBadge}</span>
+                                <span class="order-detail-label">Items</span>
+                                <span class="order-detail-value">${itemsList}</span>
                             </div>
-                            <div class="order-detail-item">
-                                <span class="order-detail-label">Address</span>
-                                <span class="order-detail-value">${order.address || 'N/A'}</span>
-                            </div>
-                        </div>
-                        <div class="order-detail-item">
-                            <span class="order-detail-label">Items</span>
-                            <span class="order-detail-value">${itemsList}</span>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Update order status
-        function updateOrderStatus(orderId, userEmail, newStatus) {
-            // Update in allOrders
-            let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
-            const orderIndex = allOrders.findIndex(o => o.id === orderId);
-            if (orderIndex !== -1) {
-                allOrders[orderIndex].status = newStatus;
-                localStorage.setItem('allOrders', JSON.stringify(allOrders));
-            }
+        // Update order status handler
+        async function handleStatusUpdate(orderId, status) {
+            const result = await updateOrderStatus(orderId, status);
             
-            // Update in user's orders
-            if (userEmail) {
-                const userOrdersKey = 'orders_' + userEmail;
-                let userOrders = JSON.parse(localStorage.getItem(userOrdersKey)) || [];
-                const userOrderIndex = userOrders.findIndex(o => o.id === orderId);
-                if (userOrderIndex !== -1) {
-                    userOrders[userOrderIndex].status = newStatus;
-                    localStorage.setItem(userOrdersKey, JSON.stringify(userOrders));
-                }
+            if (result.success) {
+                alert('✅ Order status updated!');
+            } else {
+                alert('❌ Error: ' + result.error);
             }
-            
-            alert('✅ Order status updated to: ' + newStatus.replace('_', ' ').toUpperCase());
         }
     </script>
+    <!-- Firebase Config & Functions -->
+<script src="firebase-config.js"></script>
+<script src="firebase-auth.js"></script>
 </body>
 </html>
