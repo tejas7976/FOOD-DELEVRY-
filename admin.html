@@ -8,533 +8,472 @@
     <link rel="stylesheet" href="dark-mode.css">
     <link rel="stylesheet" href="mobile-responsive.css">
     <style>
-        /* Admin Login Screen */
-        .admin-login-screen {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-        }
-
-        .admin-login-box {
-            background: white;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .admin-login-box h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-
-        .admin-login-box p {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-
-        .admin-login-box input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
-
-        .admin-login-box input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .admin-login-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .admin-login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .error-message {
-            background-color: #ffe6e6;
-            color: #cc0000;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 14px;
-            display: none;
-        }
-
-        .back-link {
-            margin-top: 20px;
-            display: block;
-            color: #666;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .back-link:hover {
-            color: #667eea;
-        }
-
-        /* Admin Dashboard (Hidden by default) */
-        .admin-dashboard {
-            display: none;
-        }
-
         .admin-container {
             max-width: 1200px;
             margin: 100px auto 50px;
             padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
         }
 
         .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
             margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
-            flex-wrap: wrap;
-            gap: 15px;
         }
 
         .admin-header h1 {
-            color: #333;
-            font-size: 28px;
+            color: var(--text-primary);
+            font-size: 32px;
+            margin-bottom: 10px;
         }
 
-        .admin-buttons {
+        .admin-header p {
+            color: var(--text-secondary);
+        }
+
+        /* Info Banner */
+        .info-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
         }
 
+        .info-banner-icon {
+            font-size: 30px;
+        }
+
+        .info-banner-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Stats Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
             padding: 25px;
-            border-radius: 12px;
+            border-radius: 15px;
+            color: white;
             text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .stat-card h2 {
-            font-size: 42px;
-            margin-bottom: 10px;
+        .stat-card.purple {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .stat-card p {
-            font-size: 16px;
+        .stat-card.pink {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card.cyan {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-card.green {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
             opacity: 0.9;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 22px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Users Table */
+        .users-table-container {
+            background: var(--bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px var(--shadow-color);
+            margin-bottom: 30px;
         }
 
         .users-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-            overflow-x: auto;
         }
 
         .users-table th {
-            background-color: #ff6347;
+            background: #ff6347;
             color: white;
             padding: 15px;
             text-align: left;
+            font-weight: bold;
             font-size: 14px;
-            text-transform: uppercase;
         }
 
         .users-table td {
             padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
             font-size: 14px;
         }
 
-        .users-table tr:hover {
-            background-color: #f9f9f9;
+        .users-table tr:last-child td {
+            border-bottom: none;
         }
 
-        .badge {
-            display: inline-block;
+        .users-table tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .status-badge {
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
-            background-color: #e0e0e0;
-            color: #666;
         }
 
-        .badge-active {
-            background-color: #48c479;
-            color: white;
+        .status-badge.online {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-badge.offline {
+            background: #f5f5f5;
+            color: #888;
         }
 
         .delete-btn {
-            background-color: #ff4444;
+            background: #ff4444;
             color: white;
             border: none;
             padding: 8px 15px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
-            transition: background-color 0.3s;
+            font-size: 13px;
+            transition: background 0.3s;
         }
 
         .delete-btn:hover {
-            background-color: #cc0000;
+            background: #cc0000;
         }
 
-        .refresh-btn {
-            background-color: #4285f4;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-
-        .refresh-btn:hover {
-            background-color: #357ae8;
-        }
-
-        .logout-btn {
-            background-color: #ff6347;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-
-        .logout-btn:hover {
-            background-color: #ff4520;
-        }
-
-        .back-btn {
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 14px;
-            display: inline-block;
-            transition: background-color 0.3s;
-        }
-
-        .back-btn:hover {
-            background-color: #555;
-        }
-
+        /* No Users */
         .no-users {
             text-align: center;
-            padding: 40px;
-            color: #999;
-            font-size: 16px;
+            padding: 50px;
+            color: var(--text-secondary);
         }
 
-        .table-container {
-            overflow-x: auto;
+        .no-users-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
         }
 
-        .admin-logged-in-as {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            padding: 10px 15px;
-            border-radius: 6px;
+        /* Orders Section */
+        .orders-section {
+            margin-top: 30px;
+        }
+
+        .order-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .order-date {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .order-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .order-detail-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .order-detail-value {
             font-size: 14px;
-            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .order-status-select {
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .order-status-select:focus {
+            border-color: #ff6347;
+            outline: none;
+        }
+
+        /* Footer */
+        .admin-footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 30px;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .admin-header {
-                flex-direction: column;
-                text-align: center;
+            .admin-container {
+                margin-top: 80px;
+                padding: 15px;
             }
 
-            .admin-header h1 {
-                font-size: 24px;
+            .stat-number {
+                font-size: 36px;
             }
 
-            .users-table th, .users-table td {
+            .users-table-container {
+                overflow-x: auto;
+            }
+
+            .users-table th,
+            .users-table td {
                 padding: 10px;
                 font-size: 12px;
             }
 
-            .stat-card h2 {
-                font-size: 32px;
+            .info-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .order-card-header {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Admin Login Screen -->
-    <div id="adminLoginScreen" class="admin-login-screen">
-        <div class="admin-login-box">
-            <h1>🔐 Admin Login</h1>
-            <p>Enter your admin credentials to access the dashboard</p>
-            
-            <div id="errorMessage" class="error-message">
-                Invalid username or password!
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                🍔 FoodExpress
             </div>
-            
-            <form id="adminLoginForm" onsubmit="return adminLogin(event)">
-                <input 
-                    type="text" 
-                    id="adminUsername" 
-                    placeholder="Admin Username" 
-                    required
-                    autocomplete="off"
-                >
-                <input 
-                    type="password" 
-                    id="adminPassword" 
-                    placeholder="Admin Password" 
-                    required
-                >
-                <button type="submit" class="admin-login-btn">🔓 Login to Dashboard</button>
-            </form>
-            
-            <a href="index.html" class="back-link">← Back to Website</a>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                        <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
+                        <span class="theme-toggle-text" id="themeToggleText">Dark</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="admin.html" class="nav-link active">Admin</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🔐 Admin Panel</h1>
+            <p>Manage users and orders</p>
+        </div>
+
+        <!-- Info Banner -->
+        <div class="info-banner">
+            <div class="info-banner-icon">ℹ️</div>
+            <div class="info-banner-text">
+                <strong>Note:</strong> This app uses browser storage (localStorage). Data is stored locally on each device/browser and is not shared across different devices. For a production app, you would need a backend database like Firebase or MongoDB.
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card purple">
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card pink">
+                <div class="stat-number" id="loggedInUsers">0</div>
+                <div class="stat-label">Currently Logged In</div>
+            </div>
+            <div class="stat-card cyan">
+                <div class="stat-number" id="todaySignups">0</div>
+                <div class="stat-label">Today's Signups</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-number" id="totalOrders">0</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+        </div>
+
+        <!-- Users Section -->
+        <h2 class="section-title">📋 All Registered Users</h2>
+        <div class="users-table-container">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>EMAIL</th>
+                        <th>NAME</th>
+                        <th>PHONE</th>
+                        <th>CREATED AT</th>
+                        <th>STATUS</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <!-- Users will be loaded here -->
+                </tbody>
+            </table>
+            <div id="noUsers" class="no-users" style="display: none;">
+                <div class="no-users-icon">👥</div>
+                <p>No registered users yet</p>
+            </div>
+        </div>
+
+        <!-- Orders Section -->
+        <h2 class="section-title">📦 Order Management</h2>
+        <div id="ordersSection">
+            <!-- Orders will be loaded here -->
+        </div>
+
+        <div class="admin-footer">
+            <p>© 2026 FoodExpress Admin Panel. All rights reserved.</p>
         </div>
     </div>
 
-    <!-- Admin Dashboard (Hidden until login) -->
-    <div id="adminDashboard" class="admin-dashboard">
-        <!-- Navigation Bar -->
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="logo">
-                    🍔 FoodExpress
-                </div>
-                <ul class="nav-menu">
-                    <!-- Theme Toggle -->
-<li class="nav-item">
-    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
-        <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
-        <span class="theme-toggle-text" id="themeToggleText">Dark</span>
-    </button>
-</li>
-                    <li class="nav-item">
-                        <a href="index.html" class="nav-link">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link active">Admin</a>
-                    </li>
-                </ul>
-
-                <!-- Hamburger Menu (ADD THIS IF MISSING) -->
-        <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-
-            </div>
-        </nav>
-
-        <div class="admin-container">
-            <div class="admin-logged-in-as">
-                ✅ Logged in as: <strong id="adminName">Admin</strong>
-            </div>
-
-            <div class="admin-header">
-                <h1>👤 User Management</h1>
-                <div class="admin-buttons">
-                    <button class="refresh-btn" onclick="loadUsers()">🔄 Refresh</button>
-                    <a href="index.html" class="back-btn">← Back to Home</a>
-                    <button class="logout-btn" onclick="adminLogout()">🚪 Logout</button>
-                </div>
-            </div>
-
-            <!-- Statistics -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h2 id="totalUsers">0</h2>
-                    <p>Total Users</p>
-                </div>
-                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                    <h2 id="currentlyLoggedIn">0</h2>
-                    <p>Currently Logged In</p>
-                </div>
-                <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                    <h2 id="todaySignups">0</h2>
-                    <p>Today's Signups</p>
-                </div>
-            </div>
-
-            <!-- Users Table -->
-            <h2>📋 All Registered Users</h2>
-            <div class="table-container">
-                <table class="users-table" id="usersTable">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Email</th>
-                            <th>Name</th>
-                            <th>Created At</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <tr>
-                            <td colspan="6" class="no-users">Loading users...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer class="footer" style="margin-top: 50px;">
-            <div class="footer-bottom">
-                <p>&copy; 2026 FoodExpress Admin Panel. All rights reserved.</p>
-            </div>
-        </footer>
-    </div>
-
+    <script src="dark-mode.js"></script>
+    <script src="mobile-menu.js"></script>
     <script>
-        // ⚠️ CHANGE THESE CREDENTIALS TO YOUR OWN! ⚠️
-        const ADMIN_CREDENTIALS = {
-            username: 'admin',      // Change this!
-            password: 'admin123'    // Change this to a strong password!
-        };
-
-        // Check if already logged in
-        function checkAdminSession() {
-            const adminSession = localStorage.getItem('adminLoggedIn');
-            if (adminSession === 'true') {
-                showDashboard();
-            }
-        }
-
-        // Admin Login
-        function adminLogin(event) {
-            event.preventDefault();
-            
-            const username = document.getElementById('adminUsername').value.trim();
-            const password = document.getElementById('adminPassword').value;
-            const errorMessage = document.getElementById('errorMessage');
-            
-            // Check credentials
-            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                // Login successful
-                localStorage.setItem('adminLoggedIn', 'true');
-                localStorage.setItem('adminUsername', username);
-                errorMessage.style.display = 'none';
-                showDashboard();
-            } else {
-                // Login failed
-                errorMessage.style.display = 'block';
-                document.getElementById('adminPassword').value = '';
-            }
-            
-            return false;
-        }
-
-        // Admin Logout
-        function adminLogout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('adminLoggedIn');
-                localStorage.removeItem('adminUsername');
-                showLoginScreen();
-            }
-        }
-
-        // Show Dashboard
-        function showDashboard() {
-            document.getElementById('adminLoginScreen').style.display = 'none';
-            document.getElementById('adminDashboard').style.display = 'block';
-            document.getElementById('adminName').textContent = localStorage.getItem('adminUsername') || 'Admin';
+        // Load admin data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdminStats();
             loadUsers();
-        }
+            loadAllOrders();
+        });
 
-        // Show Login Screen
-        function showLoginScreen() {
-            document.getElementById('adminLoginScreen').style.display = 'flex';
-            document.getElementById('adminDashboard').style.display = 'none';
-            document.getElementById('adminUsername').value = '';
-            document.getElementById('adminPassword').value = '';
+        // Load admin statistics
+        function loadAdminStats() {
+            const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+            
+            // Total users
+            document.getElementById('totalUsers').textContent = users.length;
+            
+            // Currently logged in
+            document.getElementById('loggedInUsers').textContent = currentUser ? 1 : 0;
+            
+            // Today's signups
+            const today = new Date().toDateString();
+            const todaySignups = users.filter(user => {
+                if (!user.createdAt) return false;
+                return new Date(user.createdAt).toDateString() === today;
+            }).length;
+            document.getElementById('todaySignups').textContent = todaySignups;
+            
+            // Total orders
+            document.getElementById('totalOrders').textContent = allOrders.length;
         }
 
         // Load all users
         function loadUsers() {
-            const usersJson = localStorage.getItem('registeredUsers');
-            const users = usersJson ? JSON.parse(usersJson) : [];
-            
-            const currentUserJson = localStorage.getItem('currentUser');
-            const currentUser = currentUserJson ? JSON.parse(currentUserJson) : null;
-
-            // Update statistics
-            document.getElementById('totalUsers').textContent = users.length;
-            document.getElementById('currentlyLoggedIn').textContent = currentUser ? '1' : '0';
-            
-            // Calculate today's signups
-            const today = new Date().toDateString();
-            const todaySignups = users.filter(u => {
-                if (!u.createdAt) return false;
-                const userDate = new Date(u.createdAt).toDateString();
-                return userDate === today;
-            }).length;
-            document.getElementById('todaySignups').textContent = todaySignups;
-
-            // Display users table
-            const tbody = document.getElementById('usersTableBody');
+            const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const tableBody = document.getElementById('usersTableBody');
+            const noUsers = document.getElementById('noUsers');
             
             if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="no-users">No users registered yet</td></tr>';
+                tableBody.innerHTML = '';
+                noUsers.style.display = 'block';
                 return;
             }
-
-            tbody.innerHTML = users.map((user, index) => {
-                const isLoggedIn = currentUser && currentUser.email === user.email;
-                const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A';
+            
+            noUsers.style.display = 'none';
+            
+            tableBody.innerHTML = users.map((user, index) => {
+                const createdDate = user.createdAt 
+                    ? new Date(user.createdAt).toLocaleString('en-IN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })
+                    : 'N/A';
+                
+                const isOnline = currentUser && currentUser.email === user.email;
+                const statusBadge = isOnline 
+                    ? '<span class="status-badge online">🟢 Online</span>'
+                    : '<span class="status-badge offline">⚪ Offline</span>';
                 
                 return `
                     <tr>
                         <td>${index + 1}</td>
                         <td>${user.email}</td>
-                        <td>${user.name || 'N/A'}</td>
+                        <td>${user.name || user.email.split('@')[0]}</td>
+                        <td>${user.phone || 'N/A'}</td>
                         <td>${createdDate}</td>
+                        <td>${statusBadge}</td>
                         <td>
-                            ${isLoggedIn ? '<span class="badge badge-active">🟢 Online</span>' : '<span class="badge">⚪ Offline</span>'}
-                        </td>
-                        <td>
-                            <button class="delete-btn" onclick="deleteUser('${user.email}')">🗑️ Delete</button>
+                            <button class="delete-btn" onclick="deleteUser('${user.email}')">
+                                🗑️ Delete
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -543,106 +482,152 @@
 
         // Delete user
         function deleteUser(email) {
-            if (!confirm('Are you sure you want to delete user: ' + email + '?')) {
+            if (!confirm('Are you sure you want to delete this user?\n\nThis will also delete all their orders, addresses, and data.')) {
                 return;
             }
-
-            const usersJson = localStorage.getItem('registeredUsers');
-            let users = usersJson ? JSON.parse(usersJson) : [];
             
+            // Remove from registered users
+            let users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
             users = users.filter(u => u.email !== email);
             localStorage.setItem('registeredUsers', JSON.stringify(users));
             
-            // If deleting current user, logout that user
-            const currentUserJson = localStorage.getItem('currentUser');
-            const currentUser = currentUserJson ? JSON.parse(currentUserJson) : null;
+            // Remove user's data
+            localStorage.removeItem('orders_' + email);
+            localStorage.removeItem('addresses_' + email);
+            localStorage.removeItem('cart_' + email);
+            localStorage.removeItem('notifications_' + email);
+            localStorage.removeItem('payments_' + email);
+            
+            // If current user is deleted, log them out
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             if (currentUser && currentUser.email === email) {
                 localStorage.removeItem('currentUser');
             }
             
+            // Remove user's orders from allOrders
+            let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+            allOrders = allOrders.filter(o => o.userEmail !== email);
+            localStorage.setItem('allOrders', JSON.stringify(allOrders));
+            
             alert('User deleted successfully!');
+            
+            // Reload data
+            loadAdminStats();
             loadUsers();
+            loadAllOrders();
         }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            checkAdminSession();
-        });
+        // Load all orders
+        function loadAllOrders() {
+            const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+            const ordersSection = document.getElementById('ordersSection');
+            
+            if (allOrders.length === 0) {
+                ordersSection.innerHTML = `
+                    <div class="no-users">
+                        <div class="no-users-icon">📭</div>
+                        <p>No orders yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by date (newest first)
+            allOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            ordersSection.innerHTML = allOrders.map(order => {
+                const date = new Date(order.date).toLocaleString('en-IN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const itemsList = order.items 
+                    ? order.items.map(item => `${item.quantity}x ${item.name}`).join(', ')
+                    : 'N/A';
+                
+                const paymentBadge = order.paymentStatus === 'paid'
+                    ? '✅ Paid'
+                    : order.paymentStatus === 'cod'
+                    ? '💵 COD'
+                    : '⏳ Pending';
+                
+                return `
+                    <div class="order-card">
+                        <div class="order-card-header">
+                            <div>
+                                <span class="order-id">Order #${order.id}</span>
+                                <span class="order-date"> • ${date}</span>
+                            </div>
+                            <select class="order-status-select" onchange="updateOrderStatus('${order.id}', '${order.userEmail}', this.value)">
+                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                                <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>✅ Confirmed</option>
+                                <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>👨‍🍳 Preparing</option>
+                                <option value="out_for_delivery" ${order.status === 'out_for_delivery' ? 'selected' : ''}>🚴 Out for Delivery</option>
+                                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>🎉 Delivered</option>
+                                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>❌ Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Customer</span>
+                                <span class="order-detail-value">${order.userName || 'N/A'}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Email</span>
+                                <span class="order-detail-value">${order.userEmail || 'N/A'}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Phone</span>
+                                <span class="order-detail-value">${order.phone || 'N/A'}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Total</span>
+                                <span class="order-detail-value">₹${order.total}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Payment</span>
+                                <span class="order-detail-value">${paymentBadge}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Address</span>
+                                <span class="order-detail-value">${order.address || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="order-detail-item">
+                            <span class="order-detail-label">Items</span>
+                            <span class="order-detail-value">${itemsList}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update order status
+        function updateOrderStatus(orderId, userEmail, newStatus) {
+            // Update in allOrders
+            let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+            const orderIndex = allOrders.findIndex(o => o.id === orderId);
+            if (orderIndex !== -1) {
+                allOrders[orderIndex].status = newStatus;
+                localStorage.setItem('allOrders', JSON.stringify(allOrders));
+            }
+            
+            // Update in user's orders
+            if (userEmail) {
+                const userOrdersKey = 'orders_' + userEmail;
+                let userOrders = JSON.parse(localStorage.getItem(userOrdersKey)) || [];
+                const userOrderIndex = userOrders.findIndex(o => o.id === orderId);
+                if (userOrderIndex !== -1) {
+                    userOrders[userOrderIndex].status = newStatus;
+                    localStorage.setItem(userOrdersKey, JSON.stringify(userOrders));
+                }
+            }
+            
+            alert('✅ Order status updated to: ' + newStatus.replace('_', ' ').toUpperCase());
+        }
     </script>
-
-    <!-- Order Management Section -->
-<div class="admin-section">
-    <h2>📦 Order Management</h2>
-    <div id="adminOrdersList">
-        <!-- Orders will be loaded here -->
-    </div>
-</div>
-
-<script>
-// Load all orders for admin
-function loadAdminOrders() {
-    const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
-    const ordersList = document.getElementById('adminOrdersList');
-    
-    if (allOrders.length === 0) {
-        ordersList.innerHTML = '<p>No orders yet</p>';
-        return;
-    }
-    
-    // Sort by date (newest first)
-    allOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    ordersList.innerHTML = allOrders.map(order => {
-        return `
-            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <strong>Order #${order.id}</strong>
-                    <span style="color: #666;">${new Date(order.date).toLocaleString()}</span>
-                </div>
-                <p><strong>Customer:</strong> ${order.userName || order.name}</p>
-                <p><strong>Email:</strong> ${order.userEmail}</p>
-                <p><strong>Total:</strong> ₹${order.total}</p>
-                <p><strong>Status:</strong> 
-                    <select onchange="updateOrderStatus('${order.id}', '${order.userEmail}', this.value)" style="padding: 5px 10px; border-radius: 5px;">
-                        <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
-                        <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>✅ Confirmed</option>
-                        <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>👨‍🍳 Preparing</option>
-                        <option value="out_for_delivery" ${order.status === 'out_for_delivery' ? 'selected' : ''}>🚴 Out for Delivery</option>
-                        <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>🎉 Delivered</option>
-                        <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>❌ Cancelled</option>
-                    </select>
-                </p>
-            </div>
-        `;
-    }).join('');
-}
-
-// Update order status
-function updateOrderStatus(orderId, userEmail, newStatus) {
-    // Update in allOrders
-    let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
-    const orderIndex = allOrders.findIndex(o => o.id === orderId);
-    if (orderIndex !== -1) {
-        allOrders[orderIndex].status = newStatus;
-        localStorage.setItem('allOrders', JSON.stringify(allOrders));
-    }
-    
-    // Update in user's orders
-    const userOrdersKey = 'orders_' + userEmail;
-    let userOrders = JSON.parse(localStorage.getItem(userOrdersKey)) || [];
-    const userOrderIndex = userOrders.findIndex(o => o.id === orderId);
-    if (userOrderIndex !== -1) {
-        userOrders[userOrderIndex].status = newStatus;
-        localStorage.setItem(userOrdersKey, JSON.stringify(userOrders));
-    }
-    
-    alert('Order status updated! Customer will be notified.');
-}
-
-// Load orders on page load
-document.addEventListener('DOMContentLoaded', loadAdminOrders);
-</script>
-<script src="dark-mode.js"></script>
-<script src="mobile-menu.js"></script>
 </body>
 </html>
