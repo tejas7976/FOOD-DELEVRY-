@@ -14,10 +14,108 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <style>
+        /* Admin Login Page */
+        .admin-login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .admin-login-box {
+            background: var(--bg-card, white);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .admin-login-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .admin-login-title {
+            font-size: 24px;
+            color: var(--text-primary, #333);
+            margin-bottom: 10px;
+        }
+
+        .admin-login-subtitle {
+            color: var(--text-secondary, #666);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .admin-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--border-color, #e0e0e0);
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            background: var(--bg-input, white);
+            color: var(--text-primary, #333);
+            box-sizing: border-box;
+        }
+
+        .admin-input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .admin-login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .admin-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .admin-login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .admin-error {
+            color: #ff4444;
+            font-size: 14px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .back-home-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--text-secondary, #666);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-home-link:hover {
+            color: #667eea;
+        }
+
+        /* Admin Panel Styles */
         .admin-container {
             max-width: 1200px;
             margin: 100px auto 50px;
             padding: 20px;
+            display: none;
         }
 
         .admin-header {
@@ -35,6 +133,21 @@
             color: var(--text-secondary);
         }
 
+        .admin-logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .admin-logout-btn:hover {
+            background: #cc0000;
+        }
+
         /* Success Banner */
         .success-banner {
             background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
@@ -47,14 +160,8 @@
             gap: 15px;
         }
 
-        .success-banner-icon {
-            font-size: 30px;
-        }
-
-        .success-banner-text {
-            font-size: 14px;
-            line-height: 1.5;
-        }
+        .success-banner-icon { font-size: 30px; }
+        .success-banner-text { font-size: 14px; line-height: 1.5; }
 
         /* Stats Cards */
         .stats-grid {
@@ -77,16 +184,8 @@
         .stat-card.cyan { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
         .stat-card.green { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
 
-        .stat-number {
-            font-size: 48px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            opacity: 0.9;
-        }
+        .stat-number { font-size: 48px; font-weight: bold; margin-bottom: 5px; }
+        .stat-label { font-size: 14px; opacity: 0.9; }
 
         /* Loading Spinner */
         .loading {
@@ -182,10 +281,7 @@
             color: var(--text-secondary);
         }
 
-        .no-data-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
+        .no-data-icon { font-size: 60px; margin-bottom: 15px; }
 
         /* Order Card */
         .order-card {
@@ -244,104 +340,144 @@
             .stat-number { font-size: 36px; }
             .users-table-container { overflow-x: auto; }
             .users-table th, .users-table td { padding: 10px; font-size: 12px; }
+            .admin-login-box { padding: 30px 20px; }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">🍔 FoodExpress</div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <button class="theme-toggle" onclick="toggleTheme()">
-                        <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
-                        <span class="theme-toggle-text" id="themeToggleText">Dark</span>
-                    </button>
-                </li>
-                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
-                <li class="nav-item"><a href="admin.html" class="nav-link active">Admin</a></li>
-            </ul>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+    <!-- Admin Login Page -->
+    <div id="adminLoginPage" class="admin-login-container">
+        <div class="admin-login-box">
+            <div class="admin-login-icon">🔐</div>
+            <h1 class="admin-login-title">Admin Login</h1>
+            <p class="admin-login-subtitle">Enter admin credentials to access the panel</p>
+            
+            <form onsubmit="event.preventDefault(); adminLogin();">
+                <input 
+                    type="text" 
+                    id="adminUsername" 
+                    class="admin-input" 
+                    placeholder="Admin Username"
+                    required
+                >
+                <input 
+                    type="password" 
+                    id="adminPassword" 
+                    class="admin-input" 
+                    placeholder="Admin Password"
+                    required
+                >
+                <button type="submit" class="admin-login-btn" id="adminLoginBtn">
+                    🔓 Login to Admin Panel
+                </button>
+            </form>
+            
+            <p id="adminError" class="admin-error"></p>
+            
+            <a href="index.html" class="back-home-link">← Back to Home</a>
         </div>
-    </nav>
+    </div>
 
-    <div class="admin-container">
-        <div class="admin-header">
-            <h1>🔐 Admin Panel</h1>
-            <p>Manage users and orders</p>
-        </div>
-
-        <!-- Success Banner -->
-        <div class="success-banner">
-            <div class="success-banner-icon">🔥</div>
-            <div class="success-banner-text">
-                <strong>Firebase Connected!</strong> Your app is now using a real cloud database. All data is synced across all devices and users in real-time.
-            </div>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loadingState" class="loading">
-            <div class="spinner"></div>
-            <p>Loading data from Firebase...</p>
-        </div>
-
-        <!-- Main Content (hidden until loaded) -->
-        <div id="mainContent" style="display: none;">
-            <!-- Stats Cards -->
-            <div class="stats-grid">
-                <div class="stat-card purple">
-                    <div class="stat-number" id="totalUsers">0</div>
-                    <div class="stat-label">Total Users</div>
-                </div>
-                <div class="stat-card pink">
-                    <div class="stat-number" id="onlineUsers">0</div>
-                    <div class="stat-label">Online Users</div>
-                </div>
-                <div class="stat-card cyan">
-                    <div class="stat-number" id="todaySignups">0</div>
-                    <div class="stat-label">Today's Signups</div>
-                </div>
-                <div class="stat-card green">
-                    <div class="stat-number" id="totalOrders">0</div>
-                    <div class="stat-label">Total Orders</div>
+    <!-- Admin Panel (Hidden until logged in) -->
+    <div id="adminPanel" style="display: none;">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">🍔 FoodExpress</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <button class="theme-toggle" onclick="toggleTheme()">
+                            <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
+                            <span class="theme-toggle-text" id="themeToggleText">Dark</span>
+                        </button>
+                    </li>
+                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="admin.html" class="nav-link active">Admin</a></li>
+                    <li class="nav-item">
+                        <button class="admin-logout-btn" onclick="adminLogout()">🚪 Logout</button>
+                    </li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
             </div>
+        </nav>
 
-            <!-- Users Section -->
-            <h2 class="section-title">📋 All Registered Users</h2>
-            <div class="users-table-container">
-                <table class="users-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>EMAIL</th>
-                            <th>NAME</th>
-                            <th>PHONE</th>
-                            <th>JOINED</th>
-                            <th>STATUS</th>
-                            <th>ACTIONS</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody"></tbody>
-                </table>
-                <div id="noUsers" class="no-data" style="display: none;">
-                    <div class="no-data-icon">👥</div>
-                    <p>No registered users yet</p>
+        <div class="admin-container" id="adminContainer">
+            <div class="admin-header">
+                <h1>🔐 Admin Panel</h1>
+                <p>Manage users and orders</p>
+            </div>
+
+            <!-- Success Banner -->
+            <div class="success-banner">
+                <div class="success-banner-icon">🔥</div>
+                <div class="success-banner-text">
+                    <strong>Firebase Connected!</strong> Your app is now using a real cloud database. All data is synced across all devices and users in real-time.
                 </div>
             </div>
 
-            <!-- Orders Section -->
-            <h2 class="section-title">📦 All Orders</h2>
-            <div id="ordersSection"></div>
-        </div>
+            <!-- Loading State -->
+            <div id="loadingState" class="loading">
+                <div class="spinner"></div>
+                <p>Loading data from Firebase...</p>
+            </div>
 
-        <div class="admin-footer">
-            <p>© 2026 FoodExpress Admin Panel • Powered by Firebase 🔥</p>
+            <!-- Main Content (hidden until loaded) -->
+            <div id="mainContent" style="display: none;">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card purple">
+                        <div class="stat-number" id="totalUsers">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card pink">
+                        <div class="stat-number" id="onlineUsers">0</div>
+                        <div class="stat-label">Online Users</div>
+                    </div>
+                    <div class="stat-card cyan">
+                        <div class="stat-number" id="todaySignups">0</div>
+                        <div class="stat-label">Today's Signups</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-number" id="totalOrders">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <h2 class="section-title">📋 All Registered Users</h2>
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>EMAIL</th>
+                                <th>NAME</th>
+                                <th>PHONE</th>
+                                <th>JOINED</th>
+                                <th>STATUS</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                    <div id="noUsers" class="no-data" style="display: none;">
+                        <div class="no-data-icon">👥</div>
+                        <p>No registered users yet</p>
+                    </div>
+                </div>
+
+                <!-- Orders Section -->
+                <h2 class="section-title">📦 All Orders</h2>
+                <div id="ordersSection"></div>
+            </div>
+
+            <div class="admin-footer">
+                <p>© 2026 FoodExpress Admin Panel • Powered by Firebase 🔥</p>
+            </div>
         </div>
     </div>
 
@@ -349,11 +485,96 @@
     <script src="dark-mode.js"></script>
     <script src="mobile-menu.js"></script>
     <script>
-        // Wait for Firebase to initialize
+        // ==================== ADMIN CREDENTIALS ====================
+        // Change these to your own secure credentials!
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'FoodExpress@2026';
+        
+        // ==================== ADMIN LOGIN SYSTEM ====================
+        
+        // Check if admin is already logged in
         document.addEventListener('DOMContentLoaded', function() {
-            // Wait a bit for Firebase to initialize
-            setTimeout(loadAdminData, 1000);
+            checkAdminSession();
         });
+
+        // Check admin session
+        function checkAdminSession() {
+            const adminSession = sessionStorage.getItem('adminLoggedIn');
+            const sessionTime = sessionStorage.getItem('adminSessionTime');
+            
+            // Session expires after 1 hour
+            const oneHour = 60 * 60 * 1000;
+            
+            if (adminSession === 'true' && sessionTime) {
+                const timePassed = Date.now() - parseInt(sessionTime);
+                if (timePassed < oneHour) {
+                    // Valid session
+                    showAdminPanel();
+                    return;
+                }
+            }
+            
+            // No valid session, show login
+            showLoginPage();
+        }
+
+        // Admin Login
+        function adminLogin() {
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const errorElement = document.getElementById('adminError');
+            const loginBtn = document.getElementById('adminLoginBtn');
+            
+            // Clear previous error
+            errorElement.style.display = 'none';
+            
+            // Disable button
+            loginBtn.disabled = true;
+            loginBtn.textContent = '🔄 Verifying...';
+            
+            // Simulate slight delay for security
+            setTimeout(() => {
+                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                    // Success - save session
+                    sessionStorage.setItem('adminLoggedIn', 'true');
+                    sessionStorage.setItem('adminSessionTime', Date.now().toString());
+                    
+                    showAdminPanel();
+                } else {
+                    // Failed
+                    errorElement.textContent = '❌ Invalid username or password';
+                    errorElement.style.display = 'block';
+                    
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = '🔓 Login to Admin Panel';
+                }
+            }, 500);
+        }
+
+        // Admin Logout
+        function adminLogout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('adminSessionTime');
+            showLoginPage();
+        }
+
+        // Show Login Page
+        function showLoginPage() {
+            document.getElementById('adminLoginPage').style.display = 'flex';
+            document.getElementById('adminPanel').style.display = 'none';
+        }
+
+        // Show Admin Panel
+        function showAdminPanel() {
+            document.getElementById('adminLoginPage').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminContainer').style.display = 'block';
+            
+            // Load admin data
+            loadAdminData();
+        }
+
+        // ==================== ADMIN DATA FUNCTIONS ====================
 
         // Load all admin data
         async function loadAdminData() {
@@ -379,147 +600,164 @@
 
         // Load statistics
         async function loadStats() {
-            const result = await getAdminStats();
-            
-            if (result.success) {
-                document.getElementById('totalUsers').textContent = result.stats.totalUsers;
-                document.getElementById('onlineUsers').textContent = result.stats.onlineUsers;
-                document.getElementById('todaySignups').textContent = result.stats.todaySignups;
-                document.getElementById('totalOrders').textContent = result.stats.totalOrders;
+            try {
+                const result = await getAdminStats();
+                
+                if (result.success) {
+                    document.getElementById('totalUsers').textContent = result.stats.totalUsers;
+                    document.getElementById('onlineUsers').textContent = result.stats.onlineUsers;
+                    document.getElementById('todaySignups').textContent = result.stats.todaySignups;
+                    document.getElementById('totalOrders').textContent = result.stats.totalOrders;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
             }
         }
 
         // Load users
         async function loadUsers() {
-            const result = await getAllUsers();
-            const tableBody = document.getElementById('usersTableBody');
-            const noUsers = document.getElementById('noUsers');
-            
-            if (!result.success || result.users.length === 0) {
-                tableBody.innerHTML = '';
-                noUsers.style.display = 'block';
-                return;
+            try {
+                const result = await getAllUsers();
+                const tableBody = document.getElementById('usersTableBody');
+                const noUsers = document.getElementById('noUsers');
+                
+                if (!result.success || result.users.length === 0) {
+                    tableBody.innerHTML = '';
+                    noUsers.style.display = 'block';
+                    return;
+                }
+                
+                noUsers.style.display = 'none';
+                
+                tableBody.innerHTML = result.users.map((user, index) => {
+                    const createdDate = user.createdAt 
+                        ? user.createdAt.toDate().toLocaleString('en-IN')
+                        : 'N/A';
+                    
+                    const statusBadge = user.isOnline 
+                        ? '<span class="status-badge online">🟢 Online</span>'
+                        : '<span class="status-badge offline">⚪ Offline</span>';
+                    
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${user.email}</td>
+                            <td>${user.name || 'N/A'}</td>
+                            <td>${user.phone || 'N/A'}</td>
+                            <td>${createdDate}</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button class="delete-btn" onclick="handleDeleteUser('${user.uid}')">
+                                    🗑️ Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading users:', error);
             }
-            
-            noUsers.style.display = 'none';
-            
-            tableBody.innerHTML = result.users.map((user, index) => {
-                const createdDate = user.createdAt 
-                    ? user.createdAt.toDate().toLocaleString('en-IN')
-                    : 'N/A';
-                
-                const statusBadge = user.isOnline 
-                    ? '<span class="status-badge online">🟢 Online</span>'
-                    : '<span class="status-badge offline">⚪ Offline</span>';
-                
-                return `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${user.email}</td>
-                        <td>${user.name || 'N/A'}</td>
-                        <td>${user.phone || 'N/A'}</td>
-                        <td>${createdDate}</td>
-                        <td>${statusBadge}</td>
-                        <td>
-                            <button class="delete-btn" onclick="handleDeleteUser('${user.uid}')">
-                                🗑️ Delete
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
         }
 
         // Delete user handler
         async function handleDeleteUser(uid) {
-            if (!confirm('Are you sure you want to delete this user?')) return;
+            if (!confirm('Are you sure you want to delete this user?\n\nThis will delete all their data including orders.')) return;
             
-            const result = await deleteUser(uid);
-            
-            if (result.success) {
-                alert('✅ User deleted successfully!');
-                loadAdminData(); // Reload data
-            } else {
-                alert('❌ Error: ' + result.error);
+            try {
+                const result = await deleteUser(uid);
+                
+                if (result.success) {
+                    alert('✅ User deleted successfully!');
+                    loadAdminData(); // Reload data
+                } else {
+                    alert('❌ Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
             }
         }
 
         // Load orders
         async function loadOrders() {
-            const result = await getAllOrders();
-            const ordersSection = document.getElementById('ordersSection');
-            
-            if (!result.success || result.orders.length === 0) {
-                ordersSection.innerHTML = `
-                    <div class="no-data">
-                        <div class="no-data-icon">📭</div>
-                        <p>No orders yet</p>
-                    </div>
-                `;
-                return;
+            try {
+                const result = await getAllOrders();
+                const ordersSection = document.getElementById('ordersSection');
+                
+                if (!result.success || result.orders.length === 0) {
+                    ordersSection.innerHTML = `
+                        <div class="no-data">
+                            <div class="no-data-icon">📭</div>
+                            <p>No orders yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                ordersSection.innerHTML = result.orders.map(order => {
+                    const date = order.createdAt 
+                        ? order.createdAt.toDate().toLocaleString('en-IN')
+                        : 'N/A';
+                    
+                    const itemsList = order.items 
+                        ? order.items.map(item => `${item.quantity}x ${item.name}`).join(', ')
+                        : 'N/A';
+                    
+                    return `
+                        <div class="order-card">
+                            <div class="order-card-header">
+                                <div>
+                                    <span class="order-id">Order #${order.id}</span>
+                                    <span class="order-date"> • ${date}</span>
+                                </div>
+                                <select class="order-status-select" onchange="handleStatusUpdate('${order.id}', this.value)">
+                                    <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                                    <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>✅ Confirmed</option>
+                                    <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>👨‍🍳 Preparing</option>
+                                    <option value="out_for_delivery" ${order.status === 'out_for_delivery' ? 'selected' : ''}>🚴 Out for Delivery</option>
+                                    <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>🎉 Delivered</option>
+                                    <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>❌ Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="order-details">
+                                <div class="order-detail-item">
+                                    <span class="order-detail-label">Customer</span>
+                                    <span class="order-detail-value">${order.customerName || 'N/A'}</span>
+                                </div>
+                                <div class="order-detail-item">
+                                    <span class="order-detail-label">Email</span>
+                                    <span class="order-detail-value">${order.userEmail || 'N/A'}</span>
+                                </div>
+                                <div class="order-detail-item">
+                                    <span class="order-detail-label">Total</span>
+                                    <span class="order-detail-value">₹${order.total || 0}</span>
+                                </div>
+                                <div class="order-detail-item">
+                                    <span class="order-detail-label">Items</span>
+                                    <span class="order-detail-value">${itemsList}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading orders:', error);
             }
-            
-            ordersSection.innerHTML = result.orders.map(order => {
-                const date = order.createdAt 
-                    ? order.createdAt.toDate().toLocaleString('en-IN')
-                    : 'N/A';
-                
-                const itemsList = order.items 
-                    ? order.items.map(item => `${item.quantity}x ${item.name}`).join(', ')
-                    : 'N/A';
-                
-                return `
-                    <div class="order-card">
-                        <div class="order-card-header">
-                            <div>
-                                <span class="order-id">Order #${order.id}</span>
-                                <span class="order-date"> • ${date}</span>
-                            </div>
-                            <select class="order-status-select" onchange="handleStatusUpdate('${order.id}', this.value)">
-                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
-                                <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>✅ Confirmed</option>
-                                <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>👨‍🍳 Preparing</option>
-                                <option value="out_for_delivery" ${order.status === 'out_for_delivery' ? 'selected' : ''}>🚴 Out for Delivery</option>
-                                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>🎉 Delivered</option>
-                                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>❌ Cancelled</option>
-                            </select>
-                        </div>
-                        <div class="order-details">
-                            <div class="order-detail-item">
-                                <span class="order-detail-label">Customer</span>
-                                <span class="order-detail-value">${order.customerName || 'N/A'}</span>
-                            </div>
-                            <div class="order-detail-item">
-                                <span class="order-detail-label">Email</span>
-                                <span class="order-detail-value">${order.userEmail || 'N/A'}</span>
-                            </div>
-                            <div class="order-detail-item">
-                                <span class="order-detail-label">Total</span>
-                                <span class="order-detail-value">₹${order.total || 0}</span>
-                            </div>
-                            <div class="order-detail-item">
-                                <span class="order-detail-label">Items</span>
-                                <span class="order-detail-value">${itemsList}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
 
         // Update order status handler
         async function handleStatusUpdate(orderId, status) {
-            const result = await updateOrderStatus(orderId, status);
-            
-            if (result.success) {
-                alert('✅ Order status updated!');
-            } else {
-                alert('❌ Error: ' + result.error);
+            try {
+                const result = await updateOrderStatus(orderId, status);
+                
+                if (result.success) {
+                    alert('✅ Order status updated to: ' + status.replace('_', ' ').toUpperCase());
+                } else {
+                    alert('❌ Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
             }
         }
     </script>
-    <!-- Firebase Config & Functions -->
-<script src="firebase-config.js"></script>
-<script src="firebase-auth.js"></script>
 </body>
 </html>
