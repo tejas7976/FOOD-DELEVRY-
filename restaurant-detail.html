@@ -590,32 +590,49 @@
     </div>
 
     <!-- Checkout Modal -->
-    <div id="checkoutModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>🛒 Checkout</h2>
-                <button class="modal-close" onclick="closeCheckout()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <h3 style="margin-bottom: 15px; color: var(--text-primary);">📝 Delivery Details</h3>
-                <input type="text" id="customerName" placeholder="Your Name" required>
-                <input type="tel" id="customerPhone" placeholder="Phone Number" required>
-                <textarea id="customerAddress" placeholder="Delivery Address" rows="3" required></textarea>
-                
-                <h3 style="margin: 20px 0 15px; color: var(--text-primary);">📋 Order Summary</h3>
-                <div id="orderSummary"></div>
-                
-                <h3 style="margin: 20px 0 15px; color: var(--text-primary);">💳 Payment</h3>
-                <button class="pay-btn" onclick="processPayment()">
-                    💳 Pay Now (Cards, UPI, Wallets)
+<div id="checkoutModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🛒 Checkout</h2>
+            <button class="modal-close" onclick="closeCheckout()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <h3 style="margin-bottom: 15px; color: var(--text-primary);">📝 Delivery Details</h3>
+            <input type="text" id="customerName" placeholder="Your Name" required>
+            <input type="tel" id="customerPhone" placeholder="Phone Number" required>
+            <textarea id="customerAddress" placeholder="Delivery Address" rows="3" required></textarea>
+            
+            <h3 style="margin: 20px 0 15px; color: var(--text-primary);">📋 Order Summary</h3>
+            <div id="orderSummary"></div>
+            
+            <h3 style="margin: 20px 0 15px; color: var(--text-primary);">💳 Payment Method</h3>
+            
+            <!-- Payment Options -->
+            <div class="payment-options">
+                <!-- Pay Online Button -->
+                <button class="pay-btn online-pay" onclick="processOnlinePayment()">
+                    💳 Pay Online (Cards, UPI, Wallets)
                 </button>
                 
-                <div style="margin-top: 15px; text-align: center; font-size: 12px; color: var(--text-secondary);">
-                    🔒 100% Secure Payment powered by Razorpay
+                <!-- Divider -->
+                <div style="display: flex; align-items: center; margin: 15px 0;">
+                    <div style="flex: 1; height: 1px; background: var(--border-color, #ddd);"></div>
+                    <span style="padding: 0 15px; color: var(--text-secondary); font-size: 14px;">OR</span>
+                    <div style="flex: 1; height: 1px; background: var(--border-color, #ddd);"></div>
                 </div>
+                
+                <!-- Cash on Delivery Button -->
+                <button class="pay-btn cod-pay" onclick="processCODPayment()">
+                    💵 Cash on Delivery (COD)
+                </button>
+            </div>
+            
+            <div style="margin-top: 15px; text-align: center; font-size: 12px; color: var(--text-secondary);">
+                🔒 100% Secure | Your data is safe with us
             </div>
         </div>
     </div>
+</div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
