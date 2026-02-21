@@ -3,23 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Menu - FoodExpress</title>
+    <title>Pizza Paradise - FoodExpress</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="detail-style.css">
+    <link rel="stylesheet" href="notification-styles.css">
     <link rel="stylesheet" href="dark-mode.css">
     <link rel="stylesheet" href="mobile-responsive.css">
+    
     <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
     <style>
-        /* Reviews Section Styles */
-        .reviews-section {
-            background: white;
+        /* Restaurant Header */
+        .restaurant-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-top: 70px;
+        }
+
+        .restaurant-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .restaurant-header-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 4px solid white;
+        }
+
+        .restaurant-info h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .restaurant-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .restaurant-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Main Content */
+        .restaurant-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: flex;
+            gap: 30px;
+        }
+
+        /* Menu Section */
+        .menu-section {
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 20px;
+            color: var(--text-primary);
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ff6347;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-item {
+            background: var(--bg-card);
             border-radius: 12px;
-            padding: 30px;
-            margin-top: 30px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .menu-item-info {
+            flex: 1;
+        }
+
+        .menu-item-info h3 {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .item-description {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .item-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff6347;
+        }
+
+        .menu-item-image {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-item-image img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .add-btn {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .add-btn:hover {
+            background-color: #ff4520;
+            transform: scale(1.05);
+        }
+
+        /* Cart Section */
+        .cart-summary {
+            width: 350px;
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 12px var(--shadow-color);
+            position: sticky;
+            top: 90px;
+            height: fit-content;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .cart-summary h3 {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        #cartItems {
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-info h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+
+        .cart-item-info p {
+            font-size: 13px;
+            color: #ff6347;
+            font-weight: bold;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: #ff6347;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-btn:hover {
+            background: #ff4520;
+        }
+
+        .cart-item-qty {
+            font-weight: bold;
+            color: var(--text-primary);
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-secondary);
+        }
+
+        .cart-empty-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        /* Cart Total */
+        .cart-total {
+            border-top: 2px solid var(--border-color);
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .cart-total-row.grand-total {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff6347 0%, #ff4520 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 99, 71, 0.4);
+        }
+
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Loading Spinner */
+        .menu-loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid #ff6347;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .menu-loading p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* No Items */
+        .no-items {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .no-items-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
         }
 
         .reviews-header {
@@ -31,39 +359,30 @@
             gap: 15px;
         }
 
-        .reviews-header h2 {
-            font-size: 24px;
-            color: #333;
-            margin: 0;
-        }
-
         .overall-rating {
             display: flex;
             align-items: center;
             gap: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 15px 25px;
-            border-radius: 12px;
-            color: white;
         }
 
-        .rating-number {
-            font-size: 36px;
+        .rating-big {
+            font-size: 48px;
             font-weight: bold;
-        }
-
-        .rating-details {
-            font-size: 14px;
+            color: var(--text-primary);
         }
 
         .rating-stars {
             color: #ffc107;
-            font-size: 18px;
-            letter-spacing: 2px;
+            font-size: 24px;
+        }
+
+        .rating-count {
+            color: var(--text-secondary);
+            font-size: 14px;
         }
 
         .write-review-btn {
-            background-color: #ff6347;
+            background: #ff6347;
             color: white;
             border: none;
             padding: 12px 25px;
@@ -71,21 +390,18 @@
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
         }
 
         .write-review-btn:hover {
-            background-color: #ff4520;
-            transform: translateY(-2px);
+            background: #ff4520;
         }
 
         .review-card {
-            border-bottom: 1px solid #f0f0f0;
-            padding: 20px 0;
-        }
-
-        .review-card:last-child {
-            border-bottom: none;
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .review-header {
@@ -93,8 +409,6 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 10px;
         }
 
         .reviewer-info {
@@ -106,8 +420,8 @@
         .reviewer-avatar {
             width: 45px;
             height: 45px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -118,204 +432,268 @@
 
         .reviewer-name {
             font-weight: bold;
-            color: #333;
-            font-size: 16px;
+            color: var(--text-primary);
         }
 
         .review-date {
+            color: var(--text-secondary);
             font-size: 12px;
-            color: #888;
         }
 
         .review-rating {
-            background-color: #48c479;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .review-rating.low {
-            background-color: #ff6347;
-        }
-
-        .review-rating.medium {
-            background-color: #ffc107;
-            color: #333;
+            color: #ffc107;
         }
 
         .review-text {
-            color: #555;
-            font-size: 14px;
+            color: var(--text-secondary);
             line-height: 1.6;
-            margin-bottom: 10px;
         }
 
-        .helpful-btn {
-            background: none;
-            border: 1px solid #ddd;
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .helpful-btn:hover {
-            border-color: #ff6347;
-            color: #ff6347;
-        }
-
-        .no-reviews {
-            text-align: center;
-            padding: 40px;
-            color: #888;
-        }
-
-        .no-reviews-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
-
-        .review-modal {
+        /* Modal Styles */
+        .modal {
             display: none;
             position: fixed;
-            z-index: 99999;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 100000;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
-        .review-modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 90%;
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card, white);
+            border-radius: 20px;
+            width: 100%;
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
-        .review-modal-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid #f0f0f0;
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .review-modal-header h2 {
+        .modal-header h2 {
             margin: 0;
-            font-size: 22px;
-            color: #333;
+            color: var(--text-primary);
+            font-size: 20px;
         }
 
-        .review-modal-close {
+        .close {
             font-size: 28px;
-            color: #999;
             cursor: pointer;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
         }
 
-        .review-modal-close:hover {
-            color: #333;
+        .modal-body {
+            padding: 20px;
         }
 
-        .review-modal-body {
-            padding: 25px;
-        }
-
-        .star-rating-input {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-
-        .star-rating-input span {
-            font-size: 40px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            color: #ddd;
-        }
-
-        .star-rating-input span:hover {
-            transform: scale(1.2);
-        }
-
-        .star-rating-input span.active {
-            color: #ffc107;
-        }
-
-        .rating-label {
-            text-align: center;
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .review-textarea {
+        .modal-body input,
+        .modal-body textarea {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            resize: vertical;
-            min-height: 120px;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            margin-bottom: 15px;
+            background: var(--bg-input);
+            color: var(--text-primary);
             box-sizing: border-box;
-            transition: border-color 0.3s;
         }
 
-        .review-textarea:focus {
-            outline: none;
+        .modal-body input:focus,
+        .modal-body textarea:focus {
             border-color: #ff6347;
+            outline: none;
         }
 
-        .submit-review-btn {
-            width: 100%;
-            padding: 15px;
-            background-color: #ff6347;
+        /* Payment Options */
+        .payment-options {
+            margin-top: 15px;
+        }
+
+        .pay-online-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            padding: 18px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 15px;
-            transition: background-color 0.3s;
-        }
-
-        .submit-review-btn:hover {
-            background-color: #ff4520;
-        }
-
-        .submit-review-btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        .load-more-btn {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             width: 100%;
-            padding: 12px;
-            background: none;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #666;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .load-more-btn:hover {
-            border-color: #ff6347;
+        .pay-online-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Order Summary in Checkout */
+        #orderSummary {
+            margin: 15px 0;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+        }
+
+        #orderSummary .cart-item {
+            padding: 8px 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-card);
+            padding: 40px 20px 20px;
+            margin-top: 50px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .footer-column h3, .footer-column h4 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .footer-column p, .footer-links li, .footer-contact li {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .footer-links, .footer-contact {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
             color: #ff6347;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .restaurant-content {
+                flex-direction: column;
+            }
+
+            .cart-summary {
+                width: 100%;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                border-radius: 20px 20px 0 0;
+                max-height: 60vh;
+                transform: translateY(calc(100% - 70px));
+                transition: transform 0.3s ease;
+                z-index: 9999;
+            }
+
+            .cart-summary.expanded {
+                transform: translateY(0);
+            }
+
+            .cart-summary h3 {
+                cursor: pointer;
+            }
+
+            .menu-section {
+                padding-bottom: 100px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .restaurant-header {
+                padding: 20px 15px;
+                margin-top: 60px;
+            }
+
+            .restaurant-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .restaurant-header-image {
+                width: 120px;
+                height: 120px;
+            }
+
+            .restaurant-info h1 {
+                font-size: 24px;
+            }
+
+            .restaurant-meta {
+                justify-content: center;
+            }
+
+            .menu-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .menu-item-image {
+                flex-direction: column;
+            }
+
+            .menu-item-image img {
+                width: 100%;
+                max-width: 200px;
+                height: 150px;
+            }
+
+            .reviews-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -324,16 +702,15 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                🍔 FoodExpress
+                <a href="index.html" style="text-decoration: none; color: inherit;">🍔 FoodExpress</a>
             </div>
             <ul class="nav-menu">
-                <!-- Theme Toggle -->
-<li class="nav-item">
-    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
-        <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
-        <span class="theme-toggle-text" id="themeToggleText">Dark</span>
-    </button>
-</li>
+                <li class="nav-item">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                        <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
+                        <span class="theme-toggle-text" id="themeToggleText">Dark</span>
+                    </button>
+                </li>
                 <li class="nav-item">
                     <a href="index.html" class="nav-link">Home</a>
                 </li>
@@ -341,281 +718,208 @@
                     <a href="orders.html" class="nav-link">My Orders</a>
                 </li>
                 <li class="nav-item">
-                    <a href="address.html" class="nav-link">My Addresses</a>
+                    <div class="notification-wrapper">
+                        <button class="notification-bell" onclick="toggleNotificationDropdown()">
+                            🔔
+                            <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                        </button>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <h3>🔔 Notifications</h3>
+                                <div class="notification-header-actions">
+                                    <button class="notification-header-btn" onclick="markAllNotificationsRead()">Mark all read</button>
+                                    <button class="notification-header-btn" onclick="clearAllNotifications()">Clear</button>
+                                </div>
+                            </div>
+                            <div class="notification-list" id="notificationList"></div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <button class="login-btn" onclick="showLoginModal()">Login</button>
                 </li>
                 <li class="nav-item">
                     <a href="profile.html" class="nav-link">My Profile</a>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link cart">
-                        🛒 Cart <span class="cart-count">0</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <button class="login-btn">Login</button>
-                </li>
             </ul>
-            <!-- Hamburger Menu (ADD THIS IF MISSING) -->
-        <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </nav>
 
     <!-- Restaurant Header -->
     <div class="restaurant-header">
         <div class="restaurant-header-content">
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300" alt="Pizza Paradise" class="restaurant-header-image">
             <div class="restaurant-info">
-                <h1 id="restaurantName">Pizza Paradise</h1>
-                <p class="restaurant-cuisine">Italian, Fast Food, Pizzas</p>
+                <h1 id="restaurantTitle">🍕 Pizza Paradise</h1>
+                <p>Italian • Pizza • Fast Food</p>
                 <div class="restaurant-meta">
-                    <span class="meta-item">⭐ 4.5</span>
-                    <span class="meta-item">• 30-40 mins</span>
-                    <span class="meta-item">• ₹200 for two</span>
+                    <span>⭐ 4.5 (200+ reviews)</span>
+                    <span>🕐 30-40 mins</span>
+                    <span>💰 ₹200 for two</span>
+                    <span>📍 2.5 km away</span>
                 </div>
-                <p class="restaurant-address">📍 Vijay Nagar, Indore</p>
-            </div>
-            <div class="restaurant-header-image">
-                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600" alt="Pizza">
             </div>
         </div>
     </div>
 
-    <!-- Menu Section -->
-    <div class="container">
-        <div class="menu-layout">
-            <!-- Left Side: Menu Items -->
-            <div class="menu-section">
-                <h2 class="section-title">🍕 Recommended</h2>
-                
-                <div class="menu-item">
-                    <div class="menu-item-info">
-                        <h3>Margherita Pizza</h3>
-                        <p class="item-price">₹299</p>
-                        <p class="item-description">Classic delight with 100% real mozzarella cheese</p>
-                    </div>
-                    <div class="menu-item-image">
-                        <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=200" alt="Margherita">
-                        <button class="add-btn" onclick="addToCart('Margherita Pizza', 299)">ADD</button>
-                    </div>
-                </div>
-
-                <div class="menu-item">
-                    <div class="menu-item-info">
-                        <h3>Pepperoni Pizza</h3>
-                        <p class="item-price">₹399</p>
-                        <p class="item-description">Loaded with spicy pepperoni and cheese</p>
-                    </div>
-                    <div class="menu-item-image">
-                        <img src="https://images.unsplash.com/photo-1628840042765-356cda07504e?w=200" alt="Pepperoni">
-                        <button class="add-btn" onclick="addToCart('Pepperoni Pizza', 399)">ADD</button>
-                    </div>
-                </div>
-
-                <div class="menu-item">
-                    <div class="menu-item-info">
-                        <h3>Veggie Supreme</h3>
-                        <p class="item-price">₹349</p>
-                        <p class="item-description">Loaded with fresh vegetables and olives</p>
-                    </div>
-                    <div class="menu-item-image">
-                        <img src="https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=200" alt="Veggie">
-                        <button class="add-btn" onclick="addToCart('Veggie Supreme', 349)">ADD</button>
-                    </div>
-                </div>
-
-                <h2 class="section-title">🥤 Beverages</h2>
-
-                <div class="menu-item">
-                    <div class="menu-item-info">
-                        <h3>Coca Cola</h3>
-                        <p class="item-price">₹50</p>
-                        <p class="item-description">Chilled soft drink</p>
-                    </div>
-                    <div class="menu-item-image">
-                        <img src="https://images.unsplash.com/photo-1554866585-cd94860890b7?w=200" alt="Coke">
-                        <button class="add-btn" onclick="addToCart('Coca Cola', 50)">ADD</button>
-                    </div>
-                </div>
-
-                <div class="menu-item">
-                    <div class="menu-item-info">
-                        <h3>Fresh Lemonade</h3>
-                        <p class="item-price">₹60</p>
-                        <p class="item-description">Freshly squeezed lemon with mint</p>
-                    </div>
-                    <div class="menu-item-image">
-                        <img src="https://images.unsplash.com/photo-1523677011781-c91d1bbe2f0f?w=200" alt="Lemonade">
-                        <button class="add-btn" onclick="addToCart('Fresh Lemonade', 60)">ADD</button>
-                    </div>
-                </div>
-
-                <h2 class="section-title">🍰 Desserts</h2>
-
-                <div class="menu-item">
-                    <div class="menu-item-info">
-                        <h3>Chocolate Lava Cake</h3>
-                        <p class="item-price">₹149</p>
-                        <p class="item-description">Warm chocolate cake with molten center</p>
-                    </div>
-                    <div class="menu-item-image">
-                        <img src="https://images.unsplash.com/photo-1624353365286-3f8d62daad51?w=200" alt="Lava Cake">
-                        <button class="add-btn" onclick="addToCart('Chocolate Lava Cake', 149)">ADD</button>
-                    </div>
-                </div>
+    <!-- Main Content -->
+    <div class="restaurant-content">
+        <!-- Menu Section -->
+        <div class="menu-section">
+            <h2 class="section-title">🍽️ Menu</h2>
+            
+            <!-- Loading State -->
+            <div id="menuLoading" class="menu-loading">
+                <div class="spinner"></div>
+                <p>Loading delicious menu...</p>
             </div>
-
-            <!-- Right Side: Cart Summary (Sticky) -->
-            <div class="cart-summary">
-                <h3>🛒 Your Cart</h3>
-                <button class="clear-cart-btn" onclick="clearCart()">Clear Cart</button>
-                <div id="cartItems">
-                    <p class="empty-cart">Your cart is empty</p>
-                </div>
-                <div id="cartTotal" class="cart-total" style="display: none;">
-                    <div class="total-row">
-                        <span>Subtotal</span>
-                        <span id="subtotal">₹0</span>
-                    </div>
-                    <div class="total-row">
-                        <span>Delivery Fee</span>
-                        <span>₹40</span>
-                    </div>
-                    <div class="total-row grand-total">
-                        <span>Total</span>
-                        <span id="grandTotal">₹40</span>
-                    </div>
-                    <button class="checkout-btn">Proceed to Checkout</button>
-                </div>
+            
+            <!-- Menu Items Container -->
+            <div id="menuItemsContainer" style="display: none;">
+                <!-- Menu items will be loaded here from Firebase -->
+            </div>
+            
+            <!-- No Items Message -->
+            <div id="noMenuItems" class="no-items" style="display: none;">
+                <div class="no-items-icon">😔</div>
+                <h3>No menu items available</h3>
+                <p>Please check back later</p>
             </div>
         </div>
 
-        <!-- Reviews Section -->
-        <div class="reviews-section">
-            <div class="reviews-header">
-                <h2>⭐ Ratings & Reviews</h2>
-                <div class="overall-rating">
-                    <span class="rating-number" id="overallRating">0.0</span>
-                    <div class="rating-details">
-                        <div class="rating-stars" id="overallStars">☆☆☆☆☆</div>
-                        <div id="totalReviews">0 reviews</div>
-                    </div>
+        <!-- Cart Summary -->
+        <div class="cart-summary" id="cartSummary">
+            <h3 onclick="toggleMobileCart()">🛒 Your Cart</h3>
+            
+            <div id="cartItems">
+                <div class="cart-empty">
+                    <div class="cart-empty-icon">🛒</div>
+                    <p>Your cart is empty</p>
+                    <p style="font-size: 13px;">Add items to get started</p>
                 </div>
-                <button class="write-review-btn" onclick="openReviewModal()">✍️ Write a Review</button>
             </div>
-
-            <div id="reviewsList">
-                <!-- Reviews will be loaded here -->
+            
+            <div class="cart-total" id="cartTotal" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span id="subtotal">₹0</span>
+                </div>
+                <div class="cart-total-row">
+                    <span>Delivery Fee</span>
+                    <span>₹40</span>
+                </div>
+                <div class="cart-total-row grand-total">
+                    <span>Total</span>
+                    <span id="grandTotal">₹40</span>
+                </div>
             </div>
-
-            <button id="loadMoreBtn" class="load-more-btn" style="display: none;" onclick="loadMoreReviews()">
-                Load More Reviews
+            
+            <button class="checkout-btn" id="checkoutBtn" onclick="openCheckout()" disabled>
+                Proceed to Checkout
             </button>
         </div>
     </div>
 
-    <!-- Checkout Modal with Payment Options -->
-<div id="checkoutModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>🛒 Checkout</h2>
-            <span class="close" onclick="closeCheckout()">&times;</span>
-        </div>
-        
-        <div class="modal-body">
-            <!-- Saved Addresses Section -->
-            <div id="savedAddressesSection" style="margin-bottom: 20px;">
-                <h3 style="margin-bottom: 15px;">📍 Select Delivery Address</h3>
-                <div id="savedAddressesList" style="max-height: 150px; overflow-y: auto; margin-bottom: 15px;">
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+        <div class="reviews-header">
+            <div>
+                <h2 class="section-title">⭐ Reviews</h2>
+                <div class="overall-rating">
+                    <span class="rating-big">4.5</span>
+                    <div>
+                        <div class="rating-stars">★★★★★</div>
+                        <div class="rating-count">Based on 200+ reviews</div>
+                    </div>
                 </div>
-                <button type="button" onclick="toggleNewAddressForm()" style="background: none; border: none; color: #ff6347; cursor: pointer; font-size: 14px; padding: 0;">
-                    ➕ Add New Address
-                </button>
             </div>
+            <button class="write-review-btn" onclick="openReviewModal()">✍️ Write a Review</button>
+        </div>
 
-            <!-- New Address Form -->
-            <div id="newAddressForm">
-                <h3>📝 Delivery Details</h3>
-                <form id="checkoutForm" onsubmit="event.preventDefault();">
-                    <input type="text" id="customerName" placeholder="Your Name" required>
-                    <input type="tel" id="customerPhone" placeholder="Phone Number" required>
-                    <textarea id="customerAddress" placeholder="Delivery Address" rows="3" required></textarea>
-                </form>
+        <div id="reviewsContainer">
+            <!-- Reviews will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🛒 Checkout</h2>
+                <button class="close" onclick="closeCheckout()">&times;</button>
             </div>
             
-            <!-- Order Summary -->
-            <h3 style="margin-top: 20px;">📋 Order Summary</h3>
-            <div id="orderSummary"></div>
-            
-            <!-- Payment Options -->
-            <h3 style="margin-top: 20px;">💳 Payment Method</h3>
-            <div class="payment-options" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <div class="modal-body">
+                <!-- Saved Addresses Section -->
+                <div id="savedAddressesSection" style="margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; color: var(--text-primary);">📍 Select Delivery Address</h3>
+                    <div id="savedAddressesList" style="max-height: 150px; overflow-y: auto; margin-bottom: 15px;"></div>
+                    <button type="button" onclick="toggleNewAddressForm()" style="background: none; border: none; color: #ff6347; cursor: pointer; font-size: 14px; padding: 0;">
+                        ➕ Add New Address
+                    </button>
+                </div>
+
+                <!-- New Address Form -->
+                <div id="newAddressForm">
+                    <h3 style="margin-bottom: 15px; color: var(--text-primary);">📝 Delivery Details</h3>
+                    <form id="checkoutForm" onsubmit="event.preventDefault();">
+                        <input type="text" id="customerName" placeholder="Your Name" required>
+                        <input type="tel" id="customerPhone" placeholder="Phone Number" required>
+                        <textarea id="customerAddress" placeholder="Delivery Address" rows="3" required></textarea>
+                    </form>
+                </div>
                 
-                <!-- Pay Online Button -->
-                <button class="pay-online-btn" onclick="processPayment()" style="
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                    border: none;
-                    padding: 18px;
-                    border-radius: 10px;
-                    font-size: 16px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 10px;
-                    transition: transform 0.3s, box-shadow 0.3s;
-                ">
-                    💳 Pay Online (Cards, UPI, Wallets)
-                </button>
+                <!-- Order Summary -->
+                <h3 style="margin-top: 20px; color: var(--text-primary);">📋 Order Summary</h3>
+                <div id="orderSummary"></div>
                 
+                <!-- Payment Options -->
+                <h3 style="margin-top: 20px; color: var(--text-primary);">💳 Payment</h3>
+                <div class="payment-options">
+                    <button class="pay-online-btn" onclick="processPayment()">
+                        💳 Pay Now (Cards, UPI, Wallets, Net Banking)
+                    </button>
+                </div>
                 
-            </div>
-            
-            <!-- Payment Info -->
-            <div style="margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
-                <p style="font-size: 12px; color: #666; margin: 0; display: flex; align-items: center; gap: 8px;">
-                    🔒 Secure payment powered by Razorpay
-                </p>
+                <!-- Payment Info -->
+                <div style="margin-top: 15px; padding: 15px; background: var(--bg-secondary); border-radius: 8px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <span style="font-size: 20px;">🔒</span>
+                        <span style="font-size: 14px; color: var(--text-primary); font-weight: 500;">100% Secure Payment</span>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin: 0;">
+                        Powered by Razorpay. We accept all major cards, UPI, wallets & net banking.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>  
 
     <!-- Review Modal -->
-    <div id="reviewModal" class="review-modal">
-        <div class="review-modal-content">
-            <div class="review-modal-header">
-                <h2>Write a Review</h2>
-                <span class="review-modal-close" onclick="closeReviewModal()">&times;</span>
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✍️ Write a Review</h2>
+                <button class="close" onclick="closeReviewModal()">&times;</button>
             </div>
-            <div class="review-modal-body">
-                <p style="text-align: center; color: #666; margin-bottom: 15px;">How was your experience?</p>
-                
-                <div class="star-rating-input" id="starRatingInput">
-                    <span data-rating="1" onclick="setRating(1)">★</span>
-                    <span data-rating="2" onclick="setRating(2)">★</span>
-                    <span data-rating="3" onclick="setRating(3)">★</span>
-                    <span data-rating="4" onclick="setRating(4)">★</span>
-                    <span data-rating="5" onclick="setRating(5)">★</span>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <p style="margin-bottom: 10px; color: var(--text-primary);">Rate your experience</p>
+                    <div id="starRating" style="font-size: 40px; cursor: pointer;">
+                        <span onclick="setRating(1)">☆</span>
+                        <span onclick="setRating(2)">☆</span>
+                        <span onclick="setRating(3)">☆</span>
+                        <span onclick="setRating(4)">☆</span>
+                        <span onclick="setRating(5)">☆</span>
+                    </div>
                 </div>
-                <div class="rating-label" id="ratingLabel">Tap to rate</div>
-
-                <textarea 
-                    class="review-textarea" 
-                    id="reviewText" 
-                    placeholder="Share your experience about the food, delivery, packaging..."
-                    maxlength="500"
-                ></textarea>
-                <p style="text-align: right; font-size: 12px; color: #888; margin-top: 5px;">
-                    <span id="charCount">0</span>/500 characters
-                </p>
-
-                <button class="submit-review-btn" id="submitReviewBtn" onclick="submitReview()" disabled>
+                <textarea id="reviewText" placeholder="Share your experience..." rows="4" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 15px; resize: vertical;"></textarea>
+                <button onclick="submitReview()" style="width: 100%; padding: 15px; background: #ff6347; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px;">
                     Submit Review
                 </button>
             </div>
@@ -623,29 +927,50 @@
     </div>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="modal" style="display: none;">
-        <div class="modal-content login-modal-content">
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2>Login / Sign Up</h2>
-                <span class="close" onclick="closeLoginModal()">&times;</span>
+                <h2 id="loginModalTitle">Login / Sign Up</h2>
+                <button class="close" onclick="closeLoginModal()">&times;</button>
             </div>
             
             <div class="modal-body">
-                <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
-                    Create an account or login to save your orders and cart
-                </p>
-                
-                <form id="loginForm" onsubmit="event.preventDefault();">
-                    <input type="email" id="loginEmail" placeholder="Email" required>
-                    <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
+                <div id="loginFormContainer">
+                    <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">
+                        Create an account or login to continue
+                    </p>
                     
-                    <div class="login-buttons">
-                        <button type="button" class="login-submit-btn" onclick="signInWithEmail()">Login</button>
-                        <button type="button" class="signup-submit-btn" onclick="signUpWithEmail()">Sign Up</button>
-                    </div>
-                </form>
-                
-                <p class="login-note">Your data is stored locally in your browser</p>
+                    <form id="loginForm" onsubmit="event.preventDefault();">
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                        <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" onclick="signInWithEmail()" style="flex: 1; padding: 15px; background: #ff6347; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer;">Login</button>
+                            <button type="button" onclick="signUpWithEmail()" style="flex: 1; padding: 15px; background: white; color: #ff6347; border: 2px solid #ff6347; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer;">Sign Up</button>
+                        </div>
+                    </form>
+                    
+                    <p style="text-align: center; margin-top: 15px;">
+                        <a href="#" onclick="showForgotPassword(); return false;" style="color: #ff6347; text-decoration: none; font-size: 14px;">
+                            🔑 Forgot Password?
+                        </a>
+                    </p>
+                </div>
+
+                <div id="forgotPasswordContainer" style="display: none;">
+                    <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; text-align: center;">
+                        Enter your email to reset password
+                    </p>
+                    <input type="email" id="forgotEmail" placeholder="Enter your email" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 15px; margin-bottom: 15px;">
+                    <button onclick="sendResetCode()" style="width: 100%; padding: 15px; background: #ff6347; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer;">
+                        📧 Send Reset Link
+                    </button>
+                    <p style="text-align: center; margin-top: 15px;">
+                        <a href="#" onclick="showLoginForm(); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 14px;">
+                            ← Back to Login
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -657,24 +982,478 @@
                 <h3>🍔 FoodExpress</h3>
                 <p>Your favorite food, delivered fast to your doorstep.</p>
             </div>
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="orders.html">My Orders</a></li>
+                    <li><a href="profile.html">My Profile</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Contact Us</h4>
+                <ul class="footer-contact">
+                    <li>📍 Indore, Madhya Pradesh</li>
+                    <li>📧 support@foodexpress.com</li>
+                    <li>📞 +91 98765 43210</li>
+                </ul>
+            </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026 FoodExpress. All rights reserved.</p>
         </div>
     </footer>
 
-    <script src="auth.js"></script>
-    <script src="cart.js"></script>
-    <script src="reviews.js"></script>
-    <script src="dark-mode.js"></script>
     <!-- Razorpay SDK -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+    <script src="firebase-auth.js"></script>
+    <script src="dark-mode.js"></script>
+    <script src="mobile-menu.js"></script>
+    <script src="notifications.js"></script>
+    <script src="payment.js"></script>
 
-<!-- Payment Script -->
-<script src="payment.js"></script>
-<script src="mobile-menu.js"></script>
-<!-- Firebase Config & Functions -->
-<script src="firebase-config.js"></script>
-<script src="firebase-auth.js"></script>
+    <script>
+        // ==================== CART MANAGEMENT ====================
+        let cart = [];
+        
+        // Get restaurant ID from URL
+        function getRestaurantId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('restaurant') || 'pizza-paradise';
+        }
+
+        // ==================== LOAD MENU FROM FIREBASE ====================
+        async function loadMenuFromFirebase() {
+            const restaurantId = getRestaurantId();
+            const menuLoading = document.getElementById('menuLoading');
+            const menuContainer = document.getElementById('menuItemsContainer');
+            const noMenuItems = document.getElementById('noMenuItems');
+            
+            try {
+                // Get menu items from Firebase
+                const snapshot = await db.collection('restaurants')
+                    .doc(restaurantId)
+                    .collection('menuItems')
+                    .where('available', '==', true)
+                    .get();
+                
+                menuLoading.style.display = 'none';
+                
+                if (snapshot.empty) {
+                    console.log('No items in Firebase, loading defaults...');
+                    loadDefaultMenuItems();
+                    return;
+                }
+                
+                // Group items by category
+                const itemsByCategory = {};
+                
+                snapshot.forEach(doc => {
+                    const item = doc.data();
+                    item.id = doc.id;
+                    
+                    const category = item.category || 'other';
+                    if (!itemsByCategory[category]) {
+                        itemsByCategory[category] = [];
+                    }
+                    itemsByCategory[category].push(item);
+                });
+                
+                // Generate HTML
+                let html = '';
+                
+                for (const category in itemsByCategory) {
+                    const categoryName = getCategoryName(category);
+                    html += `<h3 class="category-title">${categoryName}</h3>`;
+                    html += '<div class="menu-items">';
+                    
+                    itemsByCategory[category].forEach(item => {
+                        html += createMenuItemHTML(item);
+                    });
+                    
+                    html += '</div>';
+                }
+                
+                menuContainer.innerHTML = html;
+                menuContainer.style.display = 'block';
+                
+                console.log('Menu loaded from Firebase successfully!');
+                
+            } catch (error) {
+                console.error('Error loading menu:', error);
+                menuLoading.style.display = 'none';
+                loadDefaultMenuItems();
+            }
+        }
+
+        // Get category display name
+        function getCategoryName(category) {
+            const names = {
+                'starters': '🥗 Starters',
+                'main-course': '🍛 Main Course',
+                'pizza': '🍕 Pizzas',
+                'burger': '🍔 Burgers',
+                'biryani': '🍚 Biryani',
+                'chinese': '🥡 Chinese',
+                'desserts': '🍰 Desserts',
+                'beverages': '🥤 Beverages',
+                'other': '🍽️ Other Items'
+            };
+            return names[category] || '🍽️ ' + category.charAt(0).toUpperCase() + category.slice(1);
+        }
+
+        // Create menu item HTML
+        function createMenuItemHTML(item) {
+            const typeIcon = item.type === 'veg' ? '🟢' : '🔴';
+            const defaultImage = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300';
+            const itemName = item.name.replace(/'/g, "\\'");
+            
+            return `
+                <div class="menu-item" data-id="${item.id}">
+                    <div class="menu-item-info">
+                        <h3>${typeIcon} ${item.name}</h3>
+                        <p class="item-description">${item.description || 'Delicious item'}</p>
+                        <p class="item-price">₹${item.price}</p>
+                    </div>
+                    <div class="menu-item-image">
+                        <img src="${item.image || defaultImage}" alt="${item.name}" onerror="this.src='${defaultImage}'">
+                        <button class="add-btn" onclick="addToCart('${item.id}', '${itemName}', ${item.price})">
+                            + Add
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load default menu items (fallback)
+        function loadDefaultMenuItems() {
+            const menuContainer = document.getElementById('menuItemsContainer');
+            const noMenuItems = document.getElementById('noMenuItems');
+            
+            const defaultItems = [
+                { id: 'default-1', name: 'Margherita Pizza', description: 'Classic cheese pizza with tomato sauce and fresh basil', price: 299, type: 'veg', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'pizza' },
+                { id: 'default-2', name: 'Pepperoni Pizza', description: 'Loaded with pepperoni and mozzarella cheese', price: 399, type: 'non-veg', image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400', category: 'pizza' },
+                { id: 'default-3', name: 'Veggie Supreme', description: 'Loaded with fresh vegetables and herbs', price: 349, type: 'veg', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400', category: 'pizza' },
+                { id: 'default-4', name: 'BBQ Chicken Pizza', description: 'Tangy BBQ sauce with grilled chicken', price: 449, type: 'non-veg', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400', category: 'pizza' },
+                { id: 'default-5', name: 'Garlic Bread', description: 'Crispy bread with garlic butter and herbs', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?w=400', category: 'starters' },
+                { id: 'default-6', name: 'Cheesy Fries', description: 'Crispy fries topped with melted cheese', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400', category: 'starters' },
+                { id: 'default-7', name: 'Cold Coffee', description: 'Refreshing cold coffee with ice cream', price: 129, type: 'veg', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400', category: 'beverages' },
+                { id: 'default-8', name: 'Chocolate Brownie', description: 'Warm chocolate brownie with vanilla ice cream', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400', category: 'desserts' }
+            ];
+            
+            // Group by category
+            const itemsByCategory = {};
+            defaultItems.forEach(item => {
+                if (!itemsByCategory[item.category]) {
+                    itemsByCategory[item.category] = [];
+                }
+                itemsByCategory[item.category].push(item);
+            });
+            
+            let html = '';
+            for (const category in itemsByCategory) {
+                html += `<h3 class="category-title">${getCategoryName(category)}</h3>`;
+                html += '<div class="menu-items">';
+                itemsByCategory[category].forEach(item => {
+                    html += createMenuItemHTML(item);
+                });
+                html += '</div>';
+            }
+            
+            menuContainer.innerHTML = html;
+            menuContainer.style.display = 'block';
+            noMenuItems.style.display = 'none';
+        }
+
+        // ==================== CART FUNCTIONS ====================
+        function addToCart(id, name, price) {
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ id, name, price, quantity: 1 });
+            }
+            
+            updateCartUI();
+            
+            // Show feedback
+            const btn = event.target;
+            btn.textContent = '✓ Added';
+            btn.style.background = '#48c479';
+            setTimeout(() => {
+                btn.textContent = '+ Add';
+                btn.style.background = '#ff6347';
+            }, 1000);
+        }
+
+        function updateQuantity(id, change) {
+            const item = cart.find(item => item.id === id);
+            
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+            }
+            
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="cart-empty">
+                        <div class="cart-empty-icon">🛒</div>
+                        <p>Your cart is empty</p>
+                        <p style="font-size: 13px;">Add items to get started</p>
+                    </div>
+                `;
+                cartTotal.style.display = 'none';
+                checkoutBtn.disabled = true;
+                return;
+            }
+            
+            let html = '';
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                html += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h4>${item.name}</h4>
+                            <p>₹${item.price} x ${item.quantity} = ₹${itemTotal}</p>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
+                            <span class="cart-item-qty">${item.quantity}</span>
+                            <button class="qty-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartItemsContainer.innerHTML = html;
+            
+            const deliveryFee = 40;
+            const grandTotal = subtotal + deliveryFee;
+            
+            document.getElementById('subtotal').textContent = '₹' + subtotal;
+            document.getElementById('grandTotal').textContent = '₹' + grandTotal;
+            
+            cartTotal.style.display = 'block';
+            checkoutBtn.disabled = false;
+        }
+
+        // ==================== CHECKOUT FUNCTIONS ====================
+        function openCheckout() {
+            const user = auth.currentUser;
+            if (!user) {
+                showLoginModal();
+                return;
+            }
+            
+            updateOrderSummary();
+            document.getElementById('checkoutModal').classList.add('active');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.remove('active');
+        }
+
+        function updateOrderSummary() {
+            const summaryContainer = document.getElementById('orderSummary');
+            let html = '';
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                html += `
+                    <div class="cart-item">
+                        <span>${item.quantity}x ${item.name}</span>
+                        <span>₹${itemTotal}</span>
+                    </div>
+                `;
+            });
+            
+            const deliveryFee = 40;
+            const grandTotal = subtotal + deliveryFee;
+            
+            html += `
+                <div class="cart-item" style="border-top: 1px solid var(--border-color); margin-top: 10px; padding-top: 10px;">
+                    <span>Subtotal</span>
+                    <span>₹${subtotal}</span>
+                </div>
+                <div class="cart-item">
+                    <span>Delivery Fee</span>
+                    <span>₹${deliveryFee}</span>
+                </div>
+                <div class="cart-item" style="font-weight: bold; font-size: 16px;">
+                    <span>Total</span>
+                    <span id="checkoutGrandTotal">₹${grandTotal}</span>
+                </div>
+            `;
+            
+            summaryContainer.innerHTML = html;
+        }
+
+        function toggleNewAddressForm() {
+            const form = document.getElementById('newAddressForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Clear cart function
+        function clearCart() {
+            cart = [];
+            updateCartUI();
+        }
+
+        // ==================== MOBILE CART ====================
+        function toggleMobileCart() {
+            if (window.innerWidth <= 992) {
+                const cartSummary = document.getElementById('cartSummary');
+                cartSummary.classList.toggle('expanded');
+            }
+        }
+
+        // ==================== REVIEWS ====================
+        let selectedRating = 0;
+
+        function openReviewModal() {
+            const user = auth.currentUser;
+            if (!user) {
+                showLoginModal();
+                return;
+            }
+            document.getElementById('reviewModal').classList.add('active');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.remove('active');
+            selectedRating = 0;
+            updateStarDisplay();
+            document.getElementById('reviewText').value = '';
+        }
+
+        function setRating(rating) {
+            selectedRating = rating;
+            updateStarDisplay();
+        }
+
+        function updateStarDisplay() {
+            const stars = document.querySelectorAll('#starRating span');
+            stars.forEach((star, index) => {
+                star.textContent = index < selectedRating ? '★' : '☆';
+                star.style.color = index < selectedRating ? '#ffc107' : '#ccc';
+            });
+        }
+
+        async function submitReview() {
+            if (selectedRating === 0) {
+                alert('Please select a rating');
+                return;
+            }
+            
+            const reviewText = document.getElementById('reviewText').value.trim();
+            const user = auth.currentUser;
+            
+            try {
+                await db.collection('reviews').add({
+                    restaurantId: getRestaurantId(),
+                    userId: user.uid,
+                    userName: user.displayName || user.email.split('@')[0],
+                    rating: selectedRating,
+                    text: reviewText,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('✅ Review submitted successfully!');
+                closeReviewModal();
+                loadReviews();
+                
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                alert('❌ Failed to submit review');
+            }
+        }
+
+        async function loadReviews() {
+            const container = document.getElementById('reviewsContainer');
+            
+            try {
+                const snapshot = await db.collection('reviews')
+                    .where('restaurantId', '==', getRestaurantId())
+                    .orderBy('createdAt', 'desc')
+                    .limit(10)
+                    .get();
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="review-card">
+                            <p style="text-align: center; color: var(--text-secondary);">No reviews yet. Be the first to review!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                snapshot.forEach(doc => {
+                    const review = doc.data();
+                    const date = review.createdAt ? review.createdAt.toDate().toLocaleDateString() : 'Recently';
+                    const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+                    
+                    html += `
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-avatar">${review.userName.charAt(0).toUpperCase()}</div>
+                                    <div>
+                                        <div class="reviewer-name">${review.userName}</div>
+                                        <div class="review-date">${date}</div>
+                                    </div>
+                                </div>
+                                <div class="review-rating" style="color: #ffc107;">${stars}</div>
+                            </div>
+                            <p class="review-text">${review.text || 'Great experience!'}</p>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+            }
+        }
+
+        // ==================== INITIALIZE ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for Firebase to initialize
+            setTimeout(() => {
+                loadMenuFromFirebase();
+                loadReviews();
+            }, 1500);
+        });
+
+        // Close modals on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
