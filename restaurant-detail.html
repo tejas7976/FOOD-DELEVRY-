@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizza Paradise - FoodExpress</title>
+    <title>Restaurant - FoodExpress</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="notification-styles.css">
     <link rel="stylesheet" href="dark-mode.css">
     <link rel="stylesheet" href="mobile-responsive.css">
     
@@ -15,6 +14,18 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary, #f5f5f5);
+            color: var(--text-primary, #333);
+        }
+
         /* Restaurant Header */
         .restaurant-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -44,23 +55,25 @@
             margin-bottom: 10px;
         }
 
+        .restaurant-info > p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
         .restaurant-meta {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         .restaurant-meta span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
             font-size: 14px;
             opacity: 0.9;
         }
 
-        /* Main Content */
-        .restaurant-content {
+        /* Main Layout */
+        .main-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 30px 20px;
@@ -82,38 +95,31 @@
         .category-title {
             font-size: 20px;
             color: var(--text-primary);
-            margin: 30px 0 15px;
+            margin: 25px 0 15px;
             padding-bottom: 10px;
             border-bottom: 2px solid #ff6347;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
-        .menu-items {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
+        /* Menu Item */
         .menu-item {
-            background: var(--bg-card);
+            background: var(--bg-card, white);
             border-radius: 12px;
             padding: 15px;
+            margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 8px var(--shadow-color);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
         }
 
         .menu-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px var(--shadow-color);
         }
 
         .menu-item-info {
             flex: 1;
+            padding-right: 15px;
         }
 
         .menu-item-info h3 {
@@ -122,26 +128,25 @@
             margin-bottom: 5px;
         }
 
-        .item-description {
-            color: var(--text-secondary);
+        .menu-item-info .description {
             font-size: 13px;
+            color: var(--text-secondary, #666);
             margin-bottom: 8px;
-            line-height: 1.4;
         }
 
-        .item-price {
+        .menu-item-info .price {
             font-size: 18px;
             font-weight: bold;
             color: #ff6347;
         }
 
-        .menu-item-image {
+        .menu-item-right {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .menu-item-image img {
+        .menu-item-right img {
             width: 100px;
             height: 100px;
             border-radius: 10px;
@@ -149,7 +154,7 @@
         }
 
         .add-btn {
-            background-color: #ff6347;
+            background: #ff6347;
             color: white;
             border: none;
             padding: 10px 25px;
@@ -157,36 +162,42 @@
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: background 0.3s;
         }
 
         .add-btn:hover {
-            background-color: #ff4520;
-            transform: scale(1.05);
+            background: #ff4520;
         }
 
         /* Cart Section */
-        .cart-summary {
+        .cart-section {
             width: 350px;
-            background: var(--bg-card);
+            background: var(--bg-card, white);
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 2px 12px var(--shadow-color);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
             position: sticky;
             top: 90px;
             height: fit-content;
-            max-height: calc(100vh - 120px);
+            max-height: calc(100vh - 110px);
             overflow-y: auto;
         }
 
-        .cart-summary h3 {
+        .cart-section h3 {
+            font-size: 20px;
             color: var(--text-primary);
             margin-bottom: 20px;
-            font-size: 20px;
         }
 
-        #cartItems {
-            margin-bottom: 20px;
+        .cart-empty {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-secondary);
+        }
+
+        .cart-empty-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
         }
 
         .cart-item {
@@ -194,11 +205,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            border-bottom: 1px dashed var(--border-color);
-        }
-
-        .cart-item:last-child {
-            border-bottom: none;
+            border-bottom: 1px dashed var(--border-color, #eee);
         }
 
         .cart-item-info h4 {
@@ -228,36 +235,14 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .qty-btn:hover {
             background: #ff4520;
         }
 
-        .cart-item-qty {
-            font-weight: bold;
-            color: var(--text-primary);
-            min-width: 20px;
-            text-align: center;
-        }
-
-        .cart-empty {
-            text-align: center;
-            padding: 30px 0;
-            color: var(--text-secondary);
-        }
-
-        .cart-empty-icon {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
-
-        /* Cart Total */
         .cart-total {
-            border-top: 2px solid var(--border-color);
+            border-top: 2px solid var(--border-color, #eee);
             padding-top: 15px;
             margin-top: 15px;
         }
@@ -274,7 +259,6 @@
             font-size: 18px;
             font-weight: bold;
             color: var(--text-primary);
-            margin-top: 10px;
             padding-top: 10px;
             border-top: 1px solid var(--border-color);
         }
@@ -282,7 +266,7 @@
         .checkout-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #ff6347 0%, #ff4520 100%);
+            background: linear-gradient(135deg, #ff6347, #ff4520);
             color: white;
             border: none;
             border-radius: 10px;
@@ -290,166 +274,40 @@
             font-weight: bold;
             cursor: pointer;
             margin-top: 15px;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s;
         }
 
         .checkout-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 99, 71, 0.4);
         }
 
         .checkout-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
         }
 
-        /* Loading Spinner */
-        .menu-loading {
+        /* Loading */
+        .loading {
             text-align: center;
-            padding: 60px 20px;
+            padding: 50px;
         }
 
         .spinner {
-            border: 4px solid var(--border-color);
-            border-top: 4px solid #ff6347;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #eee;
+            border-top-color: #ff6347;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
 
-        .menu-loading p {
-            color: var(--text-secondary);
-            font-size: 16px;
-        }
-
-        /* No Items */
-        .no-items {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-
-        .no-items-icon {
-            font-size: 70px;
-            margin-bottom: 15px;
-        }
-
-        /* Reviews Section */
-        .reviews-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-
-        .reviews-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .overall-rating {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .rating-big {
-            font-size: 48px;
-            font-weight: bold;
-            color: var(--text-primary);
-        }
-
-        .rating-stars {
-            color: #ffc107;
-            font-size: 24px;
-        }
-
-        .rating-count {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .write-review-btn {
-            background: #ff6347;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .write-review-btn:hover {
-            background: #ff4520;
-        }
-
-        .review-card {
-            background: var(--bg-card);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px var(--shadow-color);
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-
-        .reviewer-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .reviewer-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .reviewer-name {
-            font-weight: bold;
-            color: var(--text-primary);
-        }
-
-        .review-date {
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-
-        .review-rating {
-            color: #ffc107;
-        }
-
-        .review-text {
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Modal Styles */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -457,7 +315,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.6);
             z-index: 100000;
             align-items: center;
             justify-content: center;
@@ -488,15 +346,14 @@
         .modal-header h2 {
             margin: 0;
             color: var(--text-primary);
-            font-size: 20px;
         }
 
-        .close {
+        .modal-close {
+            background: none;
+            border: none;
             font-size: 28px;
             cursor: pointer;
             color: var(--text-secondary);
-            background: none;
-            border: none;
         }
 
         .modal-body {
@@ -506,13 +363,11 @@
         .modal-body input,
         .modal-body textarea {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 15px;
+            padding: 15px;
             margin-bottom: 15px;
-            background: var(--bg-input);
-            color: var(--text-primary);
+            border: 2px solid var(--border-color, #eee);
+            border-radius: 10px;
+            font-size: 16px;
             box-sizing: border-box;
         }
 
@@ -522,39 +377,28 @@
             outline: none;
         }
 
-        /* Payment Options */
-        .payment-options {
-            margin-top: 15px;
-        }
-
-        .pay-online-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .pay-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 18px;
             border-radius: 10px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
         }
 
-        .pay-online-btn:hover {
+        .pay-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
 
-        /* Order Summary in Checkout */
         #orderSummary {
-            margin: 15px 0;
+            background: var(--bg-secondary, #f9f9f9);
             padding: 15px;
-            background: var(--bg-secondary);
             border-radius: 10px;
+            margin: 15px 0;
         }
 
         #orderSummary .cart-item {
@@ -564,90 +408,52 @@
         /* Footer */
         .footer {
             background: var(--bg-card);
-            padding: 40px 20px 20px;
+            padding: 30px 20px;
             margin-top: 50px;
             border-top: 1px solid var(--border-color);
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
-
-        .footer-column h3, .footer-column h4 {
-            color: var(--text-primary);
-            margin-bottom: 15px;
-        }
-
-        .footer-column p, .footer-links li, .footer-contact li {
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .footer-links, .footer-contact {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-        }
-
-        .footer-links a:hover {
-            color: #ff6347;
-        }
-
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 30px auto 0;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
             text-align: center;
+        }
+
+        .footer p {
             color: var(--text-secondary);
             font-size: 14px;
         }
 
         /* Responsive */
         @media (max-width: 992px) {
-            .restaurant-content {
+            .main-content {
                 flex-direction: column;
             }
 
-            .cart-summary {
+            .cart-section {
                 width: 100%;
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 right: 0;
                 border-radius: 20px 20px 0 0;
-                max-height: 60vh;
-                transform: translateY(calc(100% - 70px));
-                transition: transform 0.3s ease;
+                max-height: 70vh;
+                transform: translateY(calc(100% - 60px));
+                transition: transform 0.3s;
                 z-index: 9999;
             }
 
-            .cart-summary.expanded {
+            .cart-section.expanded {
                 transform: translateY(0);
             }
 
-            .cart-summary h3 {
+            .cart-section h3 {
                 cursor: pointer;
             }
 
             .menu-section {
-                padding-bottom: 100px;
+                padding-bottom: 80px;
             }
         }
 
         @media (max-width: 768px) {
             .restaurant-header {
-                padding: 20px 15px;
+                padding: 20px;
                 margin-top: 60px;
             }
 
@@ -672,33 +478,26 @@
             .menu-item {
                 flex-direction: column;
                 text-align: center;
-                gap: 15px;
             }
 
-            .menu-item-image {
+            .menu-item-info {
+                padding-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .menu-item-right {
                 flex-direction: column;
             }
 
-            .menu-item-image img {
-                width: 100%;
-                max-width: 200px;
-                height: 150px;
-            }
-
-            .reviews-header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
+            .menu-item-right img {
+                width: 150px;
+                height: 100px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
@@ -706,40 +505,16 @@
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                    <button class="theme-toggle" onclick="toggleTheme()">
                         <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
                         <span class="theme-toggle-text" id="themeToggleText">Dark</span>
                     </button>
                 </li>
-                <li class="nav-item">
-                    <a href="index.html" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="orders.html" class="nav-link">My Orders</a>
-                </li>
-                <li class="nav-item">
-                    <div class="notification-wrapper">
-                        <button class="notification-bell" onclick="toggleNotificationDropdown()">
-                            🔔
-                            <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-                        </button>
-                        <div class="notification-dropdown" id="notificationDropdown">
-                            <div class="notification-header">
-                                <h3>🔔 Notifications</h3>
-                                <div class="notification-header-actions">
-                                    <button class="notification-header-btn" onclick="markAllNotificationsRead()">Mark all read</button>
-                                    <button class="notification-header-btn" onclick="clearAllNotifications()">Clear</button>
-                                </div>
-                            </div>
-                            <div class="notification-list" id="notificationList"></div>
-                        </div>
-                    </div>
-                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="orders.html" class="nav-link">My Orders</a></li>
+                <li class="nav-item"><a href="profile.html" class="nav-link">Profile</a></li>
                 <li class="nav-item">
                     <button class="login-btn" onclick="showLoginModal()">Login</button>
-                </li>
-                <li class="nav-item">
-                    <a href="profile.html" class="nav-link">My Profile</a>
                 </li>
             </ul>
             <div class="hamburger">
@@ -753,69 +528,58 @@
     <!-- Restaurant Header -->
     <div class="restaurant-header">
         <div class="restaurant-header-content">
-            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300" alt="Pizza Paradise" class="restaurant-header-image">
+            <img id="restaurantImage" src="" alt="Restaurant" class="restaurant-header-image">
             <div class="restaurant-info">
-                <h1 id="restaurantTitle">🍕 Pizza Paradise</h1>
-                <p>Italian • Pizza • Fast Food</p>
+                <h1 id="restaurantName">Loading...</h1>
+                <p id="restaurantCuisine">Loading...</p>
                 <div class="restaurant-meta">
-                    <span>⭐ 4.5 (200+ reviews)</span>
-                    <span>🕐 30-40 mins</span>
-                    <span>💰 ₹200 for two</span>
-                    <span>📍 2.5 km away</span>
+                    <span id="restaurantRating">⭐ --</span>
+                    <span id="restaurantTime">🕐 --</span>
+                    <span id="restaurantPrice">💰 --</span>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Main Content -->
-    <div class="restaurant-content">
+    <div class="main-content">
         <!-- Menu Section -->
         <div class="menu-section">
             <h2 class="section-title">🍽️ Menu</h2>
             
-            <!-- Loading State -->
-            <div id="menuLoading" class="menu-loading">
+            <div id="menuLoading" class="loading">
                 <div class="spinner"></div>
-                <p>Loading delicious menu...</p>
+                <p>Loading menu...</p>
             </div>
             
-            <!-- Menu Items Container -->
-            <div id="menuItemsContainer" style="display: none;">
-                <!-- Menu items will be loaded here from Firebase -->
-            </div>
-            
-            <!-- No Items Message -->
-            <div id="noMenuItems" class="no-items" style="display: none;">
-                <div class="no-items-icon">😔</div>
-                <h3>No menu items available</h3>
-                <p>Please check back later</p>
-            </div>
+            <div id="menuContainer"></div>
         </div>
 
-        <!-- Cart Summary -->
-        <div class="cart-summary" id="cartSummary">
-            <h3 onclick="toggleMobileCart()">🛒 Your Cart</h3>
+        <!-- Cart Section -->
+        <div class="cart-section" id="cartSection">
+            <h3 onclick="toggleCart()">🛒 Your Cart</h3>
             
             <div id="cartItems">
                 <div class="cart-empty">
                     <div class="cart-empty-icon">🛒</div>
                     <p>Your cart is empty</p>
-                    <p style="font-size: 13px;">Add items to get started</p>
                 </div>
             </div>
             
-            <div class="cart-total" id="cartTotal" style="display: none;">
-                <div class="cart-total-row">
-                    <span>Subtotal</span>
-                    <span id="subtotal">₹0</span>
-                </div>
-                <div class="cart-total-row">
-                    <span>Delivery Fee</span>
-                    <span>₹40</span>
-                </div>
-                <div class="cart-total-row grand-total">
-                    <span>Total</span>
-                    <span id="grandTotal">₹40</span>
+            <div id="cartTotal" style="display: none;">
+                <div class="cart-total">
+                    <div class="cart-total-row">
+                        <span>Subtotal</span>
+                        <span id="subtotal">₹0</span>
+                    </div>
+                    <div class="cart-total-row">
+                        <span>Delivery Fee</span>
+                        <span>₹40</span>
+                    </div>
+                    <div class="cart-total-row grand-total">
+                        <span>Total</span>
+                        <span id="grandTotal">₹0</span>
+                    </div>
                 </div>
             </div>
             
@@ -825,103 +589,30 @@
         </div>
     </div>
 
-    <!-- Reviews Section -->
-    <div class="reviews-section">
-        <div class="reviews-header">
-            <div>
-                <h2 class="section-title">⭐ Reviews</h2>
-                <div class="overall-rating">
-                    <span class="rating-big">4.5</span>
-                    <div>
-                        <div class="rating-stars">★★★★★</div>
-                        <div class="rating-count">Based on 200+ reviews</div>
-                    </div>
-                </div>
-            </div>
-            <button class="write-review-btn" onclick="openReviewModal()">✍️ Write a Review</button>
-        </div>
-
-        <div id="reviewsContainer">
-            <!-- Reviews will be loaded here -->
-        </div>
-    </div>
-
     <!-- Checkout Modal -->
     <div id="checkoutModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>🛒 Checkout</h2>
-                <button class="close" onclick="closeCheckout()">&times;</button>
+                <button class="modal-close" onclick="closeCheckout()">&times;</button>
             </div>
-            
             <div class="modal-body">
-                <!-- Saved Addresses Section -->
-                <div id="savedAddressesSection" style="margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 15px; color: var(--text-primary);">📍 Select Delivery Address</h3>
-                    <div id="savedAddressesList" style="max-height: 150px; overflow-y: auto; margin-bottom: 15px;"></div>
-                    <button type="button" onclick="toggleNewAddressForm()" style="background: none; border: none; color: #ff6347; cursor: pointer; font-size: 14px; padding: 0;">
-                        ➕ Add New Address
-                    </button>
-                </div>
-
-                <!-- New Address Form -->
-                <div id="newAddressForm">
-                    <h3 style="margin-bottom: 15px; color: var(--text-primary);">📝 Delivery Details</h3>
-                    <form id="checkoutForm" onsubmit="event.preventDefault();">
-                        <input type="text" id="customerName" placeholder="Your Name" required>
-                        <input type="tel" id="customerPhone" placeholder="Phone Number" required>
-                        <textarea id="customerAddress" placeholder="Delivery Address" rows="3" required></textarea>
-                    </form>
-                </div>
+                <h3 style="margin-bottom: 15px; color: var(--text-primary);">📝 Delivery Details</h3>
+                <input type="text" id="customerName" placeholder="Your Name" required>
+                <input type="tel" id="customerPhone" placeholder="Phone Number" required>
+                <textarea id="customerAddress" placeholder="Delivery Address" rows="3" required></textarea>
                 
-                <!-- Order Summary -->
-                <h3 style="margin-top: 20px; color: var(--text-primary);">📋 Order Summary</h3>
+                <h3 style="margin: 20px 0 15px; color: var(--text-primary);">📋 Order Summary</h3>
                 <div id="orderSummary"></div>
                 
-                <!-- Payment Options -->
-                <h3 style="margin-top: 20px; color: var(--text-primary);">💳 Payment</h3>
-                <div class="payment-options">
-                    <button class="pay-online-btn" onclick="processPayment()">
-                        💳 Pay Now (Cards, UPI, Wallets, Net Banking)
-                    </button>
-                </div>
-                
-                <!-- Payment Info -->
-                <div style="margin-top: 15px; padding: 15px; background: var(--bg-secondary); border-radius: 8px;">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                        <span style="font-size: 20px;">🔒</span>
-                        <span style="font-size: 14px; color: var(--text-primary); font-weight: 500;">100% Secure Payment</span>
-                    </div>
-                    <p style="font-size: 12px; color: var(--text-secondary); margin: 0;">
-                        Powered by Razorpay. We accept all major cards, UPI, wallets & net banking.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Review Modal -->
-    <div id="reviewModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>✍️ Write a Review</h2>
-                <button class="close" onclick="closeReviewModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <p style="margin-bottom: 10px; color: var(--text-primary);">Rate your experience</p>
-                    <div id="starRating" style="font-size: 40px; cursor: pointer;">
-                        <span onclick="setRating(1)">☆</span>
-                        <span onclick="setRating(2)">☆</span>
-                        <span onclick="setRating(3)">☆</span>
-                        <span onclick="setRating(4)">☆</span>
-                        <span onclick="setRating(5)">☆</span>
-                    </div>
-                </div>
-                <textarea id="reviewText" placeholder="Share your experience..." rows="4" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 15px; resize: vertical;"></textarea>
-                <button onclick="submitReview()" style="width: 100%; padding: 15px; background: #ff6347; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px;">
-                    Submit Review
+                <h3 style="margin: 20px 0 15px; color: var(--text-primary);">💳 Payment</h3>
+                <button class="pay-btn" onclick="processPayment()">
+                    💳 Pay Now (Cards, UPI, Wallets)
                 </button>
+                
+                <div style="margin-top: 15px; text-align: center; font-size: 12px; color: var(--text-secondary);">
+                    🔒 100% Secure Payment powered by Razorpay
+                </div>
             </div>
         </div>
     </div>
@@ -930,46 +621,15 @@
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="loginModalTitle">Login / Sign Up</h2>
-                <button class="close" onclick="closeLoginModal()">&times;</button>
+                <h2>Login / Sign Up</h2>
+                <button class="modal-close" onclick="closeLoginModal()">&times;</button>
             </div>
-            
             <div class="modal-body">
-                <div id="loginFormContainer">
-                    <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">
-                        Create an account or login to continue
-                    </p>
-                    
-                    <form id="loginForm" onsubmit="event.preventDefault();">
-                        <input type="email" id="loginEmail" placeholder="Email" required>
-                        <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
-                        
-                        <div style="display: flex; gap: 10px;">
-                            <button type="button" onclick="signInWithEmail()" style="flex: 1; padding: 15px; background: #ff6347; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer;">Login</button>
-                            <button type="button" onclick="signUpWithEmail()" style="flex: 1; padding: 15px; background: white; color: #ff6347; border: 2px solid #ff6347; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer;">Sign Up</button>
-                        </div>
-                    </form>
-                    
-                    <p style="text-align: center; margin-top: 15px;">
-                        <a href="#" onclick="showForgotPassword(); return false;" style="color: #ff6347; text-decoration: none; font-size: 14px;">
-                            🔑 Forgot Password?
-                        </a>
-                    </p>
-                </div>
-
-                <div id="forgotPasswordContainer" style="display: none;">
-                    <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; text-align: center;">
-                        Enter your email to reset password
-                    </p>
-                    <input type="email" id="forgotEmail" placeholder="Enter your email" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 15px; margin-bottom: 15px;">
-                    <button onclick="sendResetCode()" style="width: 100%; padding: 15px; background: #ff6347; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer;">
-                        📧 Send Reset Link
-                    </button>
-                    <p style="text-align: center; margin-top: 15px;">
-                        <a href="#" onclick="showLoginForm(); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 14px;">
-                            ← Back to Login
-                        </a>
-                    </p>
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" required>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="signInWithEmail()" style="flex: 1; padding: 15px; background: #ff6347; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer;">Login</button>
+                    <button onclick="signUpWithEmail()" style="flex: 1; padding: 15px; background: white; color: #ff6347; border: 2px solid #ff6347; border-radius: 10px; font-size: 16px; cursor: pointer;">Sign Up</button>
                 </div>
             </div>
         </div>
@@ -977,210 +637,245 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-column">
-                <h3>🍔 FoodExpress</h3>
-                <p>Your favorite food, delivered fast to your doorstep.</p>
-            </div>
-            <div class="footer-column">
-                <h4>Quick Links</h4>
-                <ul class="footer-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="orders.html">My Orders</a></li>
-                    <li><a href="profile.html">My Profile</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Contact Us</h4>
-                <ul class="footer-contact">
-                    <li>📍 Indore, Madhya Pradesh</li>
-                    <li>📧 support@foodexpress.com</li>
-                    <li>📞 +91 98765 43210</li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 FoodExpress. All rights reserved.</p>
-        </div>
+        <p>&copy; 2026 FoodExpress. All rights reserved.</p>
     </footer>
 
     <!-- Razorpay SDK -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     
-    <!-- Firebase Config -->
+    <!-- Firebase & Other Scripts -->
     <script src="firebase-config.js"></script>
     <script src="firebase-auth.js"></script>
     <script src="dark-mode.js"></script>
     <script src="mobile-menu.js"></script>
-    <script src="notifications.js"></script>
-    <script src="payment.js"></script>
 
     <script>
-        // ==================== CART MANAGEMENT ====================
+        // ==================== RESTAURANT DATA ====================
+        const RESTAURANTS = {
+            'pizza-paradise': {
+                name: '🍕 Pizza Paradise',
+                cuisine: 'Italian • Pizza • Fast Food',
+                rating: '⭐ 4.5 (200+ reviews)',
+                time: '🕐 30-40 mins',
+                price: '💰 ₹200 for two',
+                image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300',
+                defaultItems: [
+                    { id: 'pp1', name: 'Margherita Pizza', description: 'Classic cheese pizza with tomato sauce and fresh basil', price: 299, type: 'veg', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'pizza' },
+                    { id: 'pp2', name: 'Pepperoni Pizza', description: 'Loaded with pepperoni and mozzarella cheese', price: 399, type: 'non-veg', image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400', category: 'pizza' },
+                    { id: 'pp3', name: 'Veggie Supreme', description: 'Fresh vegetables with herbs and cheese', price: 349, type: 'veg', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400', category: 'pizza' },
+                    { id: 'pp4', name: 'BBQ Chicken Pizza', description: 'Tangy BBQ sauce with grilled chicken', price: 449, type: 'non-veg', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400', category: 'pizza' },
+                    { id: 'pp5', name: 'Garlic Bread', description: 'Crispy bread with garlic butter', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?w=400', category: 'starters' },
+                    { id: 'pp6', name: 'Cheesy Fries', description: 'Crispy fries with melted cheese', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400', category: 'starters' },
+                    { id: 'pp7', name: 'Cold Coffee', description: 'Refreshing cold coffee', price: 129, type: 'veg', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400', category: 'beverages' },
+                    { id: 'pp8', name: 'Chocolate Brownie', description: 'Warm brownie with ice cream', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400', category: 'desserts' }
+                ]
+            },
+            'burger-house': {
+                name: '🍔 Burger House',
+                cuisine: 'American • Burgers • Fast Food',
+                rating: '⭐ 4.3 (150+ reviews)',
+                time: '🕐 25-35 mins',
+                price: '💰 ₹250 for two',
+                image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300',
+                defaultItems: [
+                    { id: 'bh1', name: 'Classic Burger', description: 'Juicy beef patty with fresh veggies', price: 199, type: 'non-veg', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400', category: 'burger' },
+                    { id: 'bh2', name: 'Cheese Burger', description: 'Double cheese with special sauce', price: 249, type: 'non-veg', image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=400', category: 'burger' },
+                    { id: 'bh3', name: 'Veggie Burger', description: 'Crispy veg patty with lettuce', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1520072959219-c595dc870360?w=400', category: 'burger' },
+                    { id: 'bh4', name: 'Chicken Burger', description: 'Grilled chicken with mayo', price: 229, type: 'non-veg', image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400', category: 'burger' },
+                    { id: 'bh5', name: 'Double Decker', description: 'Two patties, extra cheese', price: 349, type: 'non-veg', image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400', category: 'burger' },
+                    { id: 'bh6', name: 'French Fries', description: 'Crispy golden fries', price: 99, type: 'veg', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400', category: 'starters' },
+                    { id: 'bh7', name: 'Onion Rings', description: 'Crispy fried onion rings', price: 129, type: 'veg', image: 'https://images.unsplash.com/photo-1639024471283-03518883512d?w=400', category: 'starters' },
+                    { id: 'bh8', name: 'Chocolate Shake', description: 'Thick chocolate milkshake', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400', category: 'beverages' }
+                ]
+            },
+            'biryani-blues': {
+                name: '🍛 Biryani Blues',
+                cuisine: 'Indian • Biryani • Mughlai',
+                rating: '⭐ 4.7 (300+ reviews)',
+                time: '🕐 40-50 mins',
+                price: '💰 ₹350 for two',
+                image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300',
+                defaultItems: [
+                    { id: 'bb1', name: 'Chicken Biryani', description: 'Aromatic basmati rice with tender chicken', price: 299, type: 'non-veg', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400', category: 'biryani' },
+                    { id: 'bb2', name: 'Mutton Biryani', description: 'Slow cooked mutton with spices', price: 399, type: 'non-veg', image: 'https://images.unsplash.com/photo-1642821373181-696a54913e93?w=400', category: 'biryani' },
+                    { id: 'bb3', name: 'Veg Biryani', description: 'Mixed vegetables with fragrant rice', price: 249, type: 'veg', image: 'https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?w=400', category: 'biryani' },
+                    { id: 'bb4', name: 'Hyderabadi Biryani', description: 'Authentic Hyderabadi style', price: 349, type: 'non-veg', image: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=400', category: 'biryani' },
+                    { id: 'bb5', name: 'Chicken Kebab', description: 'Grilled chicken skewers', price: 199, type: 'non-veg', image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400', category: 'starters' },
+                    { id: 'bb6', name: 'Paneer Tikka', description: 'Grilled cottage cheese', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400', category: 'starters' },
+                    { id: 'bb7', name: 'Raita', description: 'Cool yogurt with cucumber', price: 49, type: 'veg', image: 'https://images.unsplash.com/photo-1567337710282-00832b415979?w=400', category: 'starters' },
+                    { id: 'bb8', name: 'Gulab Jamun', description: 'Sweet milk dumplings', price: 99, type: 'veg', image: 'https://images.unsplash.com/photo-1666190077469-f697207a9724?w=400', category: 'desserts' }
+                ]
+            },
+            'chinese-wok': {
+                name: '🥡 Chinese Wok',
+                cuisine: 'Chinese • Asian • Noodles',
+                rating: '⭐ 4.2 (180+ reviews)',
+                time: '🕐 30-40 mins',
+                price: '💰 ₹300 for two',
+                image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=300',
+                defaultItems: [
+                    { id: 'cw1', name: 'Hakka Noodles', description: 'Stir-fried noodles with vegetables', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400', category: 'chinese' },
+                    { id: 'cw2', name: 'Chicken Fried Rice', description: 'Wok-tossed rice with chicken', price: 249, type: 'non-veg', image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400', category: 'chinese' },
+                    { id: 'cw3', name: 'Veg Manchurian', description: 'Crispy veg balls in spicy sauce', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1645696996794-93acf6b23c15?w=400', category: 'chinese' },
+                    { id: 'cw4', name: 'Chilli Chicken', description: 'Spicy Indo-Chinese chicken', price: 279, type: 'non-veg', image: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?w=400', category: 'chinese' },
+                    { id: 'cw5', name: 'Spring Rolls', description: 'Crispy rolls with veggie filling', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1606525437679-037aca74a73a?w=400', category: 'starters' },
+                    { id: 'cw6', name: 'Momos (6 pcs)', description: 'Steamed dumplings', price: 129, type: 'veg', image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400', category: 'starters' },
+                    { id: 'cw7', name: 'Hot & Sour Soup', description: 'Tangy and spicy soup', price: 99, type: 'veg', image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400', category: 'starters' },
+                    { id: 'cw8', name: 'Ice Cream', description: 'Vanilla ice cream', price: 79, type: 'veg', image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400', category: 'desserts' }
+                ]
+            },
+            'healthy-bites': {
+                name: '🥗 Healthy Bites',
+                cuisine: 'Healthy • Salads • Smoothies',
+                rating: '⭐ 4.6 (120+ reviews)',
+                time: '🕐 20-30 mins',
+                price: '💰 ₹200 for two',
+                image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300',
+                defaultItems: [
+                    { id: 'hb1', name: 'Caesar Salad', description: 'Fresh romaine with caesar dressing', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400', category: 'salads' },
+                    { id: 'hb2', name: 'Greek Salad', description: 'Feta cheese with olives and cucumber', price: 229, type: 'veg', image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400', category: 'salads' },
+                    { id: 'hb3', name: 'Quinoa Bowl', description: 'Protein-rich quinoa with veggies', price: 279, type: 'veg', image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400', category: 'bowls' },
+                    { id: 'hb4', name: 'Grilled Chicken Salad', description: 'Lean chicken with fresh greens', price: 299, type: 'non-veg', image: 'https://images.unsplash.com/photo-1604497181015-76590d828b75?w=400', category: 'salads' },
+                    { id: 'hb5', name: 'Avocado Toast', description: 'Smashed avocado on sourdough', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=400', category: 'bowls' },
+                    { id: 'hb6', name: 'Berry Smoothie', description: 'Mixed berries with yogurt', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1553530666-ba11a90a0868?w=400', category: 'beverages' },
+                    { id: 'hb7', name: 'Green Detox', description: 'Spinach, apple and ginger', price: 169, type: 'veg', image: 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400', category: 'beverages' },
+                    { id: 'hb8', name: 'Protein Shake', description: 'Banana, peanut butter, oats', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=400', category: 'beverages' }
+                ]
+            }
+        };
+
+        const CATEGORY_NAMES = {
+            'pizza': '🍕 Pizzas',
+            'burger': '🍔 Burgers',
+            'biryani': '🍛 Biryani',
+            'chinese': '🥡 Chinese',
+            'salads': '🥗 Salads',
+            'bowls': '🥣 Bowls',
+            'starters': '🍟 Starters',
+            'beverages': '🥤 Beverages',
+            'desserts': '🍰 Desserts'
+        };
+
+        // ==================== VARIABLES ====================
         let cart = [];
-        
-        // Get restaurant ID from URL
+        let currentRestaurant = null;
+
+        // ==================== GET RESTAURANT ID ====================
         function getRestaurantId() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('restaurant') || 'pizza-paradise';
+            const params = new URLSearchParams(window.location.search);
+            return params.get('restaurant') || 'pizza-paradise';
         }
 
-        // ==================== LOAD MENU FROM FIREBASE ====================
-        async function loadMenuFromFirebase() {
+        // ==================== LOAD RESTAURANT ====================
+        function loadRestaurant() {
+            const restaurantId = getRestaurantId();
+            currentRestaurant = RESTAURANTS[restaurantId];
+
+            if (!currentRestaurant) {
+                currentRestaurant = RESTAURANTS['pizza-paradise'];
+            }
+
+            // Update header
+            document.getElementById('restaurantName').textContent = currentRestaurant.name;
+            document.getElementById('restaurantCuisine').textContent = currentRestaurant.cuisine;
+            document.getElementById('restaurantRating').textContent = currentRestaurant.rating;
+            document.getElementById('restaurantTime').textContent = currentRestaurant.time;
+            document.getElementById('restaurantPrice').textContent = currentRestaurant.price;
+            document.getElementById('restaurantImage').src = currentRestaurant.image;
+            document.title = currentRestaurant.name + ' - FoodExpress';
+
+            // Load menu
+            loadMenu();
+        }
+
+        // ==================== LOAD MENU ====================
+        async function loadMenu() {
             const restaurantId = getRestaurantId();
             const menuLoading = document.getElementById('menuLoading');
-            const menuContainer = document.getElementById('menuItemsContainer');
-            const noMenuItems = document.getElementById('noMenuItems');
-            
+            const menuContainer = document.getElementById('menuContainer');
+
             try {
-                // Get menu items from Firebase
+                // Try to load from Firebase first
                 const snapshot = await db.collection('restaurants')
                     .doc(restaurantId)
                     .collection('menuItems')
                     .where('available', '==', true)
                     .get();
-                
+
                 menuLoading.style.display = 'none';
-                
-                if (snapshot.empty) {
-                    console.log('No items in Firebase, loading defaults...');
-                    loadDefaultMenuItems();
-                    return;
-                }
-                
-                // Group items by category
-                const itemsByCategory = {};
-                
-                snapshot.forEach(doc => {
-                    const item = doc.data();
-                    item.id = doc.id;
-                    
-                    const category = item.category || 'other';
-                    if (!itemsByCategory[category]) {
-                        itemsByCategory[category] = [];
-                    }
-                    itemsByCategory[category].push(item);
-                });
-                
-                // Generate HTML
-                let html = '';
-                
-                for (const category in itemsByCategory) {
-                    const categoryName = getCategoryName(category);
-                    html += `<h3 class="category-title">${categoryName}</h3>`;
-                    html += '<div class="menu-items">';
-                    
-                    itemsByCategory[category].forEach(item => {
-                        html += createMenuItemHTML(item);
+
+                if (!snapshot.empty) {
+                    // Load from Firebase
+                    const items = [];
+                    snapshot.forEach(doc => {
+                        items.push({ id: doc.id, ...doc.data() });
                     });
-                    
-                    html += '</div>';
+                    renderMenu(items);
+                } else {
+                    // Load default items
+                    renderMenu(currentRestaurant.defaultItems);
                 }
-                
-                menuContainer.innerHTML = html;
-                menuContainer.style.display = 'block';
-                
-                console.log('Menu loaded from Firebase successfully!');
-                
             } catch (error) {
-                console.error('Error loading menu:', error);
+                console.log('Loading default menu...');
                 menuLoading.style.display = 'none';
-                loadDefaultMenuItems();
+                renderMenu(currentRestaurant.defaultItems);
             }
         }
 
-        // Get category display name
-        function getCategoryName(category) {
-            const names = {
-                'starters': '🥗 Starters',
-                'main-course': '🍛 Main Course',
-                'pizza': '🍕 Pizzas',
-                'burger': '🍔 Burgers',
-                'biryani': '🍚 Biryani',
-                'chinese': '🥡 Chinese',
-                'desserts': '🍰 Desserts',
-                'beverages': '🥤 Beverages',
-                'other': '🍽️ Other Items'
-            };
-            return names[category] || '🍽️ ' + category.charAt(0).toUpperCase() + category.slice(1);
-        }
-
-        // Create menu item HTML
-        function createMenuItemHTML(item) {
-            const typeIcon = item.type === 'veg' ? '🟢' : '🔴';
-            const defaultImage = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300';
-            const itemName = item.name.replace(/'/g, "\\'");
-            
-            return `
-                <div class="menu-item" data-id="${item.id}">
-                    <div class="menu-item-info">
-                        <h3>${typeIcon} ${item.name}</h3>
-                        <p class="item-description">${item.description || 'Delicious item'}</p>
-                        <p class="item-price">₹${item.price}</p>
-                    </div>
-                    <div class="menu-item-image">
-                        <img src="${item.image || defaultImage}" alt="${item.name}" onerror="this.src='${defaultImage}'">
-                        <button class="add-btn" onclick="addToCart('${item.id}', '${itemName}', ${item.price})">
-                            + Add
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Load default menu items (fallback)
-        function loadDefaultMenuItems() {
-            const menuContainer = document.getElementById('menuItemsContainer');
-            const noMenuItems = document.getElementById('noMenuItems');
-            
-            const defaultItems = [
-                { id: 'default-1', name: 'Margherita Pizza', description: 'Classic cheese pizza with tomato sauce and fresh basil', price: 299, type: 'veg', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'pizza' },
-                { id: 'default-2', name: 'Pepperoni Pizza', description: 'Loaded with pepperoni and mozzarella cheese', price: 399, type: 'non-veg', image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400', category: 'pizza' },
-                { id: 'default-3', name: 'Veggie Supreme', description: 'Loaded with fresh vegetables and herbs', price: 349, type: 'veg', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400', category: 'pizza' },
-                { id: 'default-4', name: 'BBQ Chicken Pizza', description: 'Tangy BBQ sauce with grilled chicken', price: 449, type: 'non-veg', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400', category: 'pizza' },
-                { id: 'default-5', name: 'Garlic Bread', description: 'Crispy bread with garlic butter and herbs', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?w=400', category: 'starters' },
-                { id: 'default-6', name: 'Cheesy Fries', description: 'Crispy fries topped with melted cheese', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400', category: 'starters' },
-                { id: 'default-7', name: 'Cold Coffee', description: 'Refreshing cold coffee with ice cream', price: 129, type: 'veg', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400', category: 'beverages' },
-                { id: 'default-8', name: 'Chocolate Brownie', description: 'Warm chocolate brownie with vanilla ice cream', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400', category: 'desserts' }
-            ];
+        // ==================== RENDER MENU ====================
+        function renderMenu(items) {
+            const menuContainer = document.getElementById('menuContainer');
             
             // Group by category
-            const itemsByCategory = {};
-            defaultItems.forEach(item => {
-                if (!itemsByCategory[item.category]) {
-                    itemsByCategory[item.category] = [];
-                }
-                itemsByCategory[item.category].push(item);
+            const grouped = {};
+            items.forEach(item => {
+                const cat = item.category || 'other';
+                if (!grouped[cat]) grouped[cat] = [];
+                grouped[cat].push(item);
             });
-            
+
             let html = '';
-            for (const category in itemsByCategory) {
-                html += `<h3 class="category-title">${getCategoryName(category)}</h3>`;
-                html += '<div class="menu-items">';
-                itemsByCategory[category].forEach(item => {
-                    html += createMenuItemHTML(item);
+            for (const category in grouped) {
+                const categoryName = CATEGORY_NAMES[category] || '🍽️ ' + category;
+                html += `<h3 class="category-title">${categoryName}</h3>`;
+                
+                grouped[category].forEach(item => {
+                    const typeIcon = item.type === 'veg' ? '🟢' : '🔴';
+                    const defaultImg = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300';
+                    const itemName = item.name.replace(/'/g, "\\'");
+                    
+                    html += `
+                        <div class="menu-item">
+                            <div class="menu-item-info">
+                                <h3>${typeIcon} ${item.name}</h3>
+                                <p class="description">${item.description || ''}</p>
+                                <p class="price">₹${item.price}</p>
+                            </div>
+                            <div class="menu-item-right">
+                                <img src="${item.image || defaultImg}" alt="${item.name}" onerror="this.src='${defaultImg}'">
+                                <button class="add-btn" onclick="addToCart('${item.id}', '${itemName}', ${item.price})">+ Add</button>
+                            </div>
+                        </div>
+                    `;
                 });
-                html += '</div>';
             }
-            
+
             menuContainer.innerHTML = html;
-            menuContainer.style.display = 'block';
-            noMenuItems.style.display = 'none';
         }
 
         // ==================== CART FUNCTIONS ====================
         function addToCart(id, name, price) {
-            const existingItem = cart.find(item => item.id === id);
+            const existing = cart.find(item => item.id === id);
             
-            if (existingItem) {
-                existingItem.quantity++;
+            if (existing) {
+                existing.quantity++;
             } else {
                 cart.push({ id, name, price, quantity: 1 });
             }
-            
+
             updateCartUI();
-            
-            // Show feedback
+
+            // Button feedback
             const btn = event.target;
             btn.textContent = '✓ Added';
             btn.style.background = '#48c479';
@@ -1192,38 +887,35 @@
 
         function updateQuantity(id, change) {
             const item = cart.find(item => item.id === id);
-            
             if (item) {
                 item.quantity += change;
                 if (item.quantity <= 0) {
                     cart = cart.filter(i => i.id !== id);
                 }
             }
-            
             updateCartUI();
         }
 
         function updateCartUI() {
-            const cartItemsContainer = document.getElementById('cartItems');
+            const cartItems = document.getElementById('cartItems');
             const cartTotal = document.getElementById('cartTotal');
             const checkoutBtn = document.getElementById('checkoutBtn');
-            
+
             if (cart.length === 0) {
-                cartItemsContainer.innerHTML = `
+                cartItems.innerHTML = `
                     <div class="cart-empty">
                         <div class="cart-empty-icon">🛒</div>
                         <p>Your cart is empty</p>
-                        <p style="font-size: 13px;">Add items to get started</p>
                     </div>
                 `;
                 cartTotal.style.display = 'none';
                 checkoutBtn.disabled = true;
                 return;
             }
-            
+
             let html = '';
             let subtotal = 0;
-            
+
             cart.forEach(item => {
                 const itemTotal = item.price * item.quantity;
                 subtotal += itemTotal;
@@ -1232,50 +924,35 @@
                     <div class="cart-item">
                         <div class="cart-item-info">
                             <h4>${item.name}</h4>
-                            <p>₹${item.price} x ${item.quantity} = ₹${itemTotal}</p>
+                            <p>₹${item.price} x ${item.quantity}</p>
                         </div>
                         <div class="cart-item-controls">
                             <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
-                            <span class="cart-item-qty">${item.quantity}</span>
+                            <span>${item.quantity}</span>
                             <button class="qty-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
                         </div>
                     </div>
                 `;
             });
-            
-            cartItemsContainer.innerHTML = html;
-            
-            const deliveryFee = 40;
-            const grandTotal = subtotal + deliveryFee;
-            
+
+            cartItems.innerHTML = html;
             document.getElementById('subtotal').textContent = '₹' + subtotal;
-            document.getElementById('grandTotal').textContent = '₹' + grandTotal;
-            
+            document.getElementById('grandTotal').textContent = '₹' + (subtotal + 40);
             cartTotal.style.display = 'block';
             checkoutBtn.disabled = false;
         }
 
-        // ==================== CHECKOUT FUNCTIONS ====================
+        // ==================== CHECKOUT ====================
         function openCheckout() {
-            const user = auth.currentUser;
-            if (!user) {
+            if (!auth.currentUser) {
                 showLoginModal();
                 return;
             }
-            
-            updateOrderSummary();
-            document.getElementById('checkoutModal').classList.add('active');
-        }
 
-        function closeCheckout() {
-            document.getElementById('checkoutModal').classList.remove('active');
-        }
-
-        function updateOrderSummary() {
-            const summaryContainer = document.getElementById('orderSummary');
+            // Update order summary
             let html = '';
             let subtotal = 0;
-            
+
             cart.forEach(item => {
                 const itemTotal = item.price * item.quantity;
                 subtotal += itemTotal;
@@ -1286,10 +963,7 @@
                     </div>
                 `;
             });
-            
-            const deliveryFee = 40;
-            const grandTotal = subtotal + deliveryFee;
-            
+
             html += `
                 <div class="cart-item" style="border-top: 1px solid var(--border-color); margin-top: 10px; padding-top: 10px;">
                     <span>Subtotal</span>
@@ -1297,154 +971,117 @@
                 </div>
                 <div class="cart-item">
                     <span>Delivery Fee</span>
-                    <span>₹${deliveryFee}</span>
+                    <span>₹40</span>
                 </div>
-                <div class="cart-item" style="font-weight: bold; font-size: 16px;">
+                <div class="cart-item" style="font-weight: bold;">
                     <span>Total</span>
-                    <span id="checkoutGrandTotal">₹${grandTotal}</span>
+                    <span>₹${subtotal + 40}</span>
                 </div>
             `;
-            
-            summaryContainer.innerHTML = html;
+
+            document.getElementById('orderSummary').innerHTML = html;
+            document.getElementById('checkoutModal').classList.add('active');
         }
 
-        function toggleNewAddressForm() {
-            const form = document.getElementById('newAddressForm');
-            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.remove('active');
         }
 
-        // Clear cart function
-        function clearCart() {
-            cart = [];
-            updateCartUI();
+        // ==================== PAYMENT ====================
+        async function processPayment() {
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+            const address = document.getElementById('customerAddress').value.trim();
+
+            if (!name || !phone || !address) {
+                alert('Please fill all delivery details');
+                return;
+            }
+
+            let subtotal = 0;
+            cart.forEach(item => subtotal += item.price * item.quantity);
+            const total = subtotal + 40;
+
+            // Razorpay Payment
+            const options = {
+                key: 'rzp_test_YourTestKey', // Replace with your Razorpay key
+                amount: total * 100,
+                currency: 'INR',
+                name: 'FoodExpress',
+                description: 'Food Order Payment',
+                handler: async function(response) {
+                    // Payment successful - save order
+                    await saveOrder(name, phone, address, total, response.razorpay_payment_id);
+                },
+                prefill: {
+                    name: name,
+                    contact: phone
+                },
+                theme: {
+                    color: '#ff6347'
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
+        }
+
+        async function saveOrder(name, phone, address, total, paymentId) {
+            try {
+                const user = auth.currentUser;
+                const orderId = 'ORD' + Date.now();
+                const restaurantId = getRestaurantId();
+
+                const orderData = {
+                    id: orderId,
+                    items: cart,
+                    customerName: name,
+                    phone: phone,
+                    address: address,
+                    total: total,
+                    paymentId: paymentId,
+                    paymentStatus: 'paid',
+                    status: 'pending',
+                    restaurantId: restaurantId,
+                    restaurantName: currentRestaurant.name,
+                    userId: user.uid,
+                    userEmail: user.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                await db.collection('orders').doc(orderId).set(orderData);
+
+                alert('🎉 Order placed successfully!\n\nOrder ID: ' + orderId);
+                
+                // Clear cart and close modal
+                cart = [];
+                updateCartUI();
+                closeCheckout();
+
+            } catch (error) {
+                console.error('Error saving order:', error);
+                alert('Order placed! Payment ID: ' + paymentId);
+                cart = [];
+                updateCartUI();
+                closeCheckout();
+            }
         }
 
         // ==================== MOBILE CART ====================
-        function toggleMobileCart() {
+        function toggleCart() {
             if (window.innerWidth <= 992) {
-                const cartSummary = document.getElementById('cartSummary');
-                cartSummary.classList.toggle('expanded');
+                document.getElementById('cartSection').classList.toggle('expanded');
             }
         }
 
-        // ==================== REVIEWS ====================
-        let selectedRating = 0;
-
-        function openReviewModal() {
-            const user = auth.currentUser;
-            if (!user) {
-                showLoginModal();
-                return;
-            }
-            document.getElementById('reviewModal').classList.add('active');
+        // ==================== MODALS ====================
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
         }
 
-        function closeReviewModal() {
-            document.getElementById('reviewModal').classList.remove('active');
-            selectedRating = 0;
-            updateStarDisplay();
-            document.getElementById('reviewText').value = '';
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
         }
-
-        function setRating(rating) {
-            selectedRating = rating;
-            updateStarDisplay();
-        }
-
-        function updateStarDisplay() {
-            const stars = document.querySelectorAll('#starRating span');
-            stars.forEach((star, index) => {
-                star.textContent = index < selectedRating ? '★' : '☆';
-                star.style.color = index < selectedRating ? '#ffc107' : '#ccc';
-            });
-        }
-
-        async function submitReview() {
-            if (selectedRating === 0) {
-                alert('Please select a rating');
-                return;
-            }
-            
-            const reviewText = document.getElementById('reviewText').value.trim();
-            const user = auth.currentUser;
-            
-            try {
-                await db.collection('reviews').add({
-                    restaurantId: getRestaurantId(),
-                    userId: user.uid,
-                    userName: user.displayName || user.email.split('@')[0],
-                    rating: selectedRating,
-                    text: reviewText,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                alert('✅ Review submitted successfully!');
-                closeReviewModal();
-                loadReviews();
-                
-            } catch (error) {
-                console.error('Error submitting review:', error);
-                alert('❌ Failed to submit review');
-            }
-        }
-
-        async function loadReviews() {
-            const container = document.getElementById('reviewsContainer');
-            
-            try {
-                const snapshot = await db.collection('reviews')
-                    .where('restaurantId', '==', getRestaurantId())
-                    .orderBy('createdAt', 'desc')
-                    .limit(10)
-                    .get();
-                
-                if (snapshot.empty) {
-                    container.innerHTML = `
-                        <div class="review-card">
-                            <p style="text-align: center; color: var(--text-secondary);">No reviews yet. Be the first to review!</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                let html = '';
-                snapshot.forEach(doc => {
-                    const review = doc.data();
-                    const date = review.createdAt ? review.createdAt.toDate().toLocaleDateString() : 'Recently';
-                    const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
-                    
-                    html += `
-                        <div class="review-card">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <div class="reviewer-avatar">${review.userName.charAt(0).toUpperCase()}</div>
-                                    <div>
-                                        <div class="reviewer-name">${review.userName}</div>
-                                        <div class="review-date">${date}</div>
-                                    </div>
-                                </div>
-                                <div class="review-rating" style="color: #ffc107;">${stars}</div>
-                            </div>
-                            <p class="review-text">${review.text || 'Great experience!'}</p>
-                        </div>
-                    `;
-                });
-                
-                container.innerHTML = html;
-                
-            } catch (error) {
-                console.error('Error loading reviews:', error);
-            }
-        }
-
-        // ==================== INITIALIZE ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Wait for Firebase to initialize
-            setTimeout(() => {
-                loadMenuFromFirebase();
-                loadReviews();
-            }, 1500);
-        });
 
         // Close modals on outside click
         document.querySelectorAll('.modal').forEach(modal => {
@@ -1453,6 +1090,11 @@
                     this.classList.remove('active');
                 }
             });
+        });
+
+        // ==================== INITIALIZE ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(loadRestaurant, 1000);
         });
     </script>
 </body>
