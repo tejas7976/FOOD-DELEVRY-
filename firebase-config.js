@@ -1,9 +1,6 @@
 // Firebase Configuration for FoodExpress
 // This file initializes Firebase services
 
-// Firebase CDN imports (using compat version for easier setup)
-// These are loaded via script tags in HTML
-
 // Your Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCezNDpEfqehBBXQgSj1AilGQWRhRqnbSY",
@@ -45,6 +42,7 @@ async function firebaseSignUp(email, password, name, phone) {
             email: email,
             name: name,
             phone: phone || '',
+            isOnline: true,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             lastLogin: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -64,11 +62,14 @@ async function firebaseSignIn(email, password) {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
-        // Update last login time
+        // Update last login time and set online status
         await db.collection('users').doc(user.uid).update({
             lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
             isOnline: true
         });
+        
+        // Set up online status tracking
+        setupOnlineStatusTracking(user.uid);
         
         console.log('✅ User signed in:', email);
         return { success: true, user: user };
@@ -87,7 +88,8 @@ async function firebaseSignOut() {
         // Update online status before signing out
         if (user) {
             await db.collection('users').doc(user.uid).update({
-                isOnline: false
+                isOnline: false,
+                lastSeen: firebase.firestore.FieldValue.serverTimestamp()
             });
         }
         
@@ -99,6 +101,58 @@ async function firebaseSignOut() {
         console.error('❌ Sign out error:', error);
         return { success: false, error: error.message };
     }
+}
+
+// Setup Online Status Tracking
+function setupOnlineStatusTracking(uid) {
+    // Update online status when user closes browser/tab
+    window.addEventListener('beforeunload', async function() {
+        try {
+            // Use navigator.sendBeacon for reliable delivery
+            const data = JSON.stringify({ isOnline: false });
+            navigator.sendBeacon && navigator.sendBeacon('/api/offline', data);
+            
+            // Also try direct update (may not complete)
+            await db.collection('users').doc(uid).update({
+                isOnline: false,
+                lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } catch (e) {
+            console.log('Could not update offline status');
+        }
+    });
+    
+    // Update online status periodically (heartbeat)
+    setInterval(async () => {
+        const user = auth.currentUser;
+        if (user) {
+            try {
+                await db.collection('users').doc(user.uid).update({
+                    isOnline: true,
+                    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (e) {
+                console.log('Heartbeat update failed');
+            }
+        }
+    }, 60000); // Every 60 seconds
+    
+    // Also update on visibility change
+    document.addEventListener('visibilitychange', async function() {
+        const user = auth.currentUser;
+        if (user) {
+            try {
+                if (document.visibilityState === 'visible') {
+                    await db.collection('users').doc(user.uid).update({
+                        isOnline: true,
+                        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            } catch (e) {
+                console.log('Visibility update failed');
+            }
+        }
+    });
 }
 
 // Get Current User
@@ -352,16 +406,32 @@ async function deleteUser(uid) {
     }
 }
 
-// Get Stats (Admin)
+// Get Stats (Admin) - With improved online detection
 async function getAdminStats() {
     try {
         // Get total users
         const usersSnapshot = await db.collection('users').get();
         const totalUsers = usersSnapshot.size;
         
-        // Get online users
-        const onlineSnapshot = await db.collection('users').where('isOnline', '==', true).get();
-        const onlineUsers = onlineSnapshot.size;
+        // Get online users (users who were active in last 2 minutes)
+        const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+        let onlineUsers = 0;
+        
+        usersSnapshot.forEach(doc => {
+            const userData = doc.data();
+            if (userData.isOnline === true) {
+                // Check if lastSeen is recent
+                if (userData.lastSeen) {
+                    const lastSeen = userData.lastSeen.toDate();
+                    if (lastSeen > twoMinutesAgo) {
+                        onlineUsers++;
+                    }
+                } else {
+                    // If no lastSeen but isOnline is true, count as online
+                    onlineUsers++;
+                }
+            }
+        });
         
         // Get total orders
         const ordersSnapshot = await db.collection('orders').get();
@@ -370,10 +440,17 @@ async function getAdminStats() {
         // Get today's signups
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const todaySignupsSnapshot = await db.collection('users')
-            .where('createdAt', '>=', today)
-            .get();
-        const todaySignups = todaySignupsSnapshot.size;
+        let todaySignups = 0;
+        
+        usersSnapshot.forEach(doc => {
+            const userData = doc.data();
+            if (userData.createdAt) {
+                const createdAt = userData.createdAt.toDate();
+                if (createdAt >= today) {
+                    todaySignups++;
+                }
+            }
+        });
         
         return {
             success: true,
@@ -434,6 +511,19 @@ async function getCart() {
 auth.onAuthStateChanged(async (user) => {
     if (user) {
         console.log('👤 User logged in:', user.email);
+        
+        // Set online status
+        try {
+            await db.collection('users').doc(user.uid).update({
+                isOnline: true,
+                lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } catch (e) {
+            console.log('Could not update online status');
+        }
+        
+        // Setup tracking
+        setupOnlineStatusTracking(user.uid);
         
         // Update UI for logged in user
         updateUIForLoggedInUser(user);

@@ -614,50 +614,69 @@
             }
         }
 
-        // Load users
-        async function loadUsers() {
-            try {
-                const result = await getAllUsers();
-                const tableBody = document.getElementById('usersTableBody');
-                const noUsers = document.getElementById('noUsers');
-                
-                if (!result.success || result.users.length === 0) {
-                    tableBody.innerHTML = '';
-                    noUsers.style.display = 'block';
-                    return;
-                }
-                
-                noUsers.style.display = 'none';
-                
-                tableBody.innerHTML = result.users.map((user, index) => {
-                    const createdDate = user.createdAt 
-                        ? user.createdAt.toDate().toLocaleString('en-IN')
-                        : 'N/A';
-                    
-                    const statusBadge = user.isOnline 
-                        ? '<span class="status-badge online">🟢 Online</span>'
-                        : '<span class="status-badge offline">⚪ Offline</span>';
-                    
-                    return `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${user.email}</td>
-                            <td>${user.name || 'N/A'}</td>
-                            <td>${user.phone || 'N/A'}</td>
-                            <td>${createdDate}</td>
-                            <td>${statusBadge}</td>
-                            <td>
-                                <button class="delete-btn" onclick="handleDeleteUser('${user.uid}')">
-                                    🗑️ Delete
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-            } catch (error) {
-                console.error('Error loading users:', error);
-            }
+        // Load users with better online detection
+async function loadUsers() {
+    try {
+        const result = await getAllUsers();
+        const tableBody = document.getElementById('usersTableBody');
+        const noUsers = document.getElementById('noUsers');
+        
+        if (!result.success || result.users.length === 0) {
+            tableBody.innerHTML = '';
+            noUsers.style.display = 'block';
+            return;
         }
+        
+        noUsers.style.display = 'none';
+        
+        // Current time for online check
+        const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+        
+        tableBody.innerHTML = result.users.map((user, index) => {
+            const createdDate = user.createdAt 
+                ? user.createdAt.toDate().toLocaleString('en-IN')
+                : 'N/A';
+            
+            // Check if user is really online (active in last 2 minutes)
+            let isReallyOnline = false;
+            if (user.isOnline === true && user.lastSeen) {
+                const lastSeen = user.lastSeen.toDate();
+                isReallyOnline = lastSeen > twoMinutesAgo;
+            } else if (user.isOnline === true) {
+                isReallyOnline = true;
+            }
+            
+            const statusBadge = isReallyOnline 
+                ? '<span class="status-badge online">🟢 Online</span>'
+                : '<span class="status-badge offline">⚪ Offline</span>';
+            
+            // Show last seen time if offline
+            let lastSeenText = '';
+            if (!isReallyOnline && user.lastSeen) {
+                const lastSeen = user.lastSeen.toDate();
+                lastSeenText = `<br><small style="color: #999;">Last seen: ${lastSeen.toLocaleString('en-IN')}</small>`;
+            }
+            
+            return `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${user.email}</td>
+                    <td>${user.name || 'N/A'}</td>
+                    <td>${user.phone || 'N/A'}</td>
+                    <td>${createdDate}</td>
+                    <td>${statusBadge}${lastSeenText}</td>
+                    <td>
+                        <button class="delete-btn" onclick="handleDeleteUser('${user.uid}')">
+                            🗑️ Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Error loading users:', error);
+    }
+}
 
         // Delete user handler
         async function handleDeleteUser(uid) {
