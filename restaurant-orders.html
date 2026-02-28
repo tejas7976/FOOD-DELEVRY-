@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Orders - FoodExpress</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Excel Export Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #ff6347 0%, #ff4520 100%);
+            color: white;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .header-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Login Container */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff6347 0%, #ff4520 100%);
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .login-box p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .login-input:focus {
+            border-color: #ff6347;
+            outline: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff6347, #ff4520);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-error {
+            color: #ff4444;
+            font-size: 14px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: none;
+            padding: 70px 15px 100px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .stat-card.orange { border-left: 4px solid #ff6347; }
+        .stat-card.green { border-left: 4px solid #48c479; }
+        .stat-card.blue { border-left: 4px solid #4facfe; }
+        .stat-card.purple { border-left: 4px solid #667eea; }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #ff6347;
+            color: white;
+        }
+
+        /* Order Card */
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .order-card.new-order {
+            border: 2px solid #ff6347;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 99, 71, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 99, 71, 0); }
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .order-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .order-status.pending { background: #fff3e0; color: #e65100; }
+        .order-status.confirmed { background: #e8f5e9; color: #2e7d32; }
+        .order-status.preparing { background: #e3f2fd; color: #1565c0; }
+        .order-status.out_for_delivery { background: #f3e5f5; color: #7b1fa2; }
+        .order-status.delivered { background: #e8f5e9; color: #2e7d32; }
+        .order-status.cancelled { background: #ffebee; color: #c62828; }
+
+        .order-customer {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .order-customer p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .order-customer p:last-child { margin-bottom: 0; }
+        .order-customer strong { color: #333; }
+
+        .order-items {
+            margin-bottom: 12px;
+        }
+
+        .order-item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+            font-size: 14px;
+        }
+
+        .order-item-row:last-child { border-bottom: none; }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-top: 2px solid #eee;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .order-total .amount {
+            color: #ff6347;
+        }
+
+        .payment-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            margin-left: 10px;
+        }
+
+        .payment-badge.cod { background: #fff3e0; color: #e65100; }
+        .payment-badge.online { background: #e8f5e9; color: #2e7d32; }
+
+        /* Action Buttons */
+        .order-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .action-btn.accept { background: #48c479; color: white; }
+        .action-btn.prepare { background: #4facfe; color: white; }
+        .action-btn.ready { background: #667eea; color: white; }
+        .action-btn.deliver { background: #9c27b0; color: white; }
+        .action-btn.complete { background: #2e7d32; color: white; }
+        .action-btn.reject { background: #ff4444; color: white; }
+
+        .action-btn:hover { transform: translateY(-2px); }
+
+        /* No Orders */
+        .no-orders {
+            text-align: center;
+            padding: 50px 20px;
+            color: #666;
+        }
+
+        .no-orders-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        /* Export Section */
+        .export-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .export-section h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .date-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .date-input {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .export-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #48c479, #38f9d7);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .bottom-nav-item {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border: none;
+            background: none;
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .bottom-nav-item.active {
+            color: #ff6347;
+        }
+
+        .bottom-nav-item .icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        /* Notification Sound */
+        .notification-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .notification-toggle span {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #ccc;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider { background: #48c479; }
+        input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #eee;
+            border-top-color: #ff6347;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <h1>🍕 Restaurant Orders</h1>
+            <p>Login to manage your orders</p>
+            
+            <select id="restaurantSelect" class="login-input" required>
+                <option value="">-- Select Restaurant --</option>
+                <option value="pizza-paradise">🍕 Pizza Paradise</option>
+                <option value="burger-house">🍔 Burger House</option>
+                <option value="biryani-blues">🍛 Biryani Blues</option>
+                <option value="chinese-wok">🥡 Chinese Wok</option>
+                <option value="healthy-bites">🥗 Healthy Bites</option>
+            </select>
+            
+            <input type="password" id="restaurantPassword" class="login-input" placeholder="Password" required>
+            
+            <button class="login-btn" onclick="login()">🔓 Login</button>
+            
+            <p id="loginError" class="login-error"></p>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1><span id="restaurantIcon">🍕</span> <span id="restaurantTitle">Orders</span></h1>
+            <div class="header-actions">
+                <button class="header-btn" onclick="refreshOrders()">🔄</button>
+                <button class="header-btn" onclick="logout()">🚪</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card orange">
+                <div class="stat-number" id="pendingCount">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-number" id="todayCount">0</div>
+                <div class="stat-label">Today's Orders</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-number" id="deliveredCount">0</div>
+                <div class="stat-label">Delivered</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-number" id="todayEarnings">₹0</div>
+                <div class="stat-label">Today's Earnings</div>
+            </div>
+        </div>
+
+        <!-- Notification Toggle -->
+        <div class="notification-toggle">
+            <span>🔔 Sound Notifications</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="notificationToggle" checked onchange="toggleNotifications()">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('active')">🔥 Active</button>
+            <button class="tab" onclick="switchTab('completed')">✅ Completed</button>
+            <button class="tab" onclick="switchTab('export')">📊 Export</button>
+        </div>
+
+        <!-- Active Orders -->
+        <div id="activeTab">
+            <div id="activeOrders">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading orders...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Orders -->
+        <div id="completedTab" style="display: none;">
+            <div id="completedOrders"></div>
+        </div>
+
+        <!-- Export Tab -->
+        <div id="exportTab" style="display: none;">
+            <div class="export-section">
+                <h3>📊 Export Orders to Excel</h3>
+                <div class="date-filters">
+                    <input type="date" id="startDate" class="date-input">
+                    <input type="date" id="endDate" class="date-input">
+                </div>
+                <button class="export-btn" onclick="exportToExcel()">
+                    📥 Download Excel Report
+                </button>
+            </div>
+
+            <div class="export-section">
+                <h3>📈 Quick Export</h3>
+                <button class="export-btn" style="margin-bottom: 10px; background: linear-gradient(135deg, #4facfe, #00f2fe);" onclick="exportToday()">
+                    📅 Export Today's Orders
+                </button>
+                <button class="export-btn" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="exportAll()">
+                    📋 Export All Orders
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+            <button class="bottom-nav-item active" onclick="switchTab('active')">
+                <span class="icon">📦</span>
+                Active
+            </button>
+            <button class="bottom-nav-item" onclick="switchTab('completed')">
+                <span class="icon">✅</span>
+                Completed
+            </button>
+            <button class="bottom-nav-item" onclick="switchTab('export')">
+                <span class="icon">📊</span>
+                Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification Sound -->
+    <audio id="notificationSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        // ==================== CREDENTIALS ====================
+        const PASSWORDS = {
+            'pizza-paradise': 'Pizza@2026',
+            'burger-house': 'Burger@2026',
+            'biryani-blues': 'Biryani@2026',
+            'chinese-wok': 'Chinese@2026',
+            'healthy-bites': 'Healthy@2026'
+        };
+
+        const NAMES = {
+            'pizza-paradise': { name: 'Pizza Paradise', icon: '🍕' },
+            'burger-house': { name: 'Burger House', icon: '🍔' },
+            'biryani-blues': { name: 'Biryani Blues', icon: '🍛' },
+            'chinese-wok': { name: 'Chinese Wok', icon: '🥡' },
+            'healthy-bites': { name: 'Healthy Bites', icon: '🥗' }
+        };
+
+        let currentRestaurant = null;
+        let notificationsEnabled = true;
+        let lastOrderCount = 0;
+        let allOrders = [];
+
+        // ==================== LOGIN ====================
+        function login() {
+            const restaurant = document.getElementById('restaurantSelect').value;
+            const password = document.getElementById('restaurantPassword').value;
+            const error = document.getElementById('loginError');
+
+            if (!restaurant) {
+                error.textContent = '❌ Please select a restaurant';
+                error.style.display = 'block';
+                return;
+            }
+
+            if (PASSWORDS[restaurant] !== password) {
+                error.textContent = '❌ Invalid password';
+                error.style.display = 'block';
+                return;
+            }
+
+            currentRestaurant = restaurant;
+            localStorage.setItem('restaurantId', restaurant);
+            
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('restaurantTitle').textContent = NAMES[restaurant].name;
+            document.getElementById('restaurantIcon').textContent = NAMES[restaurant].icon;
+
+            loadOrders();
+            startRealTimeListener();
+        }
+
+        function logout() {
+            localStorage.removeItem('restaurantId');
+            currentRestaurant = null;
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+        }
+
+        // Check saved login
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('restaurantId');
+            if (saved && PASSWORDS[saved]) {
+                currentRestaurant = saved;
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('restaurantTitle').textContent = NAMES[saved].name;
+                document.getElementById('restaurantIcon').textContent = NAMES[saved].icon;
+                loadOrders();
+                startRealTimeListener();
+            }
+
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').value = today;
+            document.getElementById('endDate').value = today;
+        });
+
+        // ==================== REAL-TIME ORDERS ====================
+        function startRealTimeListener() {
+            db.collection('orders')
+                .where('restaurantId', '==', currentRestaurant)
+                .orderBy('createdAt', 'desc')
+                .onSnapshot(snapshot => {
+                    const newOrders = [];
+                    snapshot.forEach(doc => newOrders.push({ id: doc.id, ...doc.data() }));
+                    
+                    // Check for new orders
+                    const pendingOrders = newOrders.filter(o => o.status === 'pending');
+                    if (pendingOrders.length > lastOrderCount && lastOrderCount > 0) {
+                        playNotificationSound();
+                    }
+                    lastOrderCount = pendingOrders.length;
+                    
+                    allOrders = newOrders;
+                    renderOrders(newOrders);
+                    updateStats(newOrders);
+                });
+        }
+
+        function loadOrders() {
+            // Initial load handled by real-time listener
+        }
+
+        function refreshOrders() {
+            location.reload();
+        }
+
+        // ==================== RENDER ORDERS ====================
+        function renderOrders(orders) {
+            const activeContainer = document.getElementById('activeOrders');
+            const completedContainer = document.getElementById('completedOrders');
+
+            const activeOrders = orders.filter(o => !['delivered', 'cancelled'].includes(o.status));
+            const completedOrders = orders.filter(o => ['delivered', 'cancelled'].includes(o.status));
+
+            // Active Orders
+            if (activeOrders.length === 0) {
+                activeContainer.innerHTML = `
+                    <div class="no-orders">
+                        <div class="no-orders-icon">📭</div>
+                        <p>No active orders</p>
+                    </div>
+                `;
+            } else {
+                activeContainer.innerHTML = activeOrders.map(order => createOrderCard(order, true)).join('');
+            }
+
+            // Completed Orders
+            if (completedOrders.length === 0) {
+                completedContainer.innerHTML = `
+                    <div class="no-orders">
+                        <div class="no-orders-icon">📋</div>
+                        <p>No completed orders yet</p>
+                    </div>
+                `;
+            } else {
+                completedContainer.innerHTML = completedOrders.slice(0, 50).map(order => createOrderCard(order, false)).join('');
+            }
+        }
+
+        function createOrderCard(order, showActions) {
+            const date = order.createdAt ? new Date(order.createdAt.toDate()).toLocaleString('en-IN') : 'Just now';
+            const isNew = order.status === 'pending';
+            
+            const statusText = {
+                'pending': '⏳ New Order',
+                'confirmed': '✅ Confirmed',
+                'preparing': '👨‍🍳 Preparing',
+                'out_for_delivery': '🚴 Out for Delivery',
+                'delivered': '🎉 Delivered',
+                'cancelled': '❌ Cancelled'
+            }[order.status] || '⏳ Pending';
+
+            const paymentBadge = order.paymentMethod === 'cash' 
+                ? '<span class="payment-badge cod">💵 COD</span>'
+                : '<span class="payment-badge online">✅ Paid</span>';
+
+            const items = order.items ? order.items.map(item => `
+                <div class="order-item-row">
+                    <span>${item.quantity}x ${item.name}</span>
+                    <span>₹${item.price * item.quantity}</span>
+                </div>
+            `).join('') : '';
+
+            let actionButtons = '';
+            if (showActions) {
+                switch(order.status) {
+                    case 'pending':
+                        actionButtons = `
+                            <button class="action-btn accept" onclick="updateStatus('${order.id}', 'confirmed')">✅ Accept</button>
+                            <button class="action-btn reject" onclick="updateStatus('${order.id}', 'cancelled')">❌ Reject</button>
+                        `;
+                        break;
+                    case 'confirmed':
+                        actionButtons = `<button class="action-btn prepare" onclick="updateStatus('${order.id}', 'preparing')">👨‍🍳 Start Preparing</button>`;
+                        break;
+                    case 'preparing':
+                        actionButtons = `<button class="action-btn ready" onclick="updateStatus('${order.id}', 'out_for_delivery')">🚴 Ready for Delivery</button>`;
+                        break;
+                    case 'out_for_delivery':
+                        actionButtons = `<button class="action-btn complete" onclick="updateStatus('${order.id}', 'delivered')">🎉 Mark Delivered</button>`;
+                        break;
+                }
+            }
+
+            return `
+                <div class="order-card ${isNew ? 'new-order' : ''}">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-id">#${order.id}</div>
+                            <div class="order-time">${date}</div>
+                        </div>
+                        <span class="order-status ${order.status}">${statusText}</span>
+                    </div>
+                    
+                    <div class="order-customer">
+                        <p><strong>👤</strong> ${order.customerName || 'N/A'}</p>
+                        <p><strong>📞</strong> <a href="tel:${order.phone}">${order.phone || 'N/A'}</a></p>
+                        <p><strong>📍</strong> ${order.address || 'N/A'}</p>
+                    </div>
+                    
+                    <div class="order-items">${items}</div>
+                    
+                    <div class="order-total">
+                        <span>Total ${paymentBadge}</span>
+                        <span class="amount">₹${order.total || 0}</span>
+                    </div>
+                    
+                    ${actionButtons ? `<div class="order-actions">${actionButtons}</div>` : ''}
+                </div>
+            `;
+        }
+
+        // ==================== UPDATE STATUS ====================
+        async function updateStatus(orderId, status) {
+            try {
+                await db.collection('orders').doc(orderId).update({
+                    status: status,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Vibrate on mobile
+                if (navigator.vibrate) {
+                    navigator.vibrate(200);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Failed to update order');
+            }
+        }
+
+        // ==================== STATS ====================
+        function updateStats(orders) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const pending = orders.filter(o => o.status === 'pending').length;
+            const todayOrders = orders.filter(o => {
+                if (!o.createdAt) return false;
+                const orderDate = o.createdAt.toDate();
+                return orderDate >= today;
+            });
+            const delivered = orders.filter(o => o.status === 'delivered').length;
+            const todayDelivered = todayOrders.filter(o => o.status === 'delivered');
+            const earnings = todayDelivered.reduce((sum, o) => sum + (o.total || 0), 0);
+
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('todayCount').textContent = todayOrders.length;
+            document.getElementById('deliveredCount').textContent = delivered;
+            document.getElementById('todayEarnings').textContent = '₹' + earnings;
+        }
+
+        // ==================== NOTIFICATIONS ====================
+        function playNotificationSound() {
+            if (!notificationsEnabled) return;
+            
+            const sound = document.getElementById('notificationSound');
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log('Audio play failed:', e));
+            
+            // Vibrate
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+        }
+
+        function toggleNotifications() {
+            notificationsEnabled = document.getElementById('notificationToggle').checked;
+        }
+
+        // ==================== TABS ====================
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.bottom-nav-item').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById('activeTab').style.display = 'none';
+            document.getElementById('completedTab').style.display = 'none';
+            document.getElementById('exportTab').style.display = 'none';
+
+            if (tab === 'active') {
+                document.getElementById('activeTab').style.display = 'block';
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.querySelectorAll('.bottom-nav-item')[0].classList.add('active');
+            } else if (tab === 'completed') {
+                document.getElementById('completedTab').style.display = 'block';
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.querySelectorAll('.bottom-nav-item')[1].classList.add('active');
+            } else if (tab === 'export') {
+                document.getElementById('exportTab').style.display = 'block';
+                document.querySelectorAll('.tab')[2].classList.add('active');
+                document.querySelectorAll('.bottom-nav-item')[2].classList.add('active');
+            }
+        }
+
+        // ==================== EXPORT TO EXCEL ====================
+        function exportToExcel() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            endDate.setHours(23, 59, 59, 999);
+
+            const filtered = allOrders.filter(o => {
+                if (!o.createdAt) return false;
+                const date = o.createdAt.toDate();
+                return date >= startDate && date <= endDate;
+            });
+
+            if (filtered.length === 0) {
+                alert('❌ No orders found for selected dates');
+                return;
+            }
+
+            generateExcel(filtered, `Orders_${document.getElementById('startDate').value}_to_${document.getElementById('endDate').value}`);
+        }
+
+        function exportToday() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const filtered = allOrders.filter(o => {
+                if (!o.createdAt) return false;
+                return o.createdAt.toDate() >= today;
+            });
+
+            if (filtered.length === 0) {
+                alert('❌ No orders today');
+                return;
+            }
+
+            generateExcel(filtered, `Orders_Today_${new Date().toISOString().split('T')[0]}`);
+        }
+
+        function exportAll() {
+            if (allOrders.length === 0) {
+                alert('❌ No orders to export');
+                return;
+            }
+            generateExcel(allOrders, `All_Orders_${new Date().toISOString().split('T')[0]}`);
+        }
+
+        function generateExcel(orders, filename) {
+            const data = orders.map(order => ({
+                'Order ID': order.id,
+                'Date': order.createdAt ? order.createdAt.toDate().toLocaleString('en-IN') : '',
+                'Customer Name': order.customerName || '',
+                'Phone': order.phone || '',
+                'Address': order.address || '',
+                'Items': order.items ? order.items.map(i => `${i.quantity}x ${i.name}`).join(', ') : '',
+                'Total': order.total || 0,
+                'Payment Method': order.paymentMethod === 'cash' ? 'COD' : 'Online',
+                'Payment Status': order.paymentStatus || '',
+                'Order Status': order.status || '',
+            }));
+
+            // Calculate totals
+            const totalEarnings = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+            const codOrders = orders.filter(o => o.paymentMethod === 'cash').length;
+            const onlineOrders = orders.filter(o => o.paymentMethod === 'online').length;
+            const deliveredOrders = orders.filter(o => o.status === 'delivered').length;
+
+            // Add summary row
+            data.push({});
+            data.push({ 'Order ID': '--- SUMMARY ---' });
+            data.push({ 'Order ID': 'Total Orders', 'Date': orders.length });
+            data.push({ 'Order ID': 'Delivered Orders', 'Date': deliveredOrders });
+            data.push({ 'Order ID': 'COD Orders', 'Date': codOrders });
+            data.push({ 'Order ID': 'Online Orders', 'Date': onlineOrders });
+            data.push({ 'Order ID': 'Total Earnings', 'Date': '₹' + totalEarnings });
+
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Orders');
+            XLSX.writeFile(wb, `${filename}.xlsx`);
+
+            alert(`✅ Excel downloaded!\n\n📊 ${orders.length} orders\n💰 Total: ₹${totalEarnings}`);
+        }
+    </script>
+</body>
+</html>
