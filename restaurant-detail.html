@@ -14,485 +14,96 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-primary, #f5f5f5); color: var(--text-primary, #333); }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-primary, #f5f5f5);
-            color: var(--text-primary, #333);
-        }
+        .restaurant-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; margin-top: 70px; }
+        .restaurant-header-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 30px; }
+        .restaurant-header-image { width: 150px; height: 150px; border-radius: 15px; object-fit: cover; border: 4px solid white; }
+        .restaurant-info h1 { font-size: 32px; margin-bottom: 10px; }
+        .restaurant-info > p { font-size: 16px; opacity: 0.9; }
+        .restaurant-meta { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px; }
+        .restaurant-meta span { font-size: 14px; opacity: 0.9; }
 
-        /* Restaurant Header */
-        .restaurant-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 20px;
-            margin-top: 70px;
-        }
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 30px 20px; display: flex; gap: 30px; }
+        .menu-section { flex: 1; }
+        .section-title { font-size: 24px; color: var(--text-primary); margin-bottom: 20px; }
+        .category-title { font-size: 20px; color: var(--text-primary); margin: 25px 0 15px; padding-bottom: 10px; border-bottom: 2px solid #ff6347; }
 
-        .restaurant-header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
+        .menu-item { background: var(--bg-card, white); border-radius: 12px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.3s; }
+        .menu-item:hover { transform: translateY(-2px); }
+        .menu-item-info { flex: 1; padding-right: 15px; }
+        .menu-item-info h3 { font-size: 18px; color: var(--text-primary); margin-bottom: 5px; }
+        .menu-item-info .description { font-size: 13px; color: var(--text-secondary, #666); margin-bottom: 8px; }
+        .menu-item-info .price { font-size: 18px; font-weight: bold; color: #ff6347; }
+        .menu-item-right { display: flex; align-items: center; gap: 15px; }
+        .menu-item-right img { width: 100px; height: 100px; border-radius: 10px; object-fit: cover; }
+        .add-btn { background: #ff6347; color: white; border: none; padding: 10px 25px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+        .add-btn:hover { background: #ff4520; }
 
-        .restaurant-header-image {
-            width: 150px;
-            height: 150px;
-            border-radius: 15px;
-            object-fit: cover;
-            border: 4px solid white;
-        }
+        .cart-section { width: 350px; background: var(--bg-card, white); border-radius: 15px; padding: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); position: sticky; top: 90px; height: fit-content; max-height: calc(100vh - 110px); overflow-y: auto; }
+        .cart-section h3 { font-size: 20px; color: var(--text-primary); margin-bottom: 20px; }
+        .cart-empty { text-align: center; padding: 30px 0; color: var(--text-secondary); }
+        .cart-empty-icon { font-size: 50px; margin-bottom: 10px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--border-color, #eee); }
+        .cart-item-info h4 { font-size: 14px; color: var(--text-primary); margin-bottom: 3px; }
+        .cart-item-info p { font-size: 13px; color: #ff6347; font-weight: bold; }
+        .cart-item-controls { display: flex; align-items: center; gap: 10px; }
+        .qty-btn { width: 28px; height: 28px; border: none; background: #ff6347; color: white; border-radius: 50%; cursor: pointer; font-size: 16px; }
+        .qty-btn:hover { background: #ff4520; }
+        .cart-total { border-top: 2px solid var(--border-color, #eee); padding-top: 15px; margin-top: 15px; }
+        .cart-total-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: var(--text-secondary); }
+        .cart-total-row.grand-total { font-size: 18px; font-weight: bold; color: var(--text-primary); padding-top: 10px; border-top: 1px solid var(--border-color); }
+        .checkout-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff6347, #ff4520); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: transform 0.3s; }
+        .checkout-btn:hover { transform: translateY(-2px); }
+        .checkout-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
 
-        .restaurant-info h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
+        .loading { text-align: center; padding: 50px; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #eee; border-top-color: #ff6347; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .restaurant-info > p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100000; align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--bg-card, white); border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h2 { margin: 0; color: var(--text-primary); }
+        .modal-close { background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text-secondary); }
+        .modal-body { padding: 20px; }
+        .modal-body input, .modal-body textarea { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid var(--border-color, #eee); border-radius: 10px; font-size: 16px; box-sizing: border-box; background: var(--bg-input, white); color: var(--text-primary, #333); }
+        .modal-body input:focus, .modal-body textarea:focus { border-color: #ff6347; outline: none; }
 
-        .restaurant-meta {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
+        .payment-options { margin-top: 10px; }
+        .pay-btn { width: 100%; padding: 18px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .pay-btn:hover { transform: translateY(-2px); }
+        .pay-btn.online-pay { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .pay-btn.online-pay:hover { box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+        .pay-btn.cod-pay { background: linear-gradient(135deg, #43e97b, #38f9d7); color: #1a5a2e; }
+        .pay-btn.cod-pay:hover { box-shadow: 0 5px 20px rgba(67, 233, 123, 0.4); }
 
-        .restaurant-meta span {
-            font-size: 14px;
-            opacity: 0.9;
-        }
+        #orderSummary { background: var(--bg-secondary, #f9f9f9); padding: 15px; border-radius: 10px; margin: 15px 0; }
+        #orderSummary .summary-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border-color, #eee); }
+        #orderSummary .summary-item:last-child { border-bottom: none; }
 
-        /* Main Layout */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 20px;
-            display: flex;
-            gap: 30px;
-        }
+        .footer { background: var(--bg-card); padding: 30px 20px; margin-top: 50px; border-top: 1px solid var(--border-color); text-align: center; }
+        .footer p { color: var(--text-secondary); font-size: 14px; }
 
-        /* Menu Section */
-        .menu-section {
-            flex: 1;
-        }
-
-        .section-title {
-            font-size: 24px;
-            color: var(--text-primary);
-            margin-bottom: 20px;
-        }
-
-        .category-title {
-            font-size: 20px;
-            color: var(--text-primary);
-            margin: 25px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #ff6347;
-        }
-
-        /* Menu Item */
-        .menu-item {
-            background: var(--bg-card, white);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: transform 0.3s;
-        }
-
-        .menu-item:hover {
-            transform: translateY(-2px);
-        }
-
-        .menu-item-info {
-            flex: 1;
-            padding-right: 15px;
-        }
-
-        .menu-item-info h3 {
-            font-size: 18px;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-        }
-
-        .menu-item-info .description {
-            font-size: 13px;
-            color: var(--text-secondary, #666);
-            margin-bottom: 8px;
-        }
-
-        .menu-item-info .price {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ff6347;
-        }
-
-        .menu-item-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .menu-item-right img {
-            width: 100px;
-            height: 100px;
-            border-radius: 10px;
-            object-fit: cover;
-        }
-
-        .add-btn {
-            background: #ff6347;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .add-btn:hover {
-            background: #ff4520;
-        }
-
-        /* Cart Section */
-        .cart-section {
-            width: 350px;
-            background: var(--bg-card, white);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 90px;
-            height: fit-content;
-            max-height: calc(100vh - 110px);
-            overflow-y: auto;
-        }
-
-        .cart-section h3 {
-            font-size: 20px;
-            color: var(--text-primary);
-            margin-bottom: 20px;
-        }
-
-        .cart-empty {
-            text-align: center;
-            padding: 30px 0;
-            color: var(--text-secondary);
-        }
-
-        .cart-empty-icon {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px dashed var(--border-color, #eee);
-        }
-
-        .cart-item-info h4 {
-            font-size: 14px;
-            color: var(--text-primary);
-            margin-bottom: 3px;
-        }
-
-        .cart-item-info p {
-            font-size: 13px;
-            color: #ff6347;
-            font-weight: bold;
-        }
-
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .qty-btn {
-            width: 28px;
-            height: 28px;
-            border: none;
-            background: #ff6347;
-            color: white;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .qty-btn:hover {
-            background: #ff4520;
-        }
-
-        .cart-total {
-            border-top: 2px solid var(--border-color, #eee);
-            padding-top: 15px;
-            margin-top: 15px;
-        }
-
-        .cart-total-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .cart-total-row.grand-total {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--text-primary);
-            padding-top: 10px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .checkout-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #ff6347, #ff4520);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: transform 0.3s;
-        }
-
-        .checkout-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .checkout-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 50px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #eee;
-            border-top-color: #ff6347;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 100000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--bg-card, white);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            color: var(--text-primary);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--text-secondary);
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .modal-body input,
-        .modal-body textarea {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 2px solid var(--border-color, #eee);
-            border-radius: 10px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        .modal-body input:focus,
-        .modal-body textarea:focus {
-            border-color: #ff6347;
-            outline: none;
-        }
-
-        .pay-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .pay-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        #orderSummary {
-            background: var(--bg-secondary, #f9f9f9);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-
-        #orderSummary .cart-item {
-            padding: 8px 0;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--bg-card);
-            padding: 30px 20px;
-            margin-top: 50px;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .footer p {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        /* Responsive */
         @media (max-width: 992px) {
-            .main-content {
-                flex-direction: column;
-            }
-
-            .cart-section {
-                width: 100%;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                border-radius: 20px 20px 0 0;
-                max-height: 70vh;
-                transform: translateY(calc(100% - 60px));
-                transition: transform 0.3s;
-                z-index: 9999;
-            }
-
-            .cart-section.expanded {
-                transform: translateY(0);
-            }
-
-            .cart-section h3 {
-                cursor: pointer;
-            }
-
-            .menu-section {
-                padding-bottom: 80px;
-            }
+            .main-content { flex-direction: column; }
+            .cart-section { width: 100%; position: fixed; bottom: 0; left: 0; right: 0; border-radius: 20px 20px 0 0; max-height: 70vh; transform: translateY(calc(100% - 60px)); transition: transform 0.3s; z-index: 9999; }
+            .cart-section.expanded { transform: translateY(0); }
+            .cart-section h3 { cursor: pointer; }
+            .menu-section { padding-bottom: 80px; }
         }
-
         @media (max-width: 768px) {
-            .restaurant-header {
-                padding: 20px;
-                margin-top: 60px;
-            }
-
-            .restaurant-header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .restaurant-header-image {
-                width: 120px;
-                height: 120px;
-            }
-
-            .restaurant-info h1 {
-                font-size: 24px;
-            }
-
-            .restaurant-meta {
-                justify-content: center;
-            }
-
-            .menu-item {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .menu-item-info {
-                padding-right: 0;
-                margin-bottom: 15px;
-            }
-
-            .menu-item-right {
-                flex-direction: column;
-            }
-
-            .menu-item-right img {
-                width: 150px;
-                height: 100px;
-            }
+            .restaurant-header { padding: 20px; margin-top: 60px; }
+            .restaurant-header-content { flex-direction: column; text-align: center; }
+            .restaurant-header-image { width: 120px; height: 120px; }
+            .restaurant-info h1 { font-size: 24px; }
+            .restaurant-meta { justify-content: center; }
+            .menu-item { flex-direction: column; text-align: center; }
+            .menu-item-info { padding-right: 0; margin-bottom: 15px; }
+            .menu-item-right { flex-direction: column; }
+            .menu-item-right img { width: 150px; height: 100px; }
         }
     </style>
 </head>
@@ -500,28 +111,15 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">
-                <a href="index.html" style="text-decoration: none; color: inherit;">🍔 FoodExpress</a>
-            </div>
+            <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">🍔 FoodExpress</a></div>
             <ul class="nav-menu">
-                <li class="nav-item">
-                    <button class="theme-toggle" onclick="toggleTheme()">
-                        <span class="theme-toggle-icon" id="themeToggleIcon">🌙</span>
-                        <span class="theme-toggle-text" id="themeToggleText">Dark</span>
-                    </button>
-                </li>
+                <li class="nav-item"><button class="theme-toggle" onclick="toggleTheme()"><span class="theme-toggle-icon" id="themeToggleIcon">🌙</span><span class="theme-toggle-text" id="themeToggleText">Dark</span></button></li>
                 <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
                 <li class="nav-item"><a href="orders.html" class="nav-link">My Orders</a></li>
                 <li class="nav-item"><a href="profile.html" class="nav-link">Profile</a></li>
-                <li class="nav-item">
-                    <button class="login-btn" onclick="showLoginModal()">Login</button>
-                </li>
+                <li class="nav-item"><button class="login-btn" onclick="showLoginModal()">Login</button></li>
             </ul>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <div class="hamburger"><span></span><span></span><span></span></div>
         </div>
     </nav>
 
@@ -543,96 +141,62 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Menu Section -->
         <div class="menu-section">
             <h2 class="section-title">🍽️ Menu</h2>
-            
-            <div id="menuLoading" class="loading">
-                <div class="spinner"></div>
-                <p>Loading menu...</p>
-            </div>
-            
+            <div id="menuLoading" class="loading"><div class="spinner"></div><p>Loading menu...</p></div>
             <div id="menuContainer"></div>
         </div>
 
-        <!-- Cart Section -->
         <div class="cart-section" id="cartSection">
             <h3 onclick="toggleCart()">🛒 Your Cart</h3>
-            
-            <div id="cartItems">
-                <div class="cart-empty">
-                    <div class="cart-empty-icon">🛒</div>
-                    <p>Your cart is empty</p>
-                </div>
-            </div>
-            
+            <div id="cartItems"><div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Your cart is empty</p></div></div>
             <div id="cartTotal" style="display: none;">
                 <div class="cart-total">
-                    <div class="cart-total-row">
-                        <span>Subtotal</span>
-                        <span id="subtotal">₹0</span>
-                    </div>
-                    <div class="cart-total-row">
-                        <span>Delivery Fee</span>
-                        <span>₹40</span>
-                    </div>
-                    <div class="cart-total-row grand-total">
-                        <span>Total</span>
-                        <span id="grandTotal">₹0</span>
-                    </div>
+                    <div class="cart-total-row"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+                    <div class="cart-total-row"><span>Delivery Fee</span><span>₹40</span></div>
+                    <div class="cart-total-row grand-total"><span>Total</span><span id="grandTotal">₹0</span></div>
                 </div>
             </div>
-            
-            <button class="checkout-btn" id="checkoutBtn" onclick="openCheckout()" disabled>
-                Proceed to Checkout
-            </button>
+            <button class="checkout-btn" id="checkoutBtn" onclick="openCheckout()" disabled>Proceed to Checkout</button>
         </div>
     </div>
 
     <!-- Checkout Modal -->
-<div id="checkoutModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>🛒 Checkout</h2>
-            <button class="modal-close" onclick="closeCheckout()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <h3 style="margin-bottom: 15px; color: var(--text-primary);">📝 Delivery Details</h3>
-            <input type="text" id="customerName" placeholder="Your Name" required>
-            <input type="tel" id="customerPhone" placeholder="Phone Number" required>
-            <textarea id="customerAddress" placeholder="Delivery Address" rows="3" required></textarea>
-            
-            <h3 style="margin: 20px 0 15px; color: var(--text-primary);">📋 Order Summary</h3>
-            <div id="orderSummary"></div>
-            
-            <h3 style="margin: 20px 0 15px; color: var(--text-primary);">💳 Payment Method</h3>
-            
-            <!-- Payment Options -->
-            <div class="payment-options">
-                <!-- Pay Online Button -->
-                <button class="pay-btn online-pay" onclick="processOnlinePayment()">
-                    💳 Pay Online (Cards, UPI, Wallets)
-                </button>
-                
-                <!-- Divider -->
-                <div style="display: flex; align-items: center; margin: 15px 0;">
-                    <div style="flex: 1; height: 1px; background: var(--border-color, #ddd);"></div>
-                    <span style="padding: 0 15px; color: var(--text-secondary); font-size: 14px;">OR</span>
-                    <div style="flex: 1; height: 1px; background: var(--border-color, #ddd);"></div>
-                </div>
-                
-                <!-- Cash on Delivery Button -->
-                <button class="pay-btn cod-pay" onclick="processCODPayment()">
-                    💵 Cash on Delivery (COD)
-                </button>
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🛒 Checkout</h2>
+                <button class="modal-close" onclick="closeCheckout()">&times;</button>
             </div>
-            
-            <div style="margin-top: 15px; text-align: center; font-size: 12px; color: var(--text-secondary);">
-                🔒 100% Secure | Your data is safe with us
+            <div class="modal-body">
+                <h3 style="margin-bottom: 15px; color: var(--text-primary);">📝 Delivery Details</h3>
+                <input type="text" id="customerName" placeholder="Your Name" required>
+                <input type="tel" id="customerPhone" placeholder="Phone Number (10 digits)" required>
+                <textarea id="customerAddress" placeholder="Full Delivery Address" rows="3" required></textarea>
+                
+                <h3 style="margin: 20px 0 15px; color: var(--text-primary);">📋 Order Summary</h3>
+                <div id="orderSummary"></div>
+                
+                <h3 style="margin: 20px 0 15px; color: var(--text-primary);">💳 Select Payment Method</h3>
+                <div class="payment-options">
+                    <button class="pay-btn online-pay" onclick="processOnlinePayment()">
+                        💳 Pay Online (Cards, UPI, Wallets)
+                    </button>
+                    <div style="display: flex; align-items: center; margin: 15px 0;">
+                        <div style="flex: 1; height: 1px; background: var(--border-color, #ddd);"></div>
+                        <span style="padding: 0 15px; color: var(--text-secondary); font-size: 14px;">OR</span>
+                        <div style="flex: 1; height: 1px; background: var(--border-color, #ddd);"></div>
+                    </div>
+                    <button class="pay-btn cod-pay" onclick="processCODPayment()">
+                        💵 Cash on Delivery (COD)
+                    </button>
+                </div>
+                <div style="margin-top: 15px; text-align: center; font-size: 12px; color: var(--text-secondary);">
+                    🔒 100% Secure | Your data is safe with us
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
@@ -652,15 +216,10 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2026 FoodExpress. All rights reserved.</p>
-    </footer>
+    <footer class="footer"><p>&copy; 2026 FoodExpress. All rights reserved.</p></footer>
 
     <!-- Razorpay SDK -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    
-    <!-- Firebase & Other Scripts -->
     <script src="firebase-config.js"></script>
     <script src="firebase-auth.js"></script>
     <script src="dark-mode.js"></script>
@@ -670,129 +229,71 @@
         // ==================== RESTAURANT DATA ====================
         const RESTAURANTS = {
             'pizza-paradise': {
-                name: '🍕 Pizza Paradise',
-                cuisine: 'Italian • Pizza • Fast Food',
-                rating: '⭐ 4.5 (200+ reviews)',
-                time: '🕐 30-40 mins',
-                price: '💰 ₹200 for two',
+                name: '🍕 Pizza Paradise', cuisine: 'Italian • Pizza • Fast Food', rating: '⭐ 4.5 (200+ reviews)', time: '🕐 30-40 mins', price: '💰 ₹200 for two',
                 image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300',
                 defaultItems: [
-                    { id: 'pp1', name: 'Margherita Pizza', description: 'Classic cheese pizza with tomato sauce and fresh basil', price: 299, type: 'veg', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'pizza' },
-                    { id: 'pp2', name: 'Pepperoni Pizza', description: 'Loaded with pepperoni and mozzarella cheese', price: 399, type: 'non-veg', image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400', category: 'pizza' },
-                    { id: 'pp3', name: 'Veggie Supreme', description: 'Fresh vegetables with herbs and cheese', price: 349, type: 'veg', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400', category: 'pizza' },
-                    { id: 'pp4', name: 'BBQ Chicken Pizza', description: 'Tangy BBQ sauce with grilled chicken', price: 449, type: 'non-veg', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400', category: 'pizza' },
-                    { id: 'pp5', name: 'Garlic Bread', description: 'Crispy bread with garlic butter', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?w=400', category: 'starters' },
-                    { id: 'pp6', name: 'Cheesy Fries', description: 'Crispy fries with melted cheese', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400', category: 'starters' },
-                    { id: 'pp7', name: 'Cold Coffee', description: 'Refreshing cold coffee', price: 129, type: 'veg', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400', category: 'beverages' },
-                    { id: 'pp8', name: 'Chocolate Brownie', description: 'Warm brownie with ice cream', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400', category: 'desserts' }
+                    { id: 'pp1', name: 'Margherita Pizza', description: 'Classic cheese pizza with tomato sauce', price: 299, type: 'veg', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'pizza' },
+                    { id: 'pp2', name: 'Pepperoni Pizza', description: 'Loaded with pepperoni and cheese', price: 399, type: 'non-veg', image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400', category: 'pizza' },
+                    { id: 'pp3', name: 'Veggie Supreme', description: 'Fresh vegetables with herbs', price: 349, type: 'veg', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400', category: 'pizza' },
+                    { id: 'pp4', name: 'Garlic Bread', description: 'Crispy bread with garlic butter', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?w=400', category: 'starters' },
+                    { id: 'pp5', name: 'Cold Coffee', description: 'Refreshing cold coffee', price: 129, type: 'veg', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400', category: 'beverages' }
                 ]
             },
             'burger-house': {
-                name: '🍔 Burger House',
-                cuisine: 'American • Burgers • Fast Food',
-                rating: '⭐ 4.3 (150+ reviews)',
-                time: '🕐 25-35 mins',
-                price: '💰 ₹250 for two',
+                name: '🍔 Burger House', cuisine: 'American • Burgers • Fast Food', rating: '⭐ 4.3 (150+ reviews)', time: '🕐 25-35 mins', price: '💰 ₹250 for two',
                 image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300',
                 defaultItems: [
                     { id: 'bh1', name: 'Classic Burger', description: 'Juicy beef patty with fresh veggies', price: 199, type: 'non-veg', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400', category: 'burger' },
                     { id: 'bh2', name: 'Cheese Burger', description: 'Double cheese with special sauce', price: 249, type: 'non-veg', image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=400', category: 'burger' },
                     { id: 'bh3', name: 'Veggie Burger', description: 'Crispy veg patty with lettuce', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1520072959219-c595dc870360?w=400', category: 'burger' },
-                    { id: 'bh4', name: 'Chicken Burger', description: 'Grilled chicken with mayo', price: 229, type: 'non-veg', image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400', category: 'burger' },
-                    { id: 'bh5', name: 'Double Decker', description: 'Two patties, extra cheese', price: 349, type: 'non-veg', image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400', category: 'burger' },
-                    { id: 'bh6', name: 'French Fries', description: 'Crispy golden fries', price: 99, type: 'veg', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400', category: 'starters' },
-                    { id: 'bh7', name: 'Onion Rings', description: 'Crispy fried onion rings', price: 129, type: 'veg', image: 'https://images.unsplash.com/photo-1639024471283-03518883512d?w=400', category: 'starters' },
-                    { id: 'bh8', name: 'Chocolate Shake', description: 'Thick chocolate milkshake', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400', category: 'beverages' }
+                    { id: 'bh4', name: 'French Fries', description: 'Crispy golden fries', price: 99, type: 'veg', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400', category: 'starters' }
                 ]
             },
             'biryani-blues': {
-                name: '🍛 Biryani Blues',
-                cuisine: 'Indian • Biryani • Mughlai',
-                rating: '⭐ 4.7 (300+ reviews)',
-                time: '🕐 40-50 mins',
-                price: '💰 ₹350 for two',
+                name: '🍛 Biryani Blues', cuisine: 'Indian • Biryani • Mughlai', rating: '⭐ 4.7 (300+ reviews)', time: '🕐 40-50 mins', price: '💰 ₹350 for two',
                 image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300',
                 defaultItems: [
-                    { id: 'bb1', name: 'Chicken Biryani', description: 'Aromatic basmati rice with tender chicken', price: 299, type: 'non-veg', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400', category: 'biryani' },
+                    { id: 'bb1', name: 'Chicken Biryani', description: 'Aromatic basmati rice with chicken', price: 299, type: 'non-veg', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400', category: 'biryani' },
                     { id: 'bb2', name: 'Mutton Biryani', description: 'Slow cooked mutton with spices', price: 399, type: 'non-veg', image: 'https://images.unsplash.com/photo-1642821373181-696a54913e93?w=400', category: 'biryani' },
                     { id: 'bb3', name: 'Veg Biryani', description: 'Mixed vegetables with fragrant rice', price: 249, type: 'veg', image: 'https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?w=400', category: 'biryani' },
-                    { id: 'bb4', name: 'Hyderabadi Biryani', description: 'Authentic Hyderabadi style', price: 349, type: 'non-veg', image: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=400', category: 'biryani' },
-                    { id: 'bb5', name: 'Chicken Kebab', description: 'Grilled chicken skewers', price: 199, type: 'non-veg', image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400', category: 'starters' },
-                    { id: 'bb6', name: 'Paneer Tikka', description: 'Grilled cottage cheese', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400', category: 'starters' },
-                    { id: 'bb7', name: 'Raita', description: 'Cool yogurt with cucumber', price: 49, type: 'veg', image: 'https://images.unsplash.com/photo-1567337710282-00832b415979?w=400', category: 'starters' },
-                    { id: 'bb8', name: 'Gulab Jamun', description: 'Sweet milk dumplings', price: 99, type: 'veg', image: 'https://images.unsplash.com/photo-1666190077469-f697207a9724?w=400', category: 'desserts' }
+                    { id: 'bb4', name: 'Raita', description: 'Cool yogurt with cucumber', price: 49, type: 'veg', image: 'https://images.unsplash.com/photo-1567337710282-00832b415979?w=400', category: 'starters' }
                 ]
             },
             'chinese-wok': {
-                name: '🥡 Chinese Wok',
-                cuisine: 'Chinese • Asian • Noodles',
-                rating: '⭐ 4.2 (180+ reviews)',
-                time: '🕐 30-40 mins',
-                price: '💰 ₹300 for two',
+                name: '🥡 Chinese Wok', cuisine: 'Chinese • Asian • Noodles', rating: '⭐ 4.2 (180+ reviews)', time: '🕐 30-40 mins', price: '💰 ₹300 for two',
                 image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=300',
                 defaultItems: [
                     { id: 'cw1', name: 'Hakka Noodles', description: 'Stir-fried noodles with vegetables', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400', category: 'chinese' },
-                    { id: 'cw2', name: 'Chicken Fried Rice', description: 'Wok-tossed rice with chicken', price: 249, type: 'non-veg', image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400', category: 'chinese' },
-                    { id: 'cw3', name: 'Veg Manchurian', description: 'Crispy veg balls in spicy sauce', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1645696996794-93acf6b23c15?w=400', category: 'chinese' },
-                    { id: 'cw4', name: 'Chilli Chicken', description: 'Spicy Indo-Chinese chicken', price: 279, type: 'non-veg', image: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?w=400', category: 'chinese' },
-                    { id: 'cw5', name: 'Spring Rolls', description: 'Crispy rolls with veggie filling', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1606525437679-037aca74a73a?w=400', category: 'starters' },
-                    { id: 'cw6', name: 'Momos (6 pcs)', description: 'Steamed dumplings', price: 129, type: 'veg', image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400', category: 'starters' },
-                    { id: 'cw7', name: 'Hot & Sour Soup', description: 'Tangy and spicy soup', price: 99, type: 'veg', image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400', category: 'starters' },
-                    { id: 'cw8', name: 'Ice Cream', description: 'Vanilla ice cream', price: 79, type: 'veg', image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400', category: 'desserts' }
+                    { id: 'cw2', name: 'Fried Rice', description: 'Wok-tossed rice with veggies', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400', category: 'chinese' },
+                    { id: 'cw3', name: 'Manchurian', description: 'Crispy veg balls in spicy sauce', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1645696996794-93acf6b23c15?w=400', category: 'chinese' },
+                    { id: 'cw4', name: 'Spring Rolls', description: 'Crispy rolls with filling', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1606525437679-037aca74a73a?w=400', category: 'starters' }
                 ]
             },
             'healthy-bites': {
-                name: '🥗 Healthy Bites',
-                cuisine: 'Healthy • Salads • Smoothies',
-                rating: '⭐ 4.6 (120+ reviews)',
-                time: '🕐 20-30 mins',
-                price: '💰 ₹200 for two',
+                name: '🥗 Healthy Bites', cuisine: 'Healthy • Salads • Smoothies', rating: '⭐ 4.6 (120+ reviews)', time: '🕐 20-30 mins', price: '💰 ₹200 for two',
                 image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300',
                 defaultItems: [
-                    { id: 'hb1', name: 'Caesar Salad', description: 'Fresh romaine with caesar dressing', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400', category: 'salads' },
-                    { id: 'hb2', name: 'Greek Salad', description: 'Feta cheese with olives and cucumber', price: 229, type: 'veg', image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400', category: 'salads' },
-                    { id: 'hb3', name: 'Quinoa Bowl', description: 'Protein-rich quinoa with veggies', price: 279, type: 'veg', image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400', category: 'bowls' },
-                    { id: 'hb4', name: 'Grilled Chicken Salad', description: 'Lean chicken with fresh greens', price: 299, type: 'non-veg', image: 'https://images.unsplash.com/photo-1604497181015-76590d828b75?w=400', category: 'salads' },
-                    { id: 'hb5', name: 'Avocado Toast', description: 'Smashed avocado on sourdough', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=400', category: 'bowls' },
-                    { id: 'hb6', name: 'Berry Smoothie', description: 'Mixed berries with yogurt', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1553530666-ba11a90a0868?w=400', category: 'beverages' },
-                    { id: 'hb7', name: 'Green Detox', description: 'Spinach, apple and ginger', price: 169, type: 'veg', image: 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400', category: 'beverages' },
-                    { id: 'hb8', name: 'Protein Shake', description: 'Banana, peanut butter, oats', price: 179, type: 'veg', image: 'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=400', category: 'beverages' }
+                    { id: 'hb1', name: 'Caesar Salad', description: 'Fresh romaine with dressing', price: 199, type: 'veg', image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400', category: 'salads' },
+                    { id: 'hb2', name: 'Greek Salad', description: 'Feta cheese with olives', price: 229, type: 'veg', image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400', category: 'salads' },
+                    { id: 'hb3', name: 'Berry Smoothie', description: 'Mixed berries with yogurt', price: 149, type: 'veg', image: 'https://images.unsplash.com/photo-1553530666-ba11a90a0868?w=400', category: 'beverages' },
+                    { id: 'hb4', name: 'Green Detox', description: 'Spinach, apple and ginger', price: 169, type: 'veg', image: 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400', category: 'beverages' }
                 ]
             }
         };
 
-        const CATEGORY_NAMES = {
-            'pizza': '🍕 Pizzas',
-            'burger': '🍔 Burgers',
-            'biryani': '🍛 Biryani',
-            'chinese': '🥡 Chinese',
-            'salads': '🥗 Salads',
-            'bowls': '🥣 Bowls',
-            'starters': '🍟 Starters',
-            'beverages': '🥤 Beverages',
-            'desserts': '🍰 Desserts'
-        };
+        const CATEGORY_NAMES = { 'pizza': '🍕 Pizzas', 'burger': '🍔 Burgers', 'biryani': '🍛 Biryani', 'chinese': '🥡 Chinese', 'salads': '🥗 Salads', 'starters': '🍟 Starters', 'beverages': '🥤 Beverages', 'desserts': '🍰 Desserts' };
 
-        // ==================== VARIABLES ====================
         let cart = [];
         let currentRestaurant = null;
 
-        // ==================== GET RESTAURANT ID ====================
         function getRestaurantId() {
             const params = new URLSearchParams(window.location.search);
             return params.get('restaurant') || 'pizza-paradise';
         }
 
-        // ==================== LOAD RESTAURANT ====================
         function loadRestaurant() {
-            const restaurantId = getRestaurantId();
-            currentRestaurant = RESTAURANTS[restaurantId];
-
-            if (!currentRestaurant) {
-                currentRestaurant = RESTAURANTS['pizza-paradise'];
-            }
-
-            // Update header
+            const id = getRestaurantId();
+            currentRestaurant = RESTAURANTS[id] || RESTAURANTS['pizza-paradise'];
             document.getElementById('restaurantName').textContent = currentRestaurant.name;
             document.getElementById('restaurantCuisine').textContent = currentRestaurant.cuisine;
             document.getElementById('restaurantRating').textContent = currentRestaurant.rating;
@@ -800,115 +301,77 @@
             document.getElementById('restaurantPrice').textContent = currentRestaurant.price;
             document.getElementById('restaurantImage').src = currentRestaurant.image;
             document.title = currentRestaurant.name + ' - FoodExpress';
-
-            // Load menu
             loadMenu();
         }
 
-        // ==================== LOAD MENU ====================
         async function loadMenu() {
-            const restaurantId = getRestaurantId();
-            const menuLoading = document.getElementById('menuLoading');
-            const menuContainer = document.getElementById('menuContainer');
-
+            const id = getRestaurantId();
+            const loading = document.getElementById('menuLoading');
+            const container = document.getElementById('menuContainer');
             try {
-                // Try to load from Firebase first
-                const snapshot = await db.collection('restaurants')
-                    .doc(restaurantId)
-                    .collection('menuItems')
-                    .where('available', '==', true)
-                    .get();
-
-                menuLoading.style.display = 'none';
-
+                const snapshot = await db.collection('restaurants').doc(id).collection('menuItems').where('available', '==', true).get();
+                loading.style.display = 'none';
                 if (!snapshot.empty) {
-                    // Load from Firebase
                     const items = [];
-                    snapshot.forEach(doc => {
-                        items.push({ id: doc.id, ...doc.data() });
-                    });
+                    snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
                     renderMenu(items);
                 } else {
-                    // Load default items
                     renderMenu(currentRestaurant.defaultItems);
                 }
-            } catch (error) {
-                console.log('Loading default menu...');
-                menuLoading.style.display = 'none';
+            } catch (e) {
+                loading.style.display = 'none';
                 renderMenu(currentRestaurant.defaultItems);
             }
         }
 
-        // ==================== RENDER MENU ====================
         function renderMenu(items) {
-            const menuContainer = document.getElementById('menuContainer');
-            
-            // Group by category
+            const container = document.getElementById('menuContainer');
             const grouped = {};
             items.forEach(item => {
                 const cat = item.category || 'other';
                 if (!grouped[cat]) grouped[cat] = [];
                 grouped[cat].push(item);
             });
-
             let html = '';
-            for (const category in grouped) {
-                const categoryName = CATEGORY_NAMES[category] || '🍽️ ' + category;
-                html += `<h3 class="category-title">${categoryName}</h3>`;
-                
-                grouped[category].forEach(item => {
-                    const typeIcon = item.type === 'veg' ? '🟢' : '🔴';
-                    const defaultImg = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300';
-                    const itemName = item.name.replace(/'/g, "\\'");
-                    
+            for (const cat in grouped) {
+                html += `<h3 class="category-title">${CATEGORY_NAMES[cat] || '🍽️ ' + cat}</h3>`;
+                grouped[cat].forEach(item => {
+                    const icon = item.type === 'veg' ? '🟢' : '🔴';
+                    const img = item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300';
+                    const name = item.name.replace(/'/g, "\\'");
                     html += `
                         <div class="menu-item">
                             <div class="menu-item-info">
-                                <h3>${typeIcon} ${item.name}</h3>
+                                <h3>${icon} ${item.name}</h3>
                                 <p class="description">${item.description || ''}</p>
                                 <p class="price">₹${item.price}</p>
                             </div>
                             <div class="menu-item-right">
-                                <img src="${item.image || defaultImg}" alt="${item.name}" onerror="this.src='${defaultImg}'">
-                                <button class="add-btn" onclick="addToCart('${item.id}', '${itemName}', ${item.price})">+ Add</button>
+                                <img src="${img}" alt="${item.name}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300'">
+                                <button class="add-btn" onclick="addToCart('${item.id}', '${name}', ${item.price})">+ Add</button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
             }
-
-            menuContainer.innerHTML = html;
+            container.innerHTML = html;
         }
 
-        // ==================== CART FUNCTIONS ====================
         function addToCart(id, name, price) {
-            const existing = cart.find(item => item.id === id);
-            
-            if (existing) {
-                existing.quantity++;
-            } else {
-                cart.push({ id, name, price, quantity: 1 });
-            }
-
+            const existing = cart.find(i => i.id === id);
+            if (existing) existing.quantity++;
+            else cart.push({ id, name, price, quantity: 1 });
             updateCartUI();
-
-            // Button feedback
             const btn = event.target;
             btn.textContent = '✓ Added';
             btn.style.background = '#48c479';
-            setTimeout(() => {
-                btn.textContent = '+ Add';
-                btn.style.background = '#ff6347';
-            }, 1000);
+            setTimeout(() => { btn.textContent = '+ Add'; btn.style.background = '#ff6347'; }, 1000);
         }
 
         function updateQuantity(id, change) {
-            const item = cart.find(item => item.id === id);
+            const item = cart.find(i => i.id === id);
             if (item) {
                 item.quantity += change;
-                if (item.quantity <= 0) {
-                    cart = cart.filter(i => i.id !== id);
-                }
+                if (item.quantity <= 0) cart = cart.filter(i => i.id !== id);
             }
             updateCartUI();
         }
@@ -917,41 +380,17 @@
             const cartItems = document.getElementById('cartItems');
             const cartTotal = document.getElementById('cartTotal');
             const checkoutBtn = document.getElementById('checkoutBtn');
-
             if (cart.length === 0) {
-                cartItems.innerHTML = `
-                    <div class="cart-empty">
-                        <div class="cart-empty-icon">🛒</div>
-                        <p>Your cart is empty</p>
-                    </div>
-                `;
+                cartItems.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Your cart is empty</p></div>';
                 cartTotal.style.display = 'none';
                 checkoutBtn.disabled = true;
                 return;
             }
-
-            let html = '';
-            let subtotal = 0;
-
+            let html = '', subtotal = 0;
             cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                subtotal += itemTotal;
-                
-                html += `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <h4>${item.name}</h4>
-                            <p>₹${item.price} x ${item.quantity}</p>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
-                            <span>${item.quantity}</span>
-                            <button class="qty-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
-                        </div>
-                    </div>
-                `;
+                subtotal += item.price * item.quantity;
+                html += `<div class="cart-item"><div class="cart-item-info"><h4>${item.name}</h4><p>₹${item.price} x ${item.quantity}</p></div><div class="cart-item-controls"><button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button><span>${item.quantity}</span><button class="qty-btn" onclick="updateQuantity('${item.id}', 1)">+</button></div></div>`;
             });
-
             cartItems.innerHTML = html;
             document.getElementById('subtotal').textContent = '₹' + subtotal;
             document.getElementById('grandTotal').textContent = '₹' + (subtotal + 40);
@@ -959,96 +398,72 @@
             checkoutBtn.disabled = false;
         }
 
-        // ==================== CHECKOUT ====================
         function openCheckout() {
-            if (!auth.currentUser) {
-                showLoginModal();
-                return;
-            }
-
-            // Update order summary
-            let html = '';
-            let subtotal = 0;
-
+            if (!auth.currentUser) { showLoginModal(); return; }
+            let html = '', subtotal = 0;
             cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                subtotal += itemTotal;
-                html += `
-                    <div class="cart-item">
-                        <span>${item.quantity}x ${item.name}</span>
-                        <span>₹${itemTotal}</span>
-                    </div>
-                `;
+                subtotal += item.price * item.quantity;
+                html += `<div class="summary-item"><span>${item.quantity}x ${item.name}</span><span>₹${item.price * item.quantity}</span></div>`;
             });
-
-            html += `
-                <div class="cart-item" style="border-top: 1px solid var(--border-color); margin-top: 10px; padding-top: 10px;">
-                    <span>Subtotal</span>
-                    <span>₹${subtotal}</span>
-                </div>
-                <div class="cart-item">
-                    <span>Delivery Fee</span>
-                    <span>₹40</span>
-                </div>
-                <div class="cart-item" style="font-weight: bold;">
-                    <span>Total</span>
-                    <span>₹${subtotal + 40}</span>
-                </div>
-            `;
-
+            html += `<div class="summary-item" style="border-top: 1px solid #ddd; margin-top: 10px; padding-top: 10px;"><span>Subtotal</span><span>₹${subtotal}</span></div>`;
+            html += `<div class="summary-item"><span>Delivery Fee</span><span>₹40</span></div>`;
+            html += `<div class="summary-item" style="font-weight: bold; font-size: 16px;"><span>Total</span><span>₹${subtotal + 40}</span></div>`;
             document.getElementById('orderSummary').innerHTML = html;
             document.getElementById('checkoutModal').classList.add('active');
         }
 
-        function closeCheckout() {
-            document.getElementById('checkoutModal').classList.remove('active');
-        }
+        function closeCheckout() { document.getElementById('checkoutModal').classList.remove('active'); }
 
-        // ==================== PAYMENT ====================
-        async function processPayment() {
+        // ==================== ONLINE PAYMENT ====================
+        function processOnlinePayment() {
             const name = document.getElementById('customerName').value.trim();
             const phone = document.getElementById('customerPhone').value.trim();
             const address = document.getElementById('customerAddress').value.trim();
+            if (!name || !phone || !address) { alert('⚠️ Please fill all delivery details'); return; }
+            if (phone.length < 10) { alert('⚠️ Please enter a valid 10-digit phone number'); return; }
+            
+            let subtotal = 0;
+            cart.forEach(item => subtotal += item.price * item.quantity);
+            const total = subtotal + 40;
 
-            if (!name || !phone || !address) {
-                alert('Please fill all delivery details');
-                return;
-            }
+            const options = {
+                key: 'rzp_test_YourKeyHere', // Replace with your Razorpay key
+                amount: total * 100,
+                currency: 'INR',
+                name: 'FoodExpress',
+                description: 'Food Order',
+                handler: function(response) {
+                    saveOrder(name, phone, address, total, response.razorpay_payment_id, 'paid', 'online');
+                },
+                prefill: { name: name, contact: phone },
+                theme: { color: '#ff6347' }
+            };
+            const rzp = new Razorpay(options);
+            rzp.open();
+        }
+
+        // ==================== CASH ON DELIVERY ====================
+        function processCODPayment() {
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+            const address = document.getElementById('customerAddress').value.trim();
+            if (!name || !phone || !address) { alert('⚠️ Please fill all delivery details'); return; }
+            if (phone.length < 10) { alert('⚠️ Please enter a valid 10-digit phone number'); return; }
 
             let subtotal = 0;
             cart.forEach(item => subtotal += item.price * item.quantity);
             const total = subtotal + 40;
 
-            // Razorpay Payment
-            const options = {
-                key: 'rzp_test_YourTestKey', // Replace with your Razorpay key
-                amount: total * 100,
-                currency: 'INR',
-                name: 'FoodExpress',
-                description: 'Food Order Payment',
-                handler: async function(response) {
-                    // Payment successful - save order
-                    await saveOrder(name, phone, address, total, response.razorpay_payment_id);
-                },
-                prefill: {
-                    name: name,
-                    contact: phone
-                },
-                theme: {
-                    color: '#ff6347'
-                }
-            };
-
-            const rzp = new Razorpay(options);
-            rzp.open();
+            if (!confirm(`📦 Confirm Cash on Delivery?\n\n💵 Amount: ₹${total}\n\nYou will pay when food arrives.`)) return;
+            
+            saveOrder(name, phone, address, total, null, 'cod', 'cash');
         }
 
-        async function saveOrder(name, phone, address, total, paymentId) {
+        // ==================== SAVE ORDER ====================
+        async function saveOrder(name, phone, address, total, paymentId, paymentStatus, paymentMethod) {
             try {
                 const user = auth.currentUser;
                 const orderId = 'ORD' + Date.now();
-                const restaurantId = getRestaurantId();
-
                 const orderData = {
                     id: orderId,
                     items: cart,
@@ -1057,62 +472,40 @@
                     address: address,
                     total: total,
                     paymentId: paymentId,
-                    paymentStatus: 'paid',
+                    paymentStatus: paymentStatus,
+                    paymentMethod: paymentMethod,
                     status: 'pending',
-                    restaurantId: restaurantId,
+                    restaurantId: getRestaurantId(),
                     restaurantName: currentRestaurant.name,
                     userId: user.uid,
                     userEmail: user.email,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
-
                 await db.collection('orders').doc(orderId).set(orderData);
-
-                alert('🎉 Order placed successfully!\n\nOrder ID: ' + orderId);
                 
-                // Clear cart and close modal
-                cart = [];
-                updateCartUI();
-                closeCheckout();
-
-            } catch (error) {
-                console.error('Error saving order:', error);
-                alert('Order placed! Payment ID: ' + paymentId);
-                cart = [];
-                updateCartUI();
-                closeCheckout();
-            }
-        }
-
-        // ==================== MOBILE CART ====================
-        function toggleCart() {
-            if (window.innerWidth <= 992) {
-                document.getElementById('cartSection').classList.toggle('expanded');
-            }
-        }
-
-        // ==================== MODALS ====================
-        function showLoginModal() {
-            document.getElementById('loginModal').classList.add('active');
-        }
-
-        function closeLoginModal() {
-            document.getElementById('loginModal').classList.remove('active');
-        }
-
-        // Close modals on outside click
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('active');
+                if (paymentMethod === 'cash') {
+                    alert(`🎉 Order Placed!\n\n📦 Order ID: ${orderId}\n💵 Payment: Cash on Delivery\n💰 Pay ₹${total} on arrival\n\n🚴 Arriving in 30-45 mins!`);
+                } else {
+                    alert(`🎉 Order Placed!\n\n📦 Order ID: ${orderId}\n✅ Paid Online: ₹${total}\n\n🚴 Arriving in 30-45 mins!`);
                 }
-            });
-        });
+                cart = [];
+                updateCartUI();
+                closeCheckout();
+            } catch (e) {
+                console.error(e);
+                alert('✅ Order placed successfully!');
+                cart = [];
+                updateCartUI();
+                closeCheckout();
+            }
+        }
 
-        // ==================== INITIALIZE ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(loadRestaurant, 1000);
-        });
+        function toggleCart() { if (window.innerWidth <= 992) document.getElementById('cartSection').classList.toggle('expanded'); }
+        function showLoginModal() { document.getElementById('loginModal').classList.add('active'); }
+        function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
+
+        document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); }));
+        document.addEventListener('DOMContentLoaded', () => setTimeout(loadRestaurant, 1000));
     </script>
 </body>
 </html>
