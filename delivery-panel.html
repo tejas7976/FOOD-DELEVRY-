@@ -91,6 +91,7 @@
         }
 
         .header h1 { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        .header-btns { display: flex; gap: 10px; }
         .header-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 8px; font-size: 14px; cursor: pointer; }
         .header-btn:hover { background: rgba(255,255,255,0.3); }
 
@@ -104,28 +105,49 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .profile-header {
             display: flex;
             align-items: center;
             gap: 15px;
+            margin-bottom: 15px;
         }
 
         .profile-avatar {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 32px;
             color: white;
         }
 
-        .profile-info h2 { font-size: 18px; color: #333; margin-bottom: 5px; }
-        .profile-info p { font-size: 13px; color: #666; }
+        .profile-info h2 { font-size: 20px; color: #333; margin-bottom: 5px; }
+        .profile-info p { font-size: 13px; color: #666; margin-bottom: 3px; }
         
+        .profile-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .profile-detail-item {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .profile-detail-value { font-size: 16px; font-weight: bold; color: #667eea; }
+        .profile-detail-label { font-size: 11px; color: #666; margin-top: 3px; }
+
         .status-badge {
-            margin-left: auto;
             padding: 8px 15px;
             border-radius: 20px;
             font-size: 12px;
@@ -175,7 +197,7 @@
             text-align: center;
             border: none;
             background: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #666;
             cursor: pointer;
@@ -194,6 +216,7 @@
         }
 
         .order-card.priority { border-left: 4px solid #ff6347; }
+        .order-card.my-order { border-left: 4px solid #48c479; }
 
         .order-header {
             display: flex;
@@ -214,6 +237,7 @@
         }
 
         .order-status.out_for_delivery { background: #f3e5f5; color: #7b1fa2; }
+        .order-status.picked { background: #fff3e0; color: #e65100; }
         .order-status.delivered { background: #e8f5e9; color: #2e7d32; }
 
         /* Customer Info */
@@ -274,6 +298,17 @@
         .payment-badge.cod { background: #fff3e0; color: #e65100; }
         .payment-badge.online { background: #e8f5e9; color: #2e7d32; }
 
+        /* Assigned Badge */
+        .assigned-badge {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
         /* Action Buttons */
         .order-actions {
             display: flex;
@@ -297,7 +332,9 @@
         }
 
         .action-btn:hover { transform: translateY(-2px); }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
+        .action-btn.accept { background: linear-gradient(135deg, #ff6347, #ff4520); color: white; }
         .action-btn.call { background: #4facfe; color: white; }
         .action-btn.navigate { background: #48c479; color: white; }
         .action-btn.delivered { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
@@ -367,6 +404,22 @@
         .earnings-item-value { font-size: 20px; font-weight: bold; color: #333; }
         .earnings-item-label { font-size: 12px; color: #666; margin-top: 3px; }
 
+        /* History Card */
+        .history-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .history-info h4 { font-size: 14px; color: #333; margin-bottom: 3px; }
+        .history-info p { font-size: 12px; color: #666; }
+        .history-amount { font-size: 16px; font-weight: bold; color: #48c479; }
+
         /* Loading */
         .loading { text-align: center; padding: 40px; }
         .spinner { width: 40px; height: 40px; border: 4px solid #eee; border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
@@ -392,6 +445,16 @@
         .toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background: white; transition: 0.3s; border-radius: 50%; }
         input:checked + .toggle-slider { background: #48c479; }
         input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+        /* Section Title */
+        .section-title {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -403,7 +466,14 @@
             <p class="login-subtitle">Login to start delivering</p>
             
             <form onsubmit="event.preventDefault(); login();">
-                <input type="text" id="deliveryId" class="login-input" placeholder="Delivery Boy ID (e.g., DB001)" required>
+                <select id="deliverySelect" class="login-input" required>
+                    <option value="">-- Select Your Name --</option>
+                    <option value="DB001">🚴 Rahul Kumar (DB001)</option>
+                    <option value="DB002">🚴 Amit Singh (DB002)</option>
+                    <option value="DB003">🚴 Vijay Sharma (DB003)</option>
+                    <option value="DB004">🚴 Ravi Patel (DB004)</option>
+                    <option value="DB005">🚴 Suresh Yadav (DB005)</option>
+                </select>
                 <input type="password" id="deliveryPassword" class="login-input" placeholder="Password" required>
                 <button type="submit" class="login-btn">🚴 Start Delivering</button>
             </form>
@@ -417,31 +487,63 @@
     <div id="mainApp" class="main-app">
         <!-- Header -->
         <div class="header">
-            <h1>🚴 <span id="deliveryName">Delivery Partner</span></h1>
-            <button class="header-btn" onclick="logout()">🚪</button>
+            <h1>🚴 <span id="headerName">Delivery</span></h1>
+            <div class="header-btns">
+                <button class="header-btn" onclick="refreshData()">🔄</button>
+                <button class="header-btn" onclick="logout()">🚪</button>
+            </div>
         </div>
 
         <!-- Content -->
         <div class="content">
             <!-- Profile Card -->
             <div class="profile-card">
-                <div class="profile-avatar">🚴</div>
-                <div class="profile-info">
-                    <h2 id="profileName">Delivery Boy</h2>
-                    <p id="profileId">ID: DB001</p>
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profileAvatar">🚴</div>
+                    <div class="profile-info">
+                        <h2 id="profileName">Delivery Boy</h2>
+                        <p id="profileId">ID: DB001</p>
+                        <p id="profilePhone">📞 9876543210</p>
+                        <p id="profileVehicle">🏍️ Bike - MH12AB1234</p>
+                    </div>
                 </div>
-                <span class="status-badge online" id="statusBadge">🟢 Online</span>
+                <div class="profile-details">
+                    <div class="profile-detail-item">
+                        <div class="profile-detail-value" id="profileTotalDeliveries">0</div>
+                        <div class="profile-detail-label">Total Deliveries</div>
+                    </div>
+                    <div class="profile-detail-item">
+                        <div class="profile-detail-value" id="profileRating">⭐ 4.8</div>
+                        <div class="profile-detail-label">Rating</div>
+                    </div>
+                    <div class="profile-detail-item">
+                        <div class="profile-detail-value" id="profileJoined">Jan 2026</div>
+                        <div class="profile-detail-label">Joined</div>
+                    </div>
+                    <div class="profile-detail-item">
+                        <div class="profile-detail-value status-badge online">🟢 Online</div>
+                        <div class="profile-detail-label">Status</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Stats -->
             <div class="stats-grid">
+                <div class="stat-card orange">
+                    <div class="stat-number" id="statAvailable">0</div>
+                    <div class="stat-label">Available Orders</div>
+                </div>
                 <div class="stat-card purple">
-                    <div class="stat-number" id="statPending">0</div>
-                    <div class="stat-label">Pending Pickup</div>
+                    <div class="stat-number" id="statMyOrders">0</div>
+                    <div class="stat-label">My Pickups</div>
                 </div>
                 <div class="stat-card green">
                     <div class="stat-number" id="statDelivered">0</div>
                     <div class="stat-label">Delivered Today</div>
+                </div>
+                <div class="stat-card blue">
+                    <div class="stat-number" id="statEarnings">₹0</div>
+                    <div class="stat-label">Today's Earnings</div>
                 </div>
             </div>
 
@@ -456,59 +558,64 @@
 
             <!-- Tabs -->
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('pending')">📦 Pending</button>
-                <button class="tab" onclick="switchTab('delivered')">✅ Delivered</button>
+                <button class="tab active" onclick="switchTab('available')">🆕 Available</button>
+                <button class="tab" onclick="switchTab('myorders')">📦 My Orders</button>
                 <button class="tab" onclick="switchTab('earnings')">💰 Earnings</button>
             </div>
 
-            <!-- Pending Orders Section -->
-            <div id="pendingSection">
-                <div id="pendingOrders">
+            <!-- Available Orders Section -->
+            <div id="availableSection">
+                <h3 class="section-title">🆕 Available Orders (First Come, First Serve)</h3>
+                <div id="availableOrders">
                     <div class="loading"><div class="spinner"></div><p>Loading orders...</p></div>
                 </div>
             </div>
 
-            <!-- Delivered Orders Section -->
-            <div id="deliveredSection" style="display: none;">
-                <div id="deliveredOrders"></div>
+            <!-- My Orders Section -->
+            <div id="myOrdersSection" style="display: none;">
+                <h3 class="section-title">📦 My Accepted Orders</h3>
+                <div id="myOrders"></div>
             </div>
 
             <!-- Earnings Section -->
             <div id="earningsSection" style="display: none;">
                 <div class="earnings-card">
                     <div class="earnings-amount" id="totalEarnings">₹0</div>
-                    <div class="earnings-label">Today's Earnings</div>
+                    <div class="earnings-label">Today's Earnings (₹20/delivery)</div>
                 </div>
                 <div class="earnings-grid">
                     <div class="earnings-item">
-                        <div class="earnings-item-value" id="totalDeliveries">0</div>
-                        <div class="earnings-item-label">Total Deliveries</div>
+                        <div class="earnings-item-value" id="todayDeliveries">0</div>
+                        <div class="earnings-item-label">Deliveries Today</div>
                     </div>
                     <div class="earnings-item">
-                        <div class="earnings-item-value" id="avgTime">0 min</div>
-                        <div class="earnings-item-label">Avg. Delivery Time</div>
+                        <div class="earnings-item-value" id="weekDeliveries">0</div>
+                        <div class="earnings-item-label">This Week</div>
                     </div>
                     <div class="earnings-item">
                         <div class="earnings-item-value" id="codCollected">₹0</div>
                         <div class="earnings-item-label">COD Collected</div>
                     </div>
                     <div class="earnings-item">
-                        <div class="earnings-item-value" id="deliveryFee">₹0</div>
-                        <div class="earnings-item-label">Delivery Fee Earned</div>
+                        <div class="earnings-item-value" id="weekEarnings">₹0</div>
+                        <div class="earnings-item-label">Week Earnings</div>
                     </div>
                 </div>
+
+                <h3 class="section-title" style="margin-top: 20px;">📋 Recent Deliveries</h3>
+                <div id="deliveryHistory"></div>
             </div>
         </div>
 
         <!-- Bottom Nav -->
         <div class="bottom-nav">
-            <button class="bottom-nav-item active" onclick="switchTab('pending')">
-                <span class="icon">📦</span>
-                Pending
+            <button class="bottom-nav-item active" onclick="switchTab('available')">
+                <span class="icon">🆕</span>
+                Available
             </button>
-            <button class="bottom-nav-item" onclick="switchTab('delivered')">
-                <span class="icon">✅</span>
-                Delivered
+            <button class="bottom-nav-item" onclick="switchTab('myorders')">
+                <span class="icon">📦</span>
+                My Orders
             </button>
             <button class="bottom-nav-item" onclick="switchTab('earnings')">
                 <span class="icon">💰</span>
@@ -525,30 +632,69 @@
     <script src="firebase-config.js"></script>
 
     <script>
-        // ==================== DELIVERY BOY CREDENTIALS ====================
+        // ==================== DELIVERY BOY DATA ====================
         const DELIVERY_BOYS = {
-            'DB001': { name: 'Rahul Kumar', password: 'Delivery@2026', phone: '9876543210' },
-            'DB002': { name: 'Amit Singh', password: 'Delivery@2026', phone: '9876543211' },
-            'DB003': { name: 'Vijay Sharma', password: 'Delivery@2026', phone: '9876543212' },
-            'DB004': { name: 'Ravi Patel', password: 'Delivery@2026', phone: '9876543213' },
-            'DB005': { name: 'Suresh Yadav', password: 'Delivery@2026', phone: '9876543214' }
+            'DB001': { 
+                name: 'Rahul Kumar', 
+                password: 'Rahul@2026', 
+                phone: '9876543210',
+                vehicle: '🏍️ Bike - MH12AB1234',
+                rating: '4.8',
+                joined: 'Jan 2026',
+                avatar: '👨'
+            },
+            'DB002': { 
+                name: 'Amit Singh', 
+                password: 'Amit@2026', 
+                phone: '9876543211',
+                vehicle: '🏍️ Bike - MH12CD5678',
+                rating: '4.6',
+                joined: 'Feb 2026',
+                avatar: '👦'
+            },
+            'DB003': { 
+                name: 'Vijay Sharma', 
+                password: 'Vijay@2026', 
+                phone: '9876543212',
+                vehicle: '🛵 Scooter - MH12EF9012',
+                rating: '4.9',
+                joined: 'Dec 2025',
+                avatar: '🧑'
+            },
+            'DB004': { 
+                name: 'Ravi Patel', 
+                password: 'Ravi@2026', 
+                phone: '9876543213',
+                vehicle: '🏍️ Bike - MH12GH3456',
+                rating: '4.7',
+                joined: 'Jan 2026',
+                avatar: '👨‍🦱'
+            },
+            'DB005': { 
+                name: 'Suresh Yadav', 
+                password: 'Suresh@2026', 
+                phone: '9876543214',
+                vehicle: '🛵 Scooter - MH12IJ7890',
+                rating: '4.5',
+                joined: 'Feb 2026',
+                avatar: '🧔'
+            }
         };
 
-        const DELIVERY_FEE_PER_ORDER = 20; // ₹30 per delivery
+        const DELIVERY_FEE = 20; // ₹20 per delivery
 
         let currentDeliveryBoy = null;
         let allOrders = [];
-        let notificationsEnabled = true;
-        let lastPendingCount = 0;
+        let lastAvailableCount = 0;
 
         // ==================== LOGIN ====================
         function login() {
-            const id = document.getElementById('deliveryId').value.trim().toUpperCase();
+            const id = document.getElementById('deliverySelect').value;
             const password = document.getElementById('deliveryPassword').value;
             const error = document.getElementById('loginError');
 
-            if (!DELIVERY_BOYS[id]) {
-                error.textContent = '❌ Invalid Delivery Boy ID';
+            if (!id) {
+                error.textContent = '❌ Please select your name';
                 error.style.display = 'block';
                 return;
             }
@@ -574,9 +720,16 @@
         function showApp() {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('deliveryName').textContent = currentDeliveryBoy.name;
+            
+            // Update profile with unique details
+            document.getElementById('headerName').textContent = currentDeliveryBoy.name.split(' ')[0];
             document.getElementById('profileName').textContent = currentDeliveryBoy.name;
             document.getElementById('profileId').textContent = 'ID: ' + currentDeliveryBoy.id;
+            document.getElementById('profilePhone').textContent = '📞 ' + currentDeliveryBoy.phone;
+            document.getElementById('profileVehicle').textContent = currentDeliveryBoy.vehicle;
+            document.getElementById('profileRating').textContent = '⭐ ' + currentDeliveryBoy.rating;
+            document.getElementById('profileJoined').textContent = currentDeliveryBoy.joined;
+            document.getElementById('profileAvatar').textContent = currentDeliveryBoy.avatar;
 
             loadOrders();
             startRealTimeListener();
@@ -598,7 +751,7 @@
 
         // ==================== LOAD ORDERS ====================
         function loadOrders() {
-            const container = document.getElementById('pendingOrders');
+            const container = document.getElementById('availableOrders');
             container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading orders...</p></div>';
 
             db.collection('orders')
@@ -615,7 +768,7 @@
                     });
 
                     allOrders = orders;
-                    renderOrders();
+                    renderAllSections();
                     updateStats();
                 })
                 .catch(error => {
@@ -625,89 +778,154 @@
         }
 
         function startRealTimeListener() {
-            db.collection('orders')
-                .onSnapshot(snapshot => {
-                    const orders = [];
-                    snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+            db.collection('orders').onSnapshot(snapshot => {
+                const orders = [];
+                snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
 
-                    orders.sort((a, b) => {
-                        const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
-                        const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
-                        return dateB - dateA;
-                    });
-
-                    // Check for new orders ready for pickup
-                    const pendingPickup = orders.filter(o => o.status === 'out_for_delivery').length;
-                    if (pendingPickup > lastPendingCount && lastPendingCount > 0) {
-                        playNotification();
-                    }
-                    lastPendingCount = pendingPickup;
-
-                    allOrders = orders;
-                    renderOrders();
-                    updateStats();
+                orders.sort((a, b) => {
+                    const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
+                    const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
+                    return dateB - dateA;
                 });
+
+                // Check for new available orders
+                const availableOrders = orders.filter(o => o.status === 'out_for_delivery' && !o.assignedTo);
+                if (availableOrders.length > lastAvailableCount && lastAvailableCount >= 0) {
+                    playNotification();
+                }
+                lastAvailableCount = availableOrders.length;
+
+                allOrders = orders;
+                renderAllSections();
+                updateStats();
+            });
         }
 
-        // ==================== RENDER ORDERS ====================
-        function renderOrders() {
-            renderPendingOrders();
-            renderDeliveredOrders();
+        function refreshData() {
+            loadOrders();
         }
 
-        function renderPendingOrders() {
-            const container = document.getElementById('pendingOrders');
+        // ==================== RENDER SECTIONS ====================
+        function renderAllSections() {
+            renderAvailableOrders();
+            renderMyOrders();
+            renderEarnings();
+        }
+
+        function renderAvailableOrders() {
+            const container = document.getElementById('availableOrders');
             
-            // Orders ready for pickup (out_for_delivery status)
-            const pendingOrders = allOrders.filter(o => o.status === 'out_for_delivery');
+            // Orders ready for pickup (not assigned to anyone)
+            const availableOrders = allOrders.filter(o => 
+                o.status === 'out_for_delivery' && !o.assignedTo
+            );
 
-            if (pendingOrders.length === 0) {
+            if (availableOrders.length === 0) {
                 container.innerHTML = `
                     <div class="no-orders">
                         <div class="no-orders-icon">📭</div>
-                        <p>No pending deliveries</p>
+                        <p>No available orders</p>
                         <p style="font-size: 13px; color: #999; margin-top: 10px;">New orders will appear here</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = pendingOrders.map(order => createOrderCard(order, true)).join('');
+            container.innerHTML = availableOrders.map(order => createOrderCard(order, 'available')).join('');
         }
 
-        function renderDeliveredOrders() {
-            const container = document.getElementById('deliveredOrders');
+        function renderMyOrders() {
+            const container = document.getElementById('myOrders');
             
-            // Today's delivered orders
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            // Orders assigned to this delivery boy
+            const myOrders = allOrders.filter(o => 
+                o.assignedTo === currentDeliveryBoy.id && 
+                o.status !== 'delivered'
+            );
 
-            const deliveredOrders = allOrders.filter(o => {
-                if (o.status !== 'delivered') return false;
-                if (!o.deliveredAt) return false;
-                const deliveredDate = o.deliveredAt.toDate();
-                return deliveredDate >= today;
-            });
-
-            if (deliveredOrders.length === 0) {
+            if (myOrders.length === 0) {
                 container.innerHTML = `
                     <div class="no-orders">
-                        <div class="no-orders-icon">📋</div>
-                        <p>No deliveries today</p>
+                        <div class="no-orders-icon">📦</div>
+                        <p>No active orders</p>
+                        <p style="font-size: 13px; color: #999; margin-top: 10px;">Accept orders from Available tab</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = deliveredOrders.map(order => createOrderCard(order, false)).join('');
+            container.innerHTML = myOrders.map(order => createOrderCard(order, 'myorder')).join('');
         }
 
-        function createOrderCard(order, showActions) {
+        function renderEarnings() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            weekAgo.setHours(0, 0, 0, 0);
+
+            // My delivered orders today
+            const todayDelivered = allOrders.filter(o => {
+                if (o.status !== 'delivered') return false;
+                if (o.deliveredBy !== currentDeliveryBoy.id) return false;
+                if (!o.deliveredAt) return false;
+                return o.deliveredAt.toDate() >= today;
+            });
+
+            // My delivered orders this week
+            const weekDelivered = allOrders.filter(o => {
+                if (o.status !== 'delivered') return false;
+                if (o.deliveredBy !== currentDeliveryBoy.id) return false;
+                if (!o.deliveredAt) return false;
+                return o.deliveredAt.toDate() >= weekAgo;
+            });
+
+            const todayEarnings = todayDelivered.length * DELIVERY_FEE;
+            const weekEarnings = weekDelivered.length * DELIVERY_FEE;
+            
+            const codToday = todayDelivered.filter(o => o.paymentMethod === 'cash');
+            const codCollected = codToday.reduce((sum, o) => sum + (o.total || 0), 0);
+
+            // Update stats
+            document.getElementById('totalEarnings').textContent = '₹' + todayEarnings;
+            document.getElementById('todayDeliveries').textContent = todayDelivered.length;
+            document.getElementById('weekDeliveries').textContent = weekDelivered.length;
+            document.getElementById('codCollected').textContent = '₹' + codCollected;
+            document.getElementById('weekEarnings').textContent = '₹' + weekEarnings;
+            document.getElementById('profileTotalDeliveries').textContent = weekDelivered.length;
+
+            // Render history
+            const historyContainer = document.getElementById('deliveryHistory');
+            if (todayDelivered.length === 0) {
+                historyContainer.innerHTML = `
+                    <div class="no-orders" style="padding: 20px;">
+                        <p>No deliveries today</p>
+                    </div>
+                `;
+            } else {
+                historyContainer.innerHTML = todayDelivered.map(order => `
+                    <div class="history-card">
+                        <div class="history-info">
+                            <h4>#${order.id}</h4>
+                            <p>${order.customerName || 'Customer'} • ${order.restaurantId || ''}</p>
+                        </div>
+                        <div class="history-amount">+₹${DELIVERY_FEE}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // ==================== CREATE ORDER CARD ====================
+        function createOrderCard(order, type) {
             const date = order.createdAt ? new Date(order.createdAt.toDate()).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }) : 'N/A';
             
-            const statusLabels = {
-                'out_for_delivery': '🚴 Ready for Pickup',
-                'delivered': '✅ Delivered'
+            const restaurantNames = {
+                'pizza-paradise': '🍕 Pizza Paradise',
+                'burger-house': '🍔 Burger House',
+                'biryani-blues': '🍛 Biryani Blues',
+                'chinese-wok': '🥡 Chinese Wok',
+                'healthy-bites': '🥗 Healthy Bites'
             };
 
             const paymentBadge = order.paymentMethod === 'cash'
@@ -721,16 +939,23 @@
                 </div>
             `).join('') : '';
 
-            const restaurantNames = {
-                'pizza-paradise': '🍕 Pizza Paradise',
-                'burger-house': '🍔 Burger House',
-                'biryani-blues': '🍛 Biryani Blues',
-                'chinese-wok': '🥡 Chinese Wok',
-                'healthy-bites': '🥗 Healthy Bites'
-            };
-
             let actions = '';
-            if (showActions) {
+            let cardClass = 'order-card';
+            let statusBadge = '';
+
+            if (type === 'available') {
+                // Available order - show Accept button
+                cardClass = order.paymentMethod === 'cash' ? 'order-card priority' : 'order-card';
+                statusBadge = '<span class="order-status out_for_delivery">🆕 Available</span>';
+                actions = `
+                    <div class="order-actions">
+                        <button class="action-btn accept" onclick="acceptOrder('${order.id}')">🙋 Accept This Order</button>
+                    </div>
+                `;
+            } else if (type === 'myorder') {
+                // My order - show delivery actions
+                cardClass = 'order-card my-order';
+                statusBadge = '<span class="order-status picked">📦 Picked Up</span>';
                 actions = `
                     <div class="order-actions">
                         <a href="tel:${order.phone}" class="action-btn call">📞 Call</a>
@@ -743,14 +968,14 @@
             }
 
             return `
-                <div class="order-card ${order.paymentMethod === 'cash' ? 'priority' : ''}">
+                <div class="${cardClass}">
                     <div class="order-header">
                         <div>
                             <div class="order-id">#${order.id}</div>
                             <div class="order-time">⏰ ${date}</div>
                             <div class="order-restaurant">${restaurantNames[order.restaurantId] || order.restaurantId}</div>
                         </div>
-                        <span class="order-status ${order.status}">${statusLabels[order.status] || order.status}</span>
+                        ${statusBadge}
                     </div>
 
                     <div class="customer-info">
@@ -783,6 +1008,48 @@
             `;
         }
 
+        // ==================== ACCEPT ORDER ====================
+        async function acceptOrder(orderId) {
+            // Check if order is still available
+            const orderRef = db.collection('orders').doc(orderId);
+            
+            try {
+                const result = await db.runTransaction(async (transaction) => {
+                    const orderDoc = await transaction.get(orderRef);
+                    
+                    if (!orderDoc.exists) {
+                        throw new Error('Order not found');
+                    }
+                    
+                    const orderData = orderDoc.data();
+                    
+                    if (orderData.assignedTo) {
+                        throw new Error('Order already taken by another delivery boy');
+                    }
+                    
+                    // Assign to this delivery boy
+                    transaction.update(orderRef, {
+                        assignedTo: currentDeliveryBoy.id,
+                        assignedToName: currentDeliveryBoy.name,
+                        assignedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    return true;
+                });
+
+                if (result) {
+                    // Vibrate
+                    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                    alert('🎉 Order accepted! Go to "My Orders" tab.');
+                    switchTab('myorders');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ ' + error.message);
+                loadOrders(); // Refresh to show updated list
+            }
+        }
+
         // ==================== MARK DELIVERED ====================
         async function markDelivered(orderId) {
             if (!confirm('✅ Confirm this order has been delivered?')) return;
@@ -792,48 +1059,49 @@
                     status: 'delivered',
                     deliveredAt: firebase.firestore.FieldValue.serverTimestamp(),
                     deliveredBy: currentDeliveryBoy.id,
-                    deliveryBoyName: currentDeliveryBoy.name
+                    deliveredByName: currentDeliveryBoy.name
                 });
 
                 // Vibrate
                 if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
 
-                alert('🎉 Order marked as delivered!');
+                alert(`🎉 Order delivered!\n\n💰 You earned ₹${DELIVERY_FEE}`);
             } catch (error) {
                 console.error('Error:', error);
                 alert('❌ Failed to update order');
             }
         }
 
-        // ==================== STATS & EARNINGS ====================
+        // ==================== UPDATE STATS ====================
         function updateStats() {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            const pendingPickup = allOrders.filter(o => o.status === 'out_for_delivery').length;
-            
-            const todayDelivered = allOrders.filter(o => {
+            // Available orders (not assigned)
+            const availableOrders = allOrders.filter(o => 
+                o.status === 'out_for_delivery' && !o.assignedTo
+            );
+
+            // My active orders
+            const myActiveOrders = allOrders.filter(o => 
+                o.assignedTo === currentDeliveryBoy.id && 
+                o.status !== 'delivered'
+            );
+
+            // My delivered today
+            const myDeliveredToday = allOrders.filter(o => {
                 if (o.status !== 'delivered') return false;
+                if (o.deliveredBy !== currentDeliveryBoy.id) return false;
                 if (!o.deliveredAt) return false;
                 return o.deliveredAt.toDate() >= today;
             });
 
-            const deliveredCount = todayDelivered.length;
-            const totalEarnings = deliveredCount * DELIVERY_FEE_PER_ORDER;
-            
-            const codOrders = todayDelivered.filter(o => o.paymentMethod === 'cash');
-            const codCollected = codOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+            const todayEarnings = myDeliveredToday.length * DELIVERY_FEE;
 
-            // Update stats
-            document.getElementById('statPending').textContent = pendingPickup;
-            document.getElementById('statDelivered').textContent = deliveredCount;
-
-            // Update earnings
-            document.getElementById('totalEarnings').textContent = '₹' + totalEarnings;
-            document.getElementById('totalDeliveries').textContent = deliveredCount;
-            document.getElementById('avgTime').textContent = deliveredCount > 0 ? '25 min' : '0 min';
-            document.getElementById('codCollected').textContent = '₹' + codCollected;
-            document.getElementById('deliveryFee').textContent = '₹' + totalEarnings;
+            document.getElementById('statAvailable').textContent = availableOrders.length;
+            document.getElementById('statMyOrders').textContent = myActiveOrders.length;
+            document.getElementById('statDelivered').textContent = myDeliveredToday.length;
+            document.getElementById('statEarnings').textContent = '₹' + todayEarnings;
         }
 
         // ==================== NOTIFICATIONS ====================
@@ -849,7 +1117,7 @@
             }
 
             if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification('🚴 New Delivery!', { body: 'A new order is ready for pickup!' });
+                new Notification('🚴 New Order Available!', { body: 'Quick! Accept before someone else does!' });
             }
         }
 
@@ -858,22 +1126,23 @@
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.bottom-nav-item').forEach(t => t.classList.remove('active'));
 
-            document.getElementById('pendingSection').style.display = 'none';
-            document.getElementById('deliveredSection').style.display = 'none';
+            document.getElementById('availableSection').style.display = 'none';
+            document.getElementById('myOrdersSection').style.display = 'none';
             document.getElementById('earningsSection').style.display = 'none';
 
-            if (tab === 'pending') {
-                document.getElementById('pendingSection').style.display = 'block';
+            if (tab === 'available') {
+                document.getElementById('availableSection').style.display = 'block';
                 document.querySelectorAll('.tab')[0].classList.add('active');
                 document.querySelectorAll('.bottom-nav-item')[0].classList.add('active');
-            } else if (tab === 'delivered') {
-                document.getElementById('deliveredSection').style.display = 'block';
+            } else if (tab === 'myorders') {
+                document.getElementById('myOrdersSection').style.display = 'block';
                 document.querySelectorAll('.tab')[1].classList.add('active');
                 document.querySelectorAll('.bottom-nav-item')[1].classList.add('active');
             } else if (tab === 'earnings') {
                 document.getElementById('earningsSection').style.display = 'block';
                 document.querySelectorAll('.tab')[2].classList.add('active');
                 document.querySelectorAll('.bottom-nav-item')[2].classList.add('active');
+                renderEarnings(); // Refresh earnings
             }
         }
     </script>
