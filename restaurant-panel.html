@@ -558,29 +558,89 @@
         });
 
         // ==================== REAL-TIME ORDERS ====================
-        function startOrdersListener() {
-            db.collection('orders')
-                .where('restaurantId', '==', currentRestaurant)
-                .orderBy('createdAt', 'desc')
-                .onSnapshot(snapshot => {
-                    const orders = [];
-                    snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
-                    
-                    // Check for new orders
-                    const pendingCount = orders.filter(o => o.status === 'pending').length;
-                    if (pendingCount > lastPendingCount && lastPendingCount >= 0) {
-                        playNotification();
-                    }
-                    lastPendingCount = pendingCount;
-                    
-                    allOrders = orders;
-                    renderOrders(orders);
-                    updateStats();
-                }, error => {
-                    console.error('Orders listener error:', error);
-                    document.getElementById('ordersContainer').innerHTML = '<div class="no-data"><div class="no-data-icon">❌</div><p>Error loading orders</p></div>';
-                });
-        }
+        // ==================== REAL-TIME ORDERS ====================
+function startOrdersListener() {
+    const container = document.getElementById('ordersContainer');
+    container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading orders...</p></div>';
+    
+    console.log('🔍 Loading orders for restaurant:', currentRestaurant);
+    
+    // Simple query without orderBy (no index needed)
+    db.collection('orders')
+        .get()
+        .then(snapshot => {
+            console.log('📦 Total orders in database:', snapshot.size);
+            
+            const orders = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                // Filter orders for current restaurant
+                if (data.restaurantId === currentRestaurant) {
+                    orders.push({ id: doc.id, ...data });
+                }
+            });
+            
+            // Sort by date (newest first)
+            orders.sort((a, b) => {
+                const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
+                const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
+                return dateB - dateA;
+            });
+            
+            console.log('✅ Orders for', currentRestaurant + ':', orders.length);
+            
+            allOrders = orders;
+            renderOrders(orders);
+            updateStats();
+            
+            // Start real-time listener after initial load
+            startRealTimeUpdates();
+        })
+        .catch(error => {
+            console.error('❌ Error loading orders:', error);
+            container.innerHTML = `
+                <div class="no-data">
+                    <div class="no-data-icon">❌</div>
+                    <p>Error loading orders</p>
+                    <p style="font-size: 12px; color: #999;">${error.message}</p>
+                </div>
+            `;
+        });
+}
+
+// Real-time updates for new orders
+function startRealTimeUpdates() {
+    db.collection('orders')
+        .onSnapshot(snapshot => {
+            const orders = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                if (data.restaurantId === currentRestaurant) {
+                    orders.push({ id: doc.id, ...data });
+                }
+            });
+            
+            // Sort by date
+            orders.sort((a, b) => {
+                const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
+                const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
+                return dateB - dateA;
+            });
+            
+            // Check for new pending orders
+            const pendingCount = orders.filter(o => o.status === 'pending').length;
+            if (pendingCount > lastPendingCount && lastPendingCount > 0) {
+                playNotification();
+            }
+            lastPendingCount = pendingCount;
+            
+            allOrders = orders;
+            renderOrders(orders);
+            updateStats();
+        }, error => {
+            console.error('Real-time listener error:', error);
+        });
+}
 
         function renderOrders(orders) {
             const container = document.getElementById('ordersContainer');
