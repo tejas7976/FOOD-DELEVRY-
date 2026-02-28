@@ -678,23 +678,24 @@ function startRealTimeUpdates() {
             `).join('') : '<p>No items</p>';
 
             let actions = '';
-            switch(order.status) {
-                case 'pending':
-                    actions = `
-                        <button class="action-btn accept" onclick="updateOrderStatus('${order.id}', 'confirmed')">✅ Accept</button>
-                        <button class="action-btn reject" onclick="updateOrderStatus('${order.id}', 'cancelled')">❌ Reject</button>
-                    `;
-                    break;
-                case 'confirmed':
-                    actions = `<button class="action-btn prepare" onclick="updateOrderStatus('${order.id}', 'preparing')">👨‍🍳 Start Preparing</button>`;
-                    break;
-                case 'preparing':
-                    actions = `<button class="action-btn ready" onclick="updateOrderStatus('${order.id}', 'out_for_delivery')">🚴 Ready for Pickup</button>`;
-                    break;
-                case 'out_for_delivery':
-                    actions = `<button class="action-btn complete" onclick="updateOrderStatus('${order.id}', 'delivered')">🎉 Mark Delivered</button>`;
-                    break;
-            }
+switch(order.status) {
+    case 'pending':
+        actions = `
+            <button class="action-btn accept" onclick="updateOrderStatus('${order.id}', 'confirmed')">✅ Accept</button>
+            <button class="action-btn reject" onclick="updateOrderStatus('${order.id}', 'cancelled')">❌ Reject</button>
+        `;
+        break;
+    case 'confirmed':
+        actions = `<button class="action-btn prepare" onclick="updateOrderStatus('${order.id}', 'preparing')">👨‍🍳 Start Preparing</button>`;
+        break;
+    case 'preparing':
+        actions = `<button class="action-btn ready" onclick="updateOrderStatus('${order.id}', 'out_for_delivery')">🚴 Ready for Pickup</button>`;
+        break;
+    case 'out_for_delivery':
+        // No button - Delivery boy will mark as delivered
+        actions = `<p style="text-align: center; color: #666; font-size: 13px; padding: 10px;">🚴 Waiting for delivery boy to mark as delivered</p>`;
+        break;
+}
 
             return `
                 <div class="order-card ${isNew ? 'new-order' : ''}">
